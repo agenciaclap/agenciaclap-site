@@ -1,0 +1,1051 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Educação Brincando — Proposta Piúma</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,700;0,900;1,700&family=Lato:wght@300;400;500;700&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+
+:root {
+  --verde: #0a5c3a;
+  --verde-medio: #1a8a57;
+  --verde-claro: #d4edda;
+  --lima: #c8e63d;
+  --branco: #f9f7f2;
+  --preto: #0d0d0d;
+  --cinza: #5a5a52;
+  --cinza-claro: #ebebdf;
+  --display: 'Fraunces', Georgia, serif;
+  --corpo: 'Lato', sans-serif;
+}
+
+html { scroll-behavior: smooth; }
+
+body {
+  background: var(--branco);
+  color: var(--preto);
+  font-family: var(--corpo);
+  font-size: 17px;
+  line-height: 1.8;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ── CAPA ── */
+.capa {
+  min-height: 100vh;
+  background: var(--verde);
+  display: grid;
+  grid-template-rows: auto 1fr auto;
+  padding: 2.5rem 3rem;
+  position: relative;
+  overflow: hidden;
+}
+
+.capa-bg-shape {
+  position: absolute;
+  bottom: -80px; right: -80px;
+  width: 480px; height: 480px;
+  background: var(--lima);
+  border-radius: 50%;
+  opacity: 0.12;
+}
+
+.capa-bg-shape2 {
+  position: absolute;
+  top: -60px; left: 40%;
+  width: 260px; height: 260px;
+  background: var(--lima);
+  border-radius: 50%;
+  opacity: 0.07;
+}
+
+.capa-topo {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  position: relative;
+  z-index: 1;
+}
+
+.logo-tv {
+  font-family: var(--display);
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--lima);
+  letter-spacing: 0.05em;
+}
+
+.logo-tv span {
+  display: block;
+  font-family: var(--corpo);
+  font-size: 0.7rem;
+  font-weight: 300;
+  color: rgba(200,230,61,0.55);
+  letter-spacing: 0.2em;
+  margin-top: 3px;
+}
+
+.capa-badge {
+  font-size: 0.65rem;
+  letter-spacing: 0.25em;
+  text-transform: uppercase;
+  color: rgba(200,230,61,0.6);
+  text-align: right;
+  line-height: 1.8;
+}
+
+.capa-corpo {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 3rem 0;
+  position: relative;
+  z-index: 1;
+}
+
+.capa-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(200,230,61,0.15);
+  border: 1px solid rgba(200,230,61,0.3);
+  border-radius: 100px;
+  padding: 0.4rem 1rem;
+  font-size: 0.7rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--lima);
+  margin-bottom: 2rem;
+  width: fit-content;
+}
+
+.capa-tag::before {
+  content: '';
+  width: 6px; height: 6px;
+  background: var(--lima);
+  border-radius: 50%;
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0%,100% { opacity: 1; }
+  50% { opacity: 0.3; }
+}
+
+.capa-titulo {
+  font-family: var(--display);
+  font-size: clamp(3rem, 7vw, 6rem);
+  font-weight: 800;
+  color: var(--branco);
+  line-height: 0.95;
+  letter-spacing: -0.02em;
+  margin-bottom: 0.5rem;
+}
+
+.capa-titulo .destaque {
+  color: var(--lima);
+}
+
+.capa-subtitulo {
+  font-size: 1.1rem;
+  color: rgba(249,247,242,0.6);
+  max-width: 520px;
+  margin-top: 1.5rem;
+  font-weight: 300;
+}
+
+.capa-dest {
+  margin-top: 2.5rem;
+  font-size: 0.85rem;
+  color: rgba(249,247,242,0.45);
+}
+
+.capa-dest strong {
+  color: rgba(249,247,242,0.8);
+  font-weight: 500;
+}
+
+.capa-rodape {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-top: 1px solid rgba(200,230,61,0.15);
+  padding-top: 1.5rem;
+  position: relative;
+  z-index: 1;
+}
+
+.capa-rodape p {
+  font-size: 0.75rem;
+  color: rgba(249,247,242,0.3);
+}
+
+/* ── MÉTRICAS ABERTURA ── */
+.metricas-faixa {
+  background: var(--lima);
+  padding: 0;
+  overflow: hidden;
+}
+
+.metricas-inner {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  divide-x: 1px solid rgba(0,0,0,0.1);
+}
+
+.metrica-item {
+  padding: 2.5rem 2rem;
+  border-right: 1px solid rgba(0,0,0,0.1);
+  text-align: center;
+}
+
+.metrica-item:last-child { border-right: none; }
+
+.metrica-numero {
+  font-family: var(--display);
+  font-size: clamp(2.2rem, 4vw, 3.5rem);
+  font-weight: 800;
+  color: var(--verde);
+  line-height: 1;
+  display: block;
+}
+
+.metrica-label {
+  font-size: 0.75rem;
+  font-weight: 500;
+  color: rgba(10,92,58,0.65);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  margin-top: 0.4rem;
+  display: block;
+}
+
+/* ── SEÇÕES ── */
+section {
+  padding: 5rem 3rem;
+  max-width: 920px;
+  margin: 0 auto;
+}
+
+.secao-label {
+  font-size: 0.65rem;
+  letter-spacing: 0.35em;
+  text-transform: uppercase;
+  color: var(--verde-medio);
+  margin-bottom: 0.75rem;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.secao-label::before {
+  content: '';
+  width: 20px;
+  height: 2px;
+  background: var(--verde-medio);
+}
+
+.secao-titulo {
+  font-family: var(--display);
+  font-size: clamp(2rem, 4vw, 3rem);
+  font-weight: 800;
+  line-height: 1.1;
+  letter-spacing: -0.02em;
+  color: var(--preto);
+  margin-bottom: 2rem;
+}
+
+/* ── PROBLEMA ── */
+.problema-bg {
+  background: #111a14;
+  padding: 5rem 0;
+}
+
+.problema-bg section { color: var(--branco); }
+.problema-bg .secao-titulo { color: var(--branco); }
+.problema-bg .secao-label { color: rgba(200,230,61,0.7); }
+.problema-bg .secao-label::before { background: rgba(200,230,61,0.5); }
+
+.stat-destaque {
+  font-family: var(--display);
+  font-size: clamp(4rem, 10vw, 8rem);
+  font-weight: 800;
+  color: var(--lima);
+  line-height: 1;
+  letter-spacing: -0.03em;
+  margin: 1.5rem 0 0.5rem;
+}
+
+.stat-desc {
+  font-size: 1rem;
+  color: rgba(249,247,242,0.55);
+  max-width: 500px;
+  font-weight: 300;
+}
+
+.stats-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1px;
+  background: rgba(200,230,61,0.1);
+  border: 1px solid rgba(200,230,61,0.1);
+  border-radius: 8px;
+  overflow: hidden;
+  margin-top: 3rem;
+}
+
+.stat-card {
+  background: #111a14;
+  padding: 2rem;
+}
+
+.stat-card .num {
+  font-family: var(--display);
+  font-size: 2.5rem;
+  font-weight: 800;
+  color: var(--lima);
+  line-height: 1;
+}
+
+.stat-card .txt {
+  font-size: 0.85rem;
+  color: rgba(249,247,242,0.5);
+  margin-top: 0.5rem;
+  line-height: 1.5;
+}
+
+.stat-card .fonte {
+  font-size: 0.7rem;
+  color: rgba(249,247,242,0.25);
+  margin-top: 0.75rem;
+  letter-spacing: 0.1em;
+}
+
+/* ── COMO FUNCIONA ── */
+.passos {
+  margin-top: 3rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.passo {
+  display: grid;
+  grid-template-columns: 80px 1fr;
+  gap: 2rem;
+  padding: 2rem 0;
+  border-bottom: 1px solid var(--cinza-claro);
+  align-items: start;
+}
+
+.passo:last-child { border-bottom: none; }
+
+.passo-num {
+  font-family: var(--display);
+  font-size: 3rem;
+  font-weight: 800;
+  color: var(--cinza-claro);
+  line-height: 1;
+}
+
+.passo-titulo {
+  font-family: var(--display);
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: var(--preto);
+  margin-bottom: 0.5rem;
+}
+
+.passo-desc {
+  font-size: 0.9rem;
+  color: var(--cinza);
+  line-height: 1.65;
+}
+
+.passo-detalhe {
+  display: inline-block;
+  margin-top: 0.75rem;
+  font-size: 0.78rem;
+  color: var(--verde-medio);
+  font-weight: 500;
+}
+
+/* ── DIFERENCIAIS ── */
+.diff-bg {
+  background: var(--cinza-claro);
+  padding: 5rem 0;
+}
+
+.diff-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.5rem;
+  margin-top: 2.5rem;
+}
+
+.diff-card {
+  background: var(--branco);
+  border-radius: 8px;
+  padding: 2rem;
+  border-left: 4px solid var(--verde);
+}
+
+.diff-card h3 {
+  font-family: var(--display);
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--preto);
+  margin-bottom: 0.5rem;
+}
+
+.diff-card p {
+  font-size: 0.85rem;
+  color: var(--cinza);
+  line-height: 1.6;
+}
+
+/* ── IMPACTO ── */
+.impacto-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1rem;
+  margin-top: 2.5rem;
+}
+
+.impacto-card {
+  text-align: center;
+  padding: 2rem 1.5rem;
+  border: 1px solid var(--cinza-claro);
+  border-radius: 8px;
+}
+
+.impacto-num {
+  font-family: var(--display);
+  font-size: 2.5rem;
+  font-weight: 800;
+  color: var(--verde);
+  display: block;
+  line-height: 1;
+  margin-bottom: 0.5rem;
+}
+
+.impacto-label {
+  font-size: 0.8rem;
+  color: var(--cinza);
+  line-height: 1.5;
+}
+
+/* ── TV ── */
+.tv-bg {
+  background: var(--verde);
+  padding: 5rem 0;
+}
+
+.tv-bg section { color: var(--branco); }
+.tv-bg .secao-titulo { color: var(--branco); }
+.tv-bg .secao-label { color: rgba(200,230,61,0.7); }
+.tv-bg .secao-label::before { background: rgba(200,230,61,0.5); }
+
+.tv-itens {
+  margin-top: 2.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.tv-item {
+  display: flex;
+  gap: 1.5rem;
+  padding: 1.5rem 0;
+  border-bottom: 1px solid rgba(200,230,61,0.12);
+  align-items: flex-start;
+}
+
+.tv-item:last-child { border-bottom: none; }
+
+.tv-icone {
+  width: 40px;
+  height: 40px;
+  background: rgba(200,230,61,0.15);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  font-size: 1rem;
+  color: var(--lima);
+  font-weight: 700;
+  font-family: var(--display);
+}
+
+.tv-item strong {
+  display: block;
+  font-size: 0.95rem;
+  font-weight: 500;
+  color: var(--branco);
+  margin-bottom: 0.2rem;
+}
+
+.tv-item span {
+  font-size: 0.83rem;
+  color: rgba(249,247,242,0.5);
+}
+
+/* ── INVESTIMENTO ── */
+.inv-box {
+  border: 2px solid var(--verde);
+  border-radius: 8px;
+  padding: 3rem;
+  margin: 2.5rem 0;
+  position: relative;
+}
+
+.inv-label {
+  position: absolute;
+  top: -0.7em;
+  left: 2rem;
+  background: var(--branco);
+  padding: 0 0.75rem;
+  font-size: 0.65rem;
+  letter-spacing: 0.25em;
+  text-transform: uppercase;
+  color: var(--verde);
+  font-weight: 500;
+}
+
+.inv-total {
+  display: flex;
+  align-items: baseline;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.inv-valor {
+  font-family: var(--display);
+  font-size: clamp(3rem, 7vw, 5rem);
+  font-weight: 800;
+  color: var(--preto);
+  line-height: 1;
+}
+
+.inv-desc {
+  font-size: 0.9rem;
+  color: var(--cinza);
+  max-width: 300px;
+  line-height: 1.5;
+}
+
+.inv-tabela {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 2rem;
+  font-size: 0.88rem;
+}
+
+.inv-tabela tr {
+  border-bottom: 1px solid var(--cinza-claro);
+}
+
+.inv-tabela tr:last-child { border-bottom: none; }
+
+.inv-tabela td {
+  padding: 0.85rem 0;
+  color: var(--cinza);
+}
+
+.inv-tabela td:last-child {
+  text-align: right;
+  font-weight: 500;
+  color: var(--preto);
+  font-family: var(--display);
+}
+
+.custo-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: var(--verde-claro);
+  color: var(--verde);
+  font-size: 0.8rem;
+  font-weight: 500;
+  padding: 0.4rem 1rem;
+  border-radius: 100px;
+  margin-top: 1.5rem;
+}
+
+/* ── ARGUMENTO ── */
+.arg-bg {
+  background: var(--preto);
+  padding: 5rem 0;
+}
+
+.arg-bg section { color: var(--branco); }
+
+.frase-argumento {
+  font-family: var(--display);
+  font-size: clamp(1.3rem, 2.5vw, 2rem);
+  font-weight: 700;
+  color: var(--lima);
+  border-left: 4px solid var(--lima);
+  padding-left: 2rem;
+  margin: 2.5rem 0;
+  line-height: 1.4;
+  font-style: italic;
+}
+
+.arg-itens {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+  margin-top: 2rem;
+}
+
+.arg-item {
+  background: rgba(255,255,255,0.04);
+  border-radius: 8px;
+  padding: 1.5rem;
+  border: 1px solid rgba(255,255,255,0.07);
+}
+
+.arg-item strong {
+  display: block;
+  font-size: 0.85rem;
+  color: var(--branco);
+  font-weight: 500;
+  margin-bottom: 0.4rem;
+}
+
+.arg-item span {
+  font-size: 0.8rem;
+  color: rgba(249,247,242,0.45);
+  line-height: 1.5;
+}
+
+/* ── CTA ── */
+.cta-bg {
+  background: var(--lima);
+  padding: 5rem 3rem;
+  text-align: center;
+}
+
+.cta-titulo {
+  font-family: var(--display);
+  font-size: clamp(2rem, 5vw, 4rem);
+  font-weight: 800;
+  color: var(--verde);
+  line-height: 1.1;
+  letter-spacing: -0.02em;
+  margin-bottom: 1.5rem;
+}
+
+.cta-texto {
+  font-size: 1rem;
+  color: rgba(10,92,58,0.65);
+  max-width: 500px;
+  margin: 0 auto 2.5rem;
+  font-weight: 300;
+}
+
+.cta-contato {
+  font-family: var(--display);
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--verde);
+  text-decoration: none;
+  border-bottom: 2px solid rgba(10,92,58,0.3);
+  padding-bottom: 3px;
+}
+
+/* ── RODAPÉ ── */
+footer {
+  background: #0a0f0b;
+  padding: 2.5rem 3rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+footer p {
+  font-size: 0.75rem;
+  color: rgba(249,247,242,0.25);
+}
+
+footer .logo-rod {
+  font-family: var(--display);
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: var(--lima);
+  opacity: 0.5;
+}
+
+/* ── RESPONSIVE ── */
+@media (max-width: 640px) {
+  .capa, section { padding-left: 1.5rem; padding-right: 1.5rem; }
+  .metricas-inner { grid-template-columns: 1fr 1fr; }
+  .stats-row, .diff-grid, .impacto-grid, .arg-itens { grid-template-columns: 1fr; }
+  .passo { grid-template-columns: 60px 1fr; }
+  footer { flex-direction: column; gap: 1rem; text-align: center; }
+  .cta-bg { padding: 4rem 1.5rem; }
+}
+</style>
+</head>
+<body>
+
+<!-- CAPA -->
+<div class="capa">
+  <div class="capa-bg-shape"></div>
+  <div class="capa-bg-shape2"></div>
+
+  <div class="capa-topo">
+    <div class="logo-tv">
+      TV Marataízes
+      <span>Canal 300 · Soul TV</span>
+    </div>
+    <div class="capa-badge">
+      Proposta Técnica e Financeira<br>
+      Piúma · ES · Junho 2026
+    </div>
+  </div>
+
+  <div class="capa-corpo">
+    <div class="capa-tag">Piloto Municipal · 5 Escolas</div>
+    <h1 class="capa-titulo">
+      Educação<br>
+      <span class="destaque">Brincando</span><br>
+      em Piúma.
+    </h1>
+    <p class="capa-subtitulo">
+      Hub de tecnologia com gamificação ao vivo nas escolas públicas municipais.
+      Matemática, Geografia e Ciências — com toda a turma engajada.
+    </p>
+    <p class="capa-dest">
+      Apresentado à <strong>Secretaria Municipal de Educação de Piúma</strong><br>
+      Via indicação do Presidente da Câmara Municipal
+    </p>
+  </div>
+
+  <div class="capa-rodape">
+    <p>TV Marataízes · (28) 99903-6141 · tvmarataizes.digital</p>
+    <p>Macuca Produções · CNPJ 59.245.417/0001-67</p>
+  </div>
+</div>
+
+<!-- MÉTRICAS -->
+<div class="metricas-faixa">
+  <div class="metricas-inner">
+    <div class="metrica-item">
+      <span class="metrica-numero">5</span>
+      <span class="metrica-label">Escolas no piloto</span>
+    </div>
+    <div class="metrica-item">
+      <span class="metrica-numero">1.200</span>
+      <span class="metrica-label">Alunos impactados</span>
+    </div>
+    <div class="metrica-item">
+      <span class="metrica-numero">R$13</span>
+      <span class="metrica-label">Custo por aluno</span>
+    </div>
+    <div class="metrica-item">
+      <span class="metrica-numero">15min</span>
+      <span class="metrica-label">Para montar e começar</span>
+    </div>
+  </div>
+</div>
+
+<!-- PROBLEMA -->
+<div class="problema-bg">
+  <section>
+    <p class="secao-label">01 · O problema</p>
+    <h2 class="secao-titulo">O Espírito Santo é referência nacional em educação.<br>Piúma ainda pode ir mais longe.</h2>
+
+    <div class="stat-destaque">52%</div>
+    <p class="stat-desc">
+      dos alunos do 5º ano do ensino fundamental brasileiro não dominam matemática básica. A escola pública precisa de uma resposta diferente — não mais do mesmo.
+    </p>
+
+    <div class="stats-row">
+      <div class="stat-card">
+        <div class="num">68%</div>
+        <div class="txt">dos professores relatam queda crítica de atenção nos primeiros 10 minutos de aula tradicional.</div>
+        <div class="fonte">Fonte: CNE</div>
+      </div>
+      <div class="stat-card">
+        <div class="num">3×</div>
+        <div class="txt">mais retenção de conteúdo em aulas com elementos de gamificação ao vivo, comparado à aula expositiva.</div>
+        <div class="fonte">Fonte: Universidade de Columbia</div>
+      </div>
+      <div class="stat-card">
+        <div class="num">25%</div>
+        <div class="txt">da receita municipal já está constitucionalmente reservada para educação. O investimento não precisa ser criado — precisa ser bem usado.</div>
+        <div class="fonte">Constituição Federal · Art. 212</div>
+      </div>
+      <div class="stat-card">
+        <div class="num">1º</div>
+        <div class="txt">O município que implementar este programa será o primeiro do ES em gamificação educacional ao vivo nas escolas públicas.</div>
+        <div class="fonte">TV Marataízes · 2026</div>
+      </div>
+    </div>
+  </section>
+</div>
+
+<!-- COMO FUNCIONA -->
+<section>
+  <p class="secao-label">02 · Como funciona</p>
+  <h2 class="secao-titulo">De zero a jogo<br>em 15 minutos.</h2>
+
+  <div class="passos">
+    <div class="passo">
+      <div class="passo-num">01</div>
+      <div>
+        <h3 class="passo-titulo">A TV Marataízes chega com tudo</h3>
+        <p class="passo-desc">Nossa equipe leva a TV touch, os equipamentos e o suporte técnico completo. A escola não precisa ter nenhuma estrutura própria. Montagem em 15 minutos — sem obra, sem instalação, sem treinamento técnico para o professor.</p>
+        <span class="passo-detalhe">→ Zero sobrecarga para a escola</span>
+      </div>
+    </div>
+
+    <div class="passo">
+      <div class="passo-num">02</div>
+      <div>
+        <h3 class="passo-titulo">A turma divide-se em dois times</h3>
+        <p class="passo-desc">Cabo de Guerra digital: dois times respondem questões curriculares em tempo real na tela touch. Cada acerto move a corda. A sala toda torce, grita e aprende. Configuração flexível: 10, 20 ou 30 segundos por rodada — adaptado à faixa etária.</p>
+        <span class="passo-detalhe">→ Até 8 turmas por escola em um dia</span>
+        <div style="margin-top:1rem; display:flex; gap:0.75rem; flex-wrap:wrap;">
+          <a href="https://tvmarataizes.digital/educacao/" target="_blank" style="display:inline-flex; align-items:center; gap:6px; background:var(--verde-claro); color:var(--verde); font-size:0.78rem; font-weight:700; padding:0.4rem 1rem; border-radius:100px; text-decoration:none; letter-spacing:0.05em;">▶ Ver o programa</a>
+          <a href="https://tvmarataizes.digital/tvmarataizesnasescolas/" target="_blank" style="display:inline-flex; align-items:center; gap:6px; background:var(--cinza-claro); color:var(--cinza); font-size:0.78rem; font-weight:700; padding:0.4rem 1rem; border-radius:100px; text-decoration:none; letter-spacing:0.05em;">▶ Ver o jogo nas escolas</a>
+        </div>
+      </div>
+    </div>
+
+    <div class="passo">
+      <div class="passo-num">03</div>
+      <div>
+        <h3 class="passo-titulo">O professor recebe o relatório</h3>
+        <p class="passo-desc">Desempenho por aluno e por turma. O professor sabe exatamente o que reforçar na semana seguinte — sem precisar preparar avaliação extra. A plataforma faz o diagnóstico enquanto o jogo acontece.</p>
+        <span class="passo-detalhe">→ Aprendizado com dados</span>
+      </div>
+    </div>
+
+    <div class="passo">
+      <div class="passo-num">04</div>
+      <div>
+        <h3 class="passo-titulo">A escola aparece na TV Marataízes</h3>
+        <p class="passo-desc">Todas as atividades realizadas nas escolas são registradas e exibidas em programa especial na TV Marataízes — Canal 300 Soul TV. Alunos, professores e a educação pública de Piúma com visibilidade na mídia regional.</p>
+        <span class="passo-detalhe">→ A prefeitura ganha comunicação do investimento</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- DIFERENCIAIS -->
+<div class="diff-bg">
+  <section>
+    <p class="secao-label">03 · Diferenciais</p>
+    <h2 class="secao-titulo">Por que este programa<br>é diferente.</h2>
+
+    <div class="diff-grid">
+      <div class="diff-card">
+        <h3>Sem obra. Sem equipamento fixo.</h3>
+        <p>A TV Marataízes leva tudo e busca tudo. A escola continua exatamente como está. Nenhum investimento em infraestrutura necessário além do programa.</p>
+      </div>
+      <div class="diff-card">
+        <h3>Professores no centro, não à margem.</h3>
+        <p>O programa não substitui o professor — ele amplifica. O jogo é a ferramenta; o professor continua sendo o condutor da aula. A tecnologia entra a serviço da pedagogy.</p>
+      </div>
+      <div class="diff-card">
+        <h3>Conteúdo alinhado à BNCC.</h3>
+        <p>Matemática, Geografia e Ciências com banco de perguntas calibrado por série e faixa etária. Português em desenvolvimento. Cada questão revisada por especialistas.</p>
+      </div>
+      <div class="diff-card">
+        <h3>Resultado na TV — toda semana.</h3>
+        <p>Único no ES. A escola aparece. O secretário aparece. A prefeitura aparece. Não como publicidade — como resultado concreto e visível para toda a cidade.</p>
+      </div>
+      <div class="diff-card">
+        <h3>Custo por aluno menor que R$ 13.</h3>
+        <p>Menos que o valor de uma apostila. Com entrega completa: equipamento, equipe, conteúdo, registro em vídeo e relatório de desempenho por turma.</p>
+      </div>
+      <div class="diff-card">
+        <h3>Piloto de baixo risco.</h3>
+        <p>5 escolas. Um valor pontual. Resultado mensurável em poucas semanas. A expansão para toda a rede se justifica com dados — não com promessa.</p>
+      </div>
+    </div>
+  </section>
+</div>
+
+<!-- IMPACTO -->
+<section>
+  <p class="secao-label">04 · Impacto do piloto</p>
+  <h2 class="secao-titulo">O que o piloto<br>entrega.</h2>
+
+  <div class="impacto-grid">
+    <div class="impacto-card">
+      <span class="impacto-num">5</span>
+      <span class="impacto-label">Escolas municipais atendidas no piloto</span>
+    </div>
+    <div class="impacto-card">
+      <span class="impacto-num">8</span>
+      <span class="impacto-label">Turmas por escola — manhã e tarde</span>
+    </div>
+    <div class="impacto-card">
+      <span class="impacto-num">~240</span>
+      <span class="impacto-label">Alunos impactados por escola</span>
+    </div>
+    <div class="impacto-card">
+      <span class="impacto-num">1.200</span>
+      <span class="impacto-label">Total de alunos no piloto</span>
+    </div>
+    <div class="impacto-card">
+      <span class="impacto-num">3</span>
+      <span class="impacto-label">Disciplinas: Matemática, Geografia e Ciências</span>
+    </div>
+    <div class="impacto-card">
+      <span class="impacto-num">TV</span>
+      <span class="impacto-label">Cobertura no Canal 300 Soul TV inclusa</span>
+    </div>
+  </div>
+</section>
+
+<!-- TV -->
+<div class="tv-bg">
+  <section>
+    <p class="secao-label">05 · A TV que faz diferença</p>
+    <h2 class="secao-titulo">A educação pública<br>de Piúma na TV.</h2>
+
+    <div class="tv-itens">
+      <div class="tv-item">
+        <div class="tv-icone">📺</div>
+        <div>
+          <strong>Canal 300 · Soul TV — ao lado da CNN Brasil</strong>
+          <span>Transmissão para todo o Sul do ES, Brasil e +197 países via streaming. A escola de Piúma com alcance nacional.</span>
+        </div>
+      </div>
+      <div class="tv-item">
+        <div class="tv-icone">🎬</div>
+        <div>
+          <strong>Programa especial dedicado ao projeto</strong>
+          <span>Reportagens de cada escola visitada, com depoimentos de alunos e professores. Conteúdo disponível nas redes sociais e no portal da Prefeitura.</span>
+        </div>
+      </div>
+      <div class="tv-item">
+        <div class="tv-icone">📱</div>
+        <div>
+          <strong>VOD gratuito para pais e alunos</strong>
+          <span>Todos os episódios disponíveis em tvmarataizes.digital. Funciona como uma videoteca educativa gratuita — pais assistem quando quiserem.</span>
+          <div style="margin-top:0.75rem; display:flex; gap:0.75rem; flex-wrap:wrap;">
+            <a href="https://tvmarataizes.digital/educacao/" target="_blank" style="display:inline-flex; align-items:center; gap:6px; background:rgba(200,230,61,0.15); color:var(--lima); font-size:0.75rem; font-weight:700; padding:0.35rem 0.9rem; border-radius:100px; text-decoration:none; border:1px solid rgba(200,230,61,0.3);">▶ Educação Brincando</a>
+            <a href="https://tvmarataizes.digital/tvmarataizesnasescolas/" target="_blank" style="display:inline-flex; align-items:center; gap:6px; background:rgba(200,230,61,0.15); color:var(--lima); font-size:0.75rem; font-weight:700; padding:0.35rem 0.9rem; border-radius:100px; text-decoration:none; border:1px solid rgba(200,230,61,0.3);">▶ Cabo de Guerra nas Escolas</a>
+          </div>
+        </div>
+      </div>
+      <div class="tv-item">
+        <div class="tv-icone">🏆</div>
+        <div>
+          <strong>A prefeitura que lidera em inovação educacional</strong>
+          <span>Municípios pioneiros viram referência para a Undime e o MEC. O secretário é convidado para eventos estaduais. O resultado gera reconhecimento institucional real.</span>
+        </div>
+      </div>
+    </div>
+  </section>
+</div>
+
+<!-- INVESTIMENTO -->
+<section>
+  <p class="secao-label">06 · Investimento</p>
+  <h2 class="secao-titulo">Um piloto que cabe<br>no Fundo de Educação.</h2>
+
+  <div class="inv-box">
+    <span class="inv-label">INVESTIMENTO TOTAL DO PILOTO</span>
+    <div class="inv-total">
+      <div class="inv-valor">R$ 22.500</div>
+      <p class="inv-desc">5 escolas · 2 turnos por escola · equipe, equipamento e cobertura de TV inclusos</p>
+    </div>
+
+    <table class="inv-tabela">
+      <tr>
+        <td>Hub de Tecnologia — por escola (2 turnos completos)</td>
+        <td>R$ 4.500,00</td>
+      </tr>
+      <tr>
+        <td>Número de escolas no piloto</td>
+        <td>5 escolas</td>
+      </tr>
+      <tr>
+        <td>Cobertura de TV e produção audiovisual</td>
+        <td>incluso</td>
+      </tr>
+      <tr>
+        <td>Relatório de desempenho por turma</td>
+        <td>incluso</td>
+      </tr>
+      <tr>
+        <td>Equipamento, equipe e logística</td>
+        <td>incluso</td>
+      </tr>
+    </table>
+
+    <div class="custo-tag">
+      ✓ Menos de R$ 13,00 por aluno impactado
+    </div>
+  </div>
+
+  <p style="font-size:0.82rem; color:var(--cinza); margin-top:1rem;">
+    Dotação sugerida: Fundo Municipal de Educação — despesas com manutenção e desenvolvimento do ensino fundamental. Empenho único, sem vínculo mensal. Após o piloto, expansão negociada com base nos resultados documentados.
+  </p>
+</section>
+
+<!-- ARGUMENTO -->
+<div class="arg-bg">
+  <section>
+    <p class="secao-label" style="color:rgba(200,230,61,0.6)">07 · Por que agora</p>
+    <h2 class="secao-titulo" style="color:var(--branco)">O município que<br>agir primeiro<br>será lembrado por isso.</h2>
+
+    <div class="frase-argumento">
+      "O dinheiro para educação já existe. O que falta é uma forma de gastá-lo que apareça — e que funcione."
+    </div>
+
+    <div class="arg-itens">
+      <div class="arg-item">
+        <strong>Sem licitação complexa</strong>
+        <span>Valor abaixo do teto de dispensa de licitação. Contratação via nota fiscal da Macuca Produções com dotação no Fundo de Educação.</span>
+      </div>
+      <div class="arg-item">
+        <strong>IDEB como argumento político</strong>
+        <span>O ES é top 5 nacional em educação. Piúma pode liderar o Sul Capixaba. O dado do IDEB local vira justificativa técnica para o programa.</span>
+      </div>
+      <div class="arg-item">
+        <strong>Resultado antes das eleições</strong>
+        <span>IDEB sobe em 12 a 18 meses de programa contínuo. O piloto começa agora e os dados aparecem no ciclo eleitoral de 2026.</span>
+      </div>
+      <div class="arg-item">
+        <strong>A escola que lidera vira notícia</strong>
+        <span>"Escola de Piúma usa jogo ao vivo para ensinar matemática" — esse título existe. Falta o município que o protagoniza.</span>
+      </div>
+    </div>
+  </section>
+</div>
+
+<!-- CTA -->
+<div class="cta-bg">
+  <h2 class="cta-titulo">Próximo passo:<br>uma visita às escolas.</h2>
+  <p class="cta-texto">
+    A estrutura está pronta. O programa está funcionando. Estamos disponíveis para apresentação presencial, demonstração ao vivo e definição do calendário de início.
+  </p>
+  <a class="cta-contato" href="https://wa.me/5528999036141">
+    (28) 99903-6141 · WhatsApp direto
+  </a>
+  <div style="margin-top:2rem; display:flex; justify-content:center; gap:1rem; flex-wrap:wrap;">
+    <a href="https://tvmarataizes.digital/educacao/" target="_blank" style="display:inline-flex; align-items:center; gap:6px; background:rgba(10,92,58,0.12); color:var(--verde); font-size:0.8rem; font-weight:700; padding:0.5rem 1.2rem; border-radius:100px; text-decoration:none; border:1px solid rgba(10,92,58,0.2);">▶ Ver site do programa</a>
+    <a href="https://tvmarataizes.digital/tvmarataizesnasescolas/" target="_blank" style="display:inline-flex; align-items:center; gap:6px; background:rgba(10,92,58,0.12); color:var(--verde); font-size:0.8rem; font-weight:700; padding:0.5rem 1.2rem; border-radius:100px; text-decoration:none; border:1px solid rgba(10,92,58,0.2);">▶ Ver o jogo ao vivo</a>
+  </div>
+</div>
+
+<!-- RODAPÉ -->
+<footer>
+  <p>TV Marataízes · Macuca Produções · CNPJ 59.245.417/0001-67<br>
+  Marataízes · tvmarataizes.digital · (28) 99903-6141</p>
+  <p class="logo-rod">TV Marataízes</p>
+</footer>
+
+</body>
+</html>
