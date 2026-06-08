@@ -1,0 +1,463 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Agência Clap — Seu negócio vendendo mais no Sul do ES</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,900;1,700;1,900&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --y:#FFD000;
+  --b:#0A0A0A;
+  --w:#ffffff;
+  --g:#777;
+  --lg:#F5F5F3;
+  --border:#E8E8E4;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{background:var(--b);color:var(--w);font-family:'DM Sans',sans-serif;overflow-x:hidden;-webkit-font-smoothing:antialiased}
+.container{max-width:1120px;margin:0 auto;padding:0 32px}
+
+/* ── NAV ── */
+nav{position:fixed;top:0;left:0;right:0;z-index:100;padding:18px 0;background:rgba(10,10,10,0.95);backdrop-filter:blur(16px);border-bottom:1px solid rgba(255,255,255,0.06)}
+.nav-in{display:flex;align-items:center;justify-content:space-between}
+.logo{display:flex;align-items:center;gap:10px;text-decoration:none}
+.logo-box{width:30px;height:30px;background:var(--y);border-radius:5px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.logo-box svg{width:17px;height:17px}
+.logo-name{font-family:'Playfair Display',serif;font-weight:700;font-size:18px;color:var(--w);letter-spacing:-0.01em}
+.logo-name em{font-style:italic;color:var(--y)}
+.nav-btn{background:var(--y);color:var(--b);font-family:'DM Sans',sans-serif;font-weight:600;font-size:13px;padding:10px 22px;border-radius:3px;text-decoration:none;letter-spacing:0.02em;transition:opacity .15s,transform .15s}
+.nav-btn:hover{opacity:.88;transform:translateY(-1px)}
+
+/* ── HERO ── */
+.hero{min-height:100vh;display:flex;align-items:center;padding:120px 0 80px;position:relative;overflow:hidden;background:var(--b)}
+.hero-inner{display:grid;grid-template-columns:1.1fr 0.9fr;gap:80px;align-items:center}
+.hero-label{display:inline-flex;align-items:center;gap:8px;font-size:11px;font-weight:500;letter-spacing:0.14em;text-transform:uppercase;color:var(--y);margin-bottom:24px}
+.hero-label::before{content:'';width:5px;height:5px;border-radius:50%;background:var(--y);animation:blink 2s infinite}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.2}}
+.hero h1{font-family:'Playfair Display',serif;font-weight:900;font-size:clamp(54px,5.5vw,80px);line-height:1.0;letter-spacing:-0.03em;margin-bottom:28px;color:var(--w)}
+.hero h1 em{font-style:italic;color:var(--y)}
+.hero-copy{font-size:17px;line-height:1.72;color:#999;margin-bottom:44px;max-width:460px;font-weight:300}
+.hero-actions{display:flex;gap:12px;flex-wrap:wrap;align-items:center}
+.btn-main{background:var(--y);color:var(--b);font-weight:600;font-size:15px;padding:16px 34px;border-radius:3px;text-decoration:none;transition:opacity .15s,transform .15s;letter-spacing:0.01em}
+.btn-main:hover{opacity:.88;transform:translateY(-2px)}
+.btn-line{color:#555;font-size:14px;font-weight:400;text-decoration:none;letter-spacing:0.01em;transition:color .15s}
+.btn-line:hover{color:#999}
+.hero-right{display:flex;flex-direction:column;gap:1px}
+.h-stat{background:#111;padding:28px 32px;display:flex;flex-direction:column;gap:4px;border-left:1px solid #1a1a1a;transition:border-color .2s}
+.h-stat:first-child{border-top:1px solid #1a1a1a}
+.h-stat:hover{border-left-color:var(--y)}
+.h-num{font-family:'Playfair Display',serif;font-weight:900;font-size:44px;color:var(--y);line-height:1}
+.h-label{font-size:13px;color:#555;line-height:1.4;font-weight:400}
+
+/* ── TICKER ── */
+.ticker{background:var(--y);padding:13px 0;overflow:hidden}
+.tick-track{display:flex;width:max-content;animation:tick 22s linear infinite}
+.tick-item{font-family:'DM Sans',sans-serif;font-weight:600;font-size:13px;letter-spacing:0.1em;text-transform:uppercase;color:var(--b);padding:0 28px;white-space:nowrap}
+.tick-item::after{content:'·';margin-left:28px;opacity:.4}
+@keyframes tick{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+
+/* ── SEÇÕES ── */
+section{padding:96px 0}
+.eyebrow{font-size:11px;font-weight:500;letter-spacing:0.14em;text-transform:uppercase;color:var(--y);margin-bottom:14px;display:flex;align-items:center;gap:10px}
+.eyebrow::before{content:'';display:block;width:20px;height:1px;background:var(--y)}
+h2{font-family:'Playfair Display',serif;font-weight:900;font-size:clamp(36px,4vw,54px);line-height:1.05;letter-spacing:-0.025em;color:var(--w)}
+h2 em{font-style:italic;color:var(--y)}
+
+/* ── PROBLEMA ── */
+.prob{background:#0C0C0C}
+.prob-grid{display:grid;grid-template-columns:1fr 1fr;gap:64px;align-items:center;margin-bottom:56px}
+.prob-body{font-size:16px;line-height:1.75;color:#666;margin-top:20px;font-weight:300}
+.prob-big{background:var(--y);border-radius:4px;padding:56px 48px;text-align:center}
+.prob-num{font-family:'Playfair Display',serif;font-weight:900;font-size:88px;color:var(--b);line-height:1;letter-spacing:-0.04em}
+.prob-sub{font-size:15px;color:rgba(0,0,0,.55);margin-top:10px;font-weight:500;line-height:1.4}
+.prob-cards{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:#1a1a1a;border-radius:4px;overflow:hidden}
+.prob-card{background:#111;padding:28px 24px}
+.prob-card h4{font-family:'Playfair Display',serif;font-weight:700;font-size:16px;margin-bottom:10px;color:var(--w)}
+.prob-card p{font-size:13px;color:#555;line-height:1.6;font-weight:300}
+
+/* ── SOLUÇÃO ── */
+.sol{background:var(--b)}
+.sol-intro{display:grid;grid-template-columns:1fr 1fr;gap:64px;align-items:end;margin-bottom:56px}
+.sol-copy{font-size:15px;line-height:1.75;color:#555;font-weight:300}
+.sol-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:#1a1a1a;border-radius:4px;overflow:hidden}
+.sol-card{background:#0E0E0E;padding:36px 28px;transition:background .2s}
+.sol-card:hover{background:#131313}
+.sol-n{font-family:'Playfair Display',serif;font-weight:900;font-size:40px;color:rgba(255,208,0,.1);line-height:1;margin-bottom:16px}
+.sol-card h3{font-family:'Playfair Display',serif;font-weight:700;font-size:19px;color:var(--w);margin-bottom:10px;line-height:1.2}
+.sol-card p{font-size:13px;color:#555;line-height:1.65;font-weight:300}
+
+/* ── PLANOS ── */
+.planos{background:#0C0C0C}
+.planos-head{display:grid;grid-template-columns:1fr 1fr;gap:64px;align-items:end;margin-bottom:56px}
+.planos-note-top{font-size:14px;color:#444;font-weight:300;line-height:1.65}
+.plans-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:#1a1a1a;border-radius:4px;overflow:hidden}
+.plan{background:#0E0E0E;padding:40px 32px;position:relative;display:flex;flex-direction:column}
+.plan.feat{background:#111;border:1px solid rgba(255,208,0,.3)}
+.plan-badge{display:inline-block;background:var(--y);color:var(--b);font-size:10px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;padding:4px 12px;border-radius:2px;margin-bottom:20px}
+.plan-code{font-size:10px;font-weight:500;letter-spacing:.14em;text-transform:uppercase;color:#444;margin-bottom:8px}
+.plan h3{font-family:'Playfair Display',serif;font-weight:900;font-size:24px;color:var(--w);margin-bottom:6px}
+.plan-sub{font-size:13px;color:#444;margin-bottom:20px;font-weight:300}
+.plan-div{height:1px;background:#1a1a1a;margin-bottom:20px}
+.plan.feat .plan-div{background:#222}
+.plan-price{font-family:'Playfair Display',serif;font-weight:900;font-size:46px;color:var(--y);line-height:1;margin-bottom:4px}
+.plan-mo{font-size:12px;color:#444;margin-bottom:24px}
+.plan-items{list-style:none;flex:1;margin-bottom:28px}
+.plan-items li{font-size:13px;color:#555;padding:7px 0;border-bottom:1px solid #141414;display:flex;gap:10px;line-height:1.4;font-weight:300}
+.plan.feat .plan-items li{color:#888;border-bottom-color:#1c1c1c}
+.plan-items li::before{content:'—';color:var(--y);flex-shrink:0;font-weight:400}
+.plan-cta{display:block;text-align:center;padding:13px;border-radius:3px;font-size:13px;font-weight:600;letter-spacing:.03em;text-decoration:none;transition:all .15s;margin-top:auto}
+.cta-outline{border:1px solid #222;color:#444}
+.cta-outline:hover{border-color:#444;color:#777}
+.cta-solid{background:var(--y);color:var(--b)}
+.cta-solid:hover{opacity:.88}
+.plans-foot{text-align:center;font-size:12px;color:#333;margin-top:20px;font-weight:300}
+
+/* ── COMO ── */
+.como{background:var(--b)}
+.como-steps{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:#1a1a1a;border-radius:4px;overflow:hidden;margin-top:56px}
+.step{background:#0E0E0E;padding:36px 28px;position:relative}
+.step-n{font-family:'Playfair Display',serif;font-weight:900;font-size:52px;color:rgba(255,208,0,.07);line-height:1;margin-bottom:18px}
+.step h4{font-family:'Playfair Display',serif;font-weight:700;font-size:17px;color:var(--w);margin-bottom:10px}
+.step p{font-size:13px;color:#444;line-height:1.65;font-weight:300}
+.step-arr{position:absolute;top:36px;right:-1px;width:2px;height:32px;background:var(--y);opacity:.4}
+.step:last-child .step-arr{display:none}
+
+/* ── CTA FINAL ── */
+.cta-sec{background:#0C0C0C;padding:96px 0}
+.cta-wrap{border:1px solid #1a1a1a;border-radius:4px;padding:80px 64px;text-align:center}
+.cta-wrap h2{margin-bottom:16px}
+.cta-sub{font-size:16px;color:#444;margin-bottom:44px;font-weight:300}
+.cta-btns{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;margin-bottom:48px}
+.cta-divider{height:1px;background:#1a1a1a;margin-bottom:40px}
+.cta-contacts{display:flex;gap:48px;justify-content:center;flex-wrap:wrap}
+.cta-c{text-align:left}
+.cta-c-label{font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:#333;margin-bottom:5px;font-weight:500}
+.cta-c-val{font-family:'Playfair Display',serif;font-weight:700;font-size:15px;color:#555;letter-spacing:-.01em}
+.guarantee{margin-top:48px;padding-top:40px;border-top:1px solid #1a1a1a;font-size:13px;color:#333;line-height:1.7;font-weight:300}
+.guarantee strong{color:#444;font-weight:500}
+
+/* ── FOOTER ── */
+footer{background:#070707;border-top:1px solid #111;padding:28px 0}
+.foot-in{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px}
+.foot-copy{font-size:12px;color:#2a2a2a;font-weight:300}
+
+/* ── RESPONSIVE ── */
+@media(max-width:920px){
+  .hero-inner,.prob-grid,.sol-intro,.planos-head{grid-template-columns:1fr}
+  .hero-right,.h-stat:first-child{border-top:none}
+  .prob-cards{grid-template-columns:1fr 1fr}
+  .sol-grid,.plans-grid{grid-template-columns:1fr}
+  .como-steps{grid-template-columns:1fr 1fr}
+  .step-arr{display:none}
+  .cta-wrap{padding:48px 28px}
+  .cta-contacts{gap:28px}
+}
+@media(max-width:600px){
+  .prob-cards,.como-steps{grid-template-columns:1fr}
+  .hero h1{font-size:48px}
+}
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="container nav-in">
+    <a href="#" class="logo">
+      <div class="logo-box">
+        <svg viewBox="0 0 18 18" fill="none"><rect x="1" y="4" width="13" height="2.2" rx="1" fill="#0A0A0A"/><rect x="1" y="4" width="1.8" height="9" rx=".9" fill="#0A0A0A"/><rect x="1" y="11.8" width="13" height="2.2" rx="1" fill="#0A0A0A"/><line x1="4" y1="4" x2="5.8" y2="6.2" stroke="#0A0A0A" stroke-width="1.3" stroke-linecap="round"/><line x1="7.2" y1="4" x2="9" y2="6.2" stroke="#0A0A0A" stroke-width="1.3" stroke-linecap="round"/><line x1="10.4" y1="4" x2="12.2" y2="6.2" stroke="#0A0A0A" stroke-width="1.3" stroke-linecap="round"/></svg>
+      </div>
+      <span class="logo-name">Agência <em>Clap</em></span>
+    </a>
+    <a href="#contato" class="nav-btn">Falar no WhatsApp</a>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="container">
+    <div class="hero-inner">
+      <div>
+        <div class="hero-label">Sul do Espírito Santo</div>
+        <h1>Seu negócio<br>aparecendo pra<br>quem quer <em>comprar.</em></h1>
+        <p class="hero-copy">Ajudamos empresas do Sul do ES a aparecer, vender e crescer com conteúdo, vídeo e anúncios online. Sem achismo. Com resultado.</p>
+        <div class="hero-actions">
+          <a href="https://wa.me/5528999362584" class="btn-main">Quero mais clientes</a>
+          <a href="#planos" class="btn-line">Ver planos →</a>
+        </div>
+      </div>
+      <div class="hero-right">
+        <div class="h-stat">
+          <div class="h-num">+50</div>
+          <div class="h-label">negócios atendidos na região Sul do ES</div>
+        </div>
+        <div class="h-stat">
+          <div class="h-num">3×</div>
+          <div class="h-label">mais contatos em média após 60 dias</div>
+        </div>
+        <div class="h-stat">
+          <div class="h-num">3</div>
+          <div class="h-label">planos — do tamanho certo para o seu negócio</div>
+        </div>
+        <div class="h-stat">
+          <div class="h-num">0</div>
+          <div class="h-label">contratos longos ou letras miúdas</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- TICKER -->
+<div class="ticker">
+  <div class="tick-track">
+    <span class="tick-item">Mais clientes</span>
+    <span class="tick-item">Mais pedidos no WhatsApp</span>
+    <span class="tick-item">Mais agendamentos</span>
+    <span class="tick-item">Mais orçamentos</span>
+    <span class="tick-item">Resultado real</span>
+    <span class="tick-item">Marataízes</span>
+    <span class="tick-item">Itapemirim</span>
+    <span class="tick-item">Piúma</span>
+    <span class="tick-item">Cachoeiro</span>
+    <span class="tick-item">Presidente Kennedy</span>
+    <span class="tick-item">Mais clientes</span>
+    <span class="tick-item">Mais pedidos no WhatsApp</span>
+    <span class="tick-item">Mais agendamentos</span>
+    <span class="tick-item">Mais orçamentos</span>
+    <span class="tick-item">Resultado real</span>
+    <span class="tick-item">Marataízes</span>
+    <span class="tick-item">Itapemirim</span>
+    <span class="tick-item">Piúma</span>
+    <span class="tick-item">Cachoeiro</span>
+    <span class="tick-item">Presidente Kennedy</span>
+  </div>
+</div>
+
+<!-- PROBLEMA -->
+<section class="prob" id="sobre">
+  <div class="container">
+    <div class="prob-grid">
+      <div>
+        <div class="eyebrow">O problema</div>
+        <h2>A maioria dos negócios locais é <em>invisível.</em></h2>
+        <p class="prob-body">Quando o cliente pesquisa no Google ou no Instagram, ele não encontra você. Encontra o concorrente. E você perde o cliente antes mesmo de falar com ele.</p>
+      </div>
+      <div class="prob-big">
+        <div class="prob-num">9/10</div>
+        <div class="prob-sub">negócios locais sem<br>presença digital real</div>
+      </div>
+    </div>
+    <div class="prob-cards">
+      <div class="prob-card">
+        <h4>Instagram parado</h4>
+        <p>Perfil desatualizado afasta o cliente antes de qualquer conversa.</p>
+      </div>
+      <div class="prob-card">
+        <h4>Invisível no digital</h4>
+        <p>Seu concorrente aparece primeiro. Você perde sem nem saber.</p>
+      </div>
+      <div class="prob-card">
+        <h4>Dinheiro sem retorno</h4>
+        <p>Impulsionar post sem estratégia não é marketing — é desperdício.</p>
+      </div>
+      <div class="prob-card">
+        <h4>Sem números reais</h4>
+        <p>Não sabe quantos clientes vieram do digital. Não sabe o que funciona.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SOLUÇÃO -->
+<section class="sol" id="servicos">
+  <div class="container">
+    <div class="sol-intro">
+      <div>
+        <div class="eyebrow">O que fazemos</div>
+        <h2>Fazemos seu negócio aparecer <em>para quem quer comprar.</em></h2>
+      </div>
+      <div>
+        <p class="sol-copy">Não vendemos curtidas. Não vendemos seguidores. Vendemos resultado: clientes ligando, mandando mensagem e entrando pela sua porta.</p>
+      </div>
+    </div>
+    <div class="sol-grid">
+      <div class="sol-card">
+        <div class="sol-n">01</div>
+        <h3>Anúncios que trazem clientes</h3>
+        <p>Campanhas no Meta e Google para seu negócio aparecer para quem está procurando o que você vende — agora, na sua cidade.</p>
+      </div>
+      <div class="sol-card">
+        <div class="sol-n">02</div>
+        <h3>Redes sociais que vendem</h3>
+        <p>Gestão completa do Instagram: posts, stories, reels e legendas que geram confiança e fazem o cliente querer falar com você.</p>
+      </div>
+      <div class="sol-card">
+        <div class="sol-n">03</div>
+        <h3>Vídeos que convencem</h3>
+        <p>Vídeos curtos para anúncios e redes sociais. Seu produto, seu espaço, sua equipe — de um jeito que gera desejo de compra.</p>
+      </div>
+      <div class="sol-card">
+        <div class="sol-n">04</div>
+        <h3>Landing page de conversão</h3>
+        <p>Página focada em capturar contatos, gerar agendamentos e fechar pedidos — integrada às suas campanhas pagas.</p>
+      </div>
+      <div class="sol-card">
+        <div class="sol-n">05</div>
+        <h3>Conteúdo estratégico</h3>
+        <p>Artes, textos e identidade visual para feed e stories. Tudo alinhado com o que seu cliente quer ver antes de comprar.</p>
+      </div>
+      <div class="sol-card">
+        <div class="sol-n">06</div>
+        <h3>Relatório de resultado</h3>
+        <p>Números reais todo mês: alcance, cliques, leads e vendas. Você sabe exatamente onde está o seu retorno.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PLANOS -->
+<section class="planos" id="planos">
+  <div class="container">
+    <div class="planos-head">
+      <div>
+        <div class="eyebrow">Planos</div>
+        <h2>Comece pelo tamanho certo <em>do seu negócio.</em></h2>
+      </div>
+      <p class="planos-note-top">Sem contrato longo. Sem letras miúdas. Você começa quando quiser e encerra com 30 dias de aviso. Nosso compromisso é com resultado.</p>
+    </div>
+    <div class="plans-grid">
+      <div class="plan">
+        <div class="plan-code">Take 1</div>
+        <h3>Presença</h3>
+        <div class="plan-sub">Para quem quer existir no digital</div>
+        <div class="plan-div"></div>
+        <div class="plan-price">R$600</div>
+        <div class="plan-mo">por mês</div>
+        <ul class="plan-items">
+          <li>12 posts/mês no Instagram</li>
+          <li>Stories 3× por semana</li>
+          <li>Bio e perfil otimizados</li>
+          <li>Criação de arte e texto</li>
+          <li>Relatório mensal</li>
+        </ul>
+        <a href="https://wa.me/5528999362584?text=Olá! Tenho interesse no plano Take 1." class="plan-cta cta-outline">Quero o Take 1</a>
+      </div>
+      <div class="plan feat">
+        <div class="plan-badge">Mais vendido</div>
+        <div class="plan-code">Take 2</div>
+        <h3>Crescimento</h3>
+        <div class="plan-sub">Para quem quer vender mais</div>
+        <div class="plan-div"></div>
+        <div class="plan-price">R$1.200</div>
+        <div class="plan-mo">por mês</div>
+        <ul class="plan-items">
+          <li>20 posts + reels por mês</li>
+          <li>Stories todos os dias</li>
+          <li>Anúncios Meta (até R$300 ads)</li>
+          <li>1 vídeo de venda por mês</li>
+          <li>Relatório quinzenal</li>
+        </ul>
+        <a href="https://wa.me/5528999362584?text=Olá! Tenho interesse no plano Take 2." class="plan-cta cta-solid">Quero vender mais</a>
+      </div>
+      <div class="plan">
+        <div class="plan-code">Take 3</div>
+        <h3>Dominância</h3>
+        <div class="plan-sub">Para quem quer liderar a região</div>
+        <div class="plan-div"></div>
+        <div class="plan-price">R$2.200</div>
+        <div class="plan-mo">por mês</div>
+        <ul class="plan-items">
+          <li>Gestão completa das redes</li>
+          <li>Anúncios avançados (até R$800 ads)</li>
+          <li>2 vídeos de venda por mês</li>
+          <li>Landing page dedicada</li>
+          <li>Suporte via WhatsApp direto</li>
+          <li>Relatório semanal</li>
+          <li>Estratégia mensal personalizada</li>
+        </ul>
+        <a href="https://wa.me/5528999362584?text=Olá! Tenho interesse no plano Take 3." class="plan-cta cta-outline">Quero ser referência</a>
+      </div>
+    </div>
+    <p class="plans-foot">* Valor de anúncios é investimento separado, pago diretamente às plataformas (Meta/Google).</p>
+  </div>
+</section>
+
+<!-- COMO FUNCIONA -->
+<section class="como" id="como">
+  <div class="container">
+    <div class="eyebrow">Como funciona</div>
+    <h2>Simples, direto <em>e sem enrolação.</em></h2>
+    <div class="como-steps">
+      <div class="step">
+        <div class="step-arr"></div>
+        <div class="step-n">01</div>
+        <h4>Conversa inicial</h4>
+        <p>Gratuita, sem compromisso. Entendemos seu negócio, seus objetivos e o que está travando suas vendas hoje.</p>
+      </div>
+      <div class="step">
+        <div class="step-arr"></div>
+        <div class="step-n">02</div>
+        <h4>Estratégia personalizada</h4>
+        <p>Montamos um plano específico para o seu segmento e cidade — sem fórmula genérica de agência de São Paulo.</p>
+      </div>
+      <div class="step">
+        <div class="step-arr"></div>
+        <div class="step-n">03</div>
+        <h4>Execução e resultado</h4>
+        <p>Colocamos tudo no ar, acompanhamos os números e ajustamos o que for necessário para gerar resultado.</p>
+      </div>
+      <div class="step">
+        <div class="step-n">04</div>
+        <h4>Crescimento contínuo</h4>
+        <p>Você vê resultado em dados reais. Escalamos o que funciona e eliminamos o que não traz retorno.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA FINAL -->
+<section class="cta-sec" id="contato">
+  <div class="container">
+    <div class="cta-wrap">
+      <h2>Pronto para <em>mais clientes?</em></h2>
+      <p class="cta-sub">A conversa inicial é gratuita e sem compromisso.</p>
+      <div class="cta-btns">
+        <a href="https://wa.me/5528999362584?text=Olá! Quero saber mais sobre a Agência Clap." class="btn-main">Falar no WhatsApp agora</a>
+        <a href="mailto:agenciaclap25@gmail.com" class="btn-line">Enviar e-mail →</a>
+      </div>
+      <div class="cta-divider"></div>
+      <div class="cta-contacts">
+        <div class="cta-c">
+          <div class="cta-c-label">Instagram</div>
+          <div class="cta-c-val">@agenciaclap.es</div>
+        </div>
+        <div class="cta-c">
+          <div class="cta-c-label">E-mail</div>
+          <div class="cta-c-val">agenciaclap25@gmail.com</div>
+        </div>
+        <div class="cta-c">
+          <div class="cta-c-label">Região</div>
+          <div class="cta-c-val">Sul do Espírito Santo</div>
+        </div>
+      </div>
+      <p class="guarantee"><strong>Sem contrato longo. Sem letras miúdas.</strong> Você começa quando quiser e encerra com 30 dias de aviso. Se crescer, fica. Se não crescer, conversamos.</p>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="container foot-in">
+    <a href="#" class="logo">
+      <div class="logo-box">
+        <svg viewBox="0 0 18 18" fill="none"><rect x="1" y="4" width="13" height="2.2" rx="1" fill="#0A0A0A"/><rect x="1" y="4" width="1.8" height="9" rx=".9" fill="#0A0A0A"/><rect x="1" y="11.8" width="13" height="2.2" rx="1" fill="#0A0A0A"/><line x1="4" y1="4" x2="5.8" y2="6.2" stroke="#0A0A0A" stroke-width="1.3" stroke-linecap="round"/><line x1="7.2" y1="4" x2="9" y2="6.2" stroke="#0A0A0A" stroke-width="1.3" stroke-linecap="round"/><line x1="10.4" y1="4" x2="12.2" y2="6.2" stroke="#0A0A0A" stroke-width="1.3" stroke-linecap="round"/></svg>
+      </div>
+      <span class="logo-name">Agência <em>Clap</em></span>
+    </a>
+    <span class="foot-copy">© 2026 Agência Clap · Sul do Espírito Santo</span>
+  </div>
+</footer>
+
+</body>
+</html>
