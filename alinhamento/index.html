@@ -1,0 +1,908 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Rotina — Gabriel</title>
+<style>
+:root {
+  --bg: #0D0D14;
+  --s1: #14141F;
+  --s2: #1C1C2C;
+  --s3: #232338;
+  --border: rgba(255,255,255,0.07);
+  --border2: rgba(255,255,255,0.13);
+  --text: #F0EFF8;
+  --text2: #8C8BA0;
+  --text3: #4A4960;
+  --teal: #00CDB8;
+  --coral: #FF6B50;
+  --violet: #9B7FFF;
+  --gold: #FFB830;
+  --blue: #5BA3FF;
+  --r: 12px;
+  --rs: 8px;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--text);font-family:system-ui,-apple-system,sans-serif;font-size:14px;line-height:1.6;min-height:100vh;padding-bottom:60px}
+
+header{position:sticky;top:0;z-index:50;background:rgba(13,13,20,0.95);backdrop-filter:blur(10px);border-bottom:1px solid var(--border);padding:0 16px;height:54px;display:flex;align-items:center;justify-content:space-between}
+.logo{display:flex;align-items:center;gap:10px}
+.logo-mark{width:30px;height:30px;border-radius:8px;background:linear-gradient(135deg,var(--teal),var(--violet));display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;color:#000}
+.logo-text{font-size:14px;font-weight:600}
+.logo-sub{font-size:11px;color:var(--text3);margin-top:1px}
+
+.btn{display:inline-flex;align-items:center;gap:6px;padding:7px 13px;border-radius:var(--rs);font-size:12px;font-weight:500;cursor:pointer;border:1px solid var(--border2);background:var(--s2);color:var(--text2);transition:all .15s}
+.btn:hover{color:var(--text);border-color:rgba(255,255,255,.22)}
+.btn-teal{background:var(--teal);color:#000;border-color:transparent;font-weight:700}
+.btn-teal:hover{background:#00b5a3;color:#000}
+.btn-sm{padding:5px 10px;font-size:11px}
+
+.tabs{display:flex;gap:2px;padding:10px 16px 0;border-bottom:1px solid var(--border);overflow-x:auto;scrollbar-width:none}
+.tabs::-webkit-scrollbar{display:none}
+.tab{display:flex;align-items:center;gap:6px;padding:7px 13px;border-radius:var(--rs) var(--rs) 0 0;font-size:12px;font-weight:500;cursor:pointer;color:var(--text3);border:1px solid transparent;border-bottom:none;white-space:nowrap;transition:all .15s;background:transparent}
+.tab:hover{color:var(--text2)}
+.tab.on{color:var(--text);background:var(--s1);border-color:var(--border2);border-bottom:1px solid var(--s1);margin-bottom:-1px}
+.tdot{width:7px;height:7px;border-radius:50%}
+
+.wrap{padding:20px 16px;max-width:720px;margin:0 auto}
+.panel{display:none}.panel.on{display:block}
+
+/* DATE BAR */
+.datebar{display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;flex-wrap:wrap;gap:8px}
+.datebar-left{display:flex;align-items:center;gap:8px}
+.dpill{background:var(--s2);border:1px solid var(--border2);border-radius:20px;padding:5px 14px;font-size:12px;color:var(--text2)}
+.today-tag{font-size:11px;color:var(--teal);font-weight:600;background:rgba(0,205,184,.12);border-radius:20px;padding:3px 10px}
+
+/* TIMELINE */
+.tl{display:flex;flex-direction:column}
+.tl-item{display:grid;grid-template-columns:68px 2px 1fr;gap:0 14px}
+.tl-time{padding-top:18px;text-align:right;font-size:11px;font-weight:600;color:var(--text3);line-height:1.3;white-space:nowrap}
+.tl-line{display:flex;flex-direction:column;align-items:center}
+.tl-dot{width:10px;height:10px;border-radius:50%;margin-top:21px;flex-shrink:0;z-index:1}
+.tl-pipe{flex:1;width:1px;background:var(--border2)}
+
+.card{margin:10px 0 16px;background:var(--s1);border:1px solid var(--border);border-radius:var(--r);overflow:hidden;transition:border-color .15s}
+.card:hover{border-color:var(--border2)}
+.card-head{display:flex;align-items:center;gap:10px;padding:13px 15px;cursor:pointer}
+.card-icon{width:34px;height:34px;border-radius:9px;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:18px}
+.card-title{font-size:13px;font-weight:600;color:var(--text)}
+.card-sub{font-size:11px;color:var(--text3);margin-top:1px}
+.card-chev{margin-left:auto;color:var(--text3);transition:transform .2s;flex-shrink:0}
+.card.open .card-chev{transform:rotate(180deg)}
+
+.card-body{display:none;border-top:1px solid var(--border);padding:16px}
+.card-body.open{display:block}
+
+/* STEPS */
+.steps{display:flex;flex-direction:column;gap:7px;margin-bottom:16px}
+.step{display:flex;gap:10px;align-items:flex-start}
+.snum{width:20px;height:20px;border-radius:50%;font-size:10px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px}
+.stxt{font-size:12px;color:var(--text2);line-height:1.5}
+
+/* REGISTRO INLINE */
+.reg-title{font-size:10px;font-weight:700;color:var(--text3);letter-spacing:.7px;text-transform:uppercase;margin:14px 0 10px;padding-top:14px;border-top:1px solid var(--border)}
+.fgrid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.fgrid.c1{grid-template-columns:1fr}
+.fgrid.c3{grid-template-columns:1fr 1fr 1fr}
+@media(max-width:480px){.fgrid,.fgrid.c3{grid-template-columns:1fr}}
+.field{display:flex;flex-direction:column;gap:4px}
+.field label{font-size:10px;color:var(--text3);font-weight:600;letter-spacing:.3px}
+.field input,.field select,.field textarea{background:var(--s2);border:1px solid var(--border2);border-radius:var(--rs);padding:7px 10px;color:var(--text);font-size:12px;font-family:inherit;outline:none;transition:border-color .15s;width:100%}
+.field input:focus,.field select:focus,.field textarea:focus{border-color:var(--teal)}
+.field select option{background:#1C1C2C}
+.field textarea{resize:vertical;min-height:60px}
+
+.row-actions{display:flex;justify-content:flex-end;margin-top:12px;gap:8px}
+
+/* LISTA REGISTROS */
+.reg-list{display:flex;flex-direction:column;gap:6px;margin-top:12px}
+.reg-item{background:var(--s2);border:1px solid var(--border);border-radius:var(--rs);padding:10px 12px;display:flex;justify-content:space-between;align-items:flex-start;gap:12px}
+.reg-item-content{flex:1}
+.reg-date{font-size:10px;color:var(--text3);margin-bottom:3px}
+.reg-main{font-size:12px;color:var(--text);font-weight:500}
+.reg-detail{font-size:11px;color:var(--text2);margin-top:2px;line-height:1.5}
+.reg-del{background:none;border:none;color:var(--text3);cursor:pointer;font-size:16px;padding:0 2px;line-height:1;flex-shrink:0}
+.reg-del:hover{color:var(--coral)}
+
+.empty{font-size:12px;color:var(--text3);text-align:center;padding:20px;background:var(--s2);border-radius:var(--rs);margin-top:10px}
+
+/* META BOX */
+.meta-box{display:flex;align-items:center;gap:8px;padding:10px 12px;background:var(--s2);border-radius:var(--rs);margin-top:14px}
+.meta-num{font-size:22px;font-weight:700}
+.meta-of{font-size:12px;color:var(--text3)}
+.meta-label{font-size:11px;color:var(--text2)}
+.prog-bg{height:4px;background:var(--s3);border-radius:4px;flex:1;margin-left:auto}
+.prog-fill{height:4px;border-radius:4px;transition:width .4s}
+
+/* HISTORICO */
+.hist-day{background:var(--s1);border:1px solid var(--border);border-radius:var(--r);margin-bottom:10px;overflow:hidden}
+.hist-day-head{padding:12px 15px;cursor:pointer;display:flex;align-items:center;justify-content:space-between}
+.hist-day-date{font-size:13px;font-weight:600;color:var(--text)}
+.hist-chips{display:flex;gap:6px;flex-wrap:wrap;margin-top:2px}
+.chip{font-size:10px;font-weight:600;padding:2px 7px;border-radius:20px}
+.hist-day-body{display:none;border-top:1px solid var(--border);padding:12px 15px}
+.hist-day-body.open{display:block}
+.hist-section{margin-bottom:12px}
+.hist-section-title{font-size:10px;font-weight:700;color:var(--text3);letter-spacing:.6px;text-transform:uppercase;margin-bottom:6px}
+
+/* MODAL */
+.modal-ov{display:none;position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:200;align-items:center;justify-content:center;padding:20px}
+.modal-ov.open{display:flex}
+.modal{background:var(--s1);border:1px solid var(--border2);border-radius:var(--r);padding:24px;width:100%;max-width:400px}
+.modal h3{font-size:15px;font-weight:600;margin-bottom:6px}
+.modal p{font-size:12px;color:var(--text2);margin-bottom:16px;line-height:1.6}
+.modal-actions{display:flex;gap:8px;justify-content:flex-end;flex-wrap:wrap}
+
+#toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:var(--s2);border:1px solid var(--border2);border-radius:20px;padding:8px 18px;font-size:12px;color:var(--text);font-weight:500;opacity:0;pointer-events:none;transition:opacity .25s;z-index:999;white-space:nowrap}
+#toast.show{opacity:1}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo">
+    <div class="logo-mark">G</div>
+    <div>
+      <div class="logo-text">Rotina Diária</div>
+      <div class="logo-sub">Gabriel · CLAP + TV Sul Capixaba</div>
+    </div>
+  </div>
+  <button class="btn" onclick="openBackup()">⬇ Backup</button>
+</header>
+
+<div class="tabs">
+  <div class="tab on" onclick="switchTab('hoje')" id="tab-hoje"><span class="tdot" style="background:var(--teal)"></span>Hoje</div>
+  <div class="tab" onclick="switchTab('historico')" id="tab-historico"><span class="tdot" style="background:var(--violet)"></span>Histórico</div>
+</div>
+
+<div class="wrap">
+
+  <!-- HOJE -->
+  <div class="panel on" id="panel-hoje">
+    <div class="datebar">
+      <div class="datebar-left">
+        <div class="dpill" id="currentDate"></div>
+        <div class="today-tag">Hoje</div>
+      </div>
+    </div>
+    <div class="tl" id="timeline"></div>
+  </div>
+
+  <!-- HISTÓRICO -->
+  <div class="panel" id="panel-historico">
+    <div id="hist-list"></div>
+  </div>
+
+</div>
+
+<!-- MODAL BACKUP -->
+<div class="modal-ov" id="backupModal">
+  <div class="modal">
+    <h3>Backup de dados</h3>
+    <p>Exporte um arquivo JSON com tudo. Para restaurar em outro computador, abra o arquivo HTML e importe o JSON.</p>
+    <div class="modal-actions">
+      <button class="btn" onclick="closeBackup()">Fechar</button>
+      <label class="btn" style="cursor:pointer">⬆ Importar<input type="file" accept=".json" style="display:none" onchange="importData(event)"></label>
+      <button class="btn btn-teal" onclick="exportData()">⬇ Exportar JSON</button>
+    </div>
+  </div>
+</div>
+
+<div id="toast"></div>
+
+<script>
+// ── helpers ──────────────────────────────────────────────────────────────
+const qs = s => document.querySelector(s);
+const mk = (tag, attrs={}, html='') => {
+  const el = document.createElement(tag);
+  Object.entries(attrs).forEach(([k,v]) => el[k]=v);
+  if(html) el.innerHTML = html;
+  return el;
+};
+
+function today() {
+  return new Date().toISOString().split('T')[0];
+}
+function fmtDate(s) {
+  if(!s) return '—';
+  const [y,m,d] = s.split('-');
+  return `${d}/${m}/${y}`;
+}
+function fmtDateLong(s) {
+  if(!s) return '';
+  const dias = ['domingo','segunda','terça','quarta','quinta','sexta','sábado'];
+  const meses = ['jan','fev','mar','abr','mai','jun','jul','ago','set','out','nov','dez'];
+  const d = new Date(s+'T12:00:00');
+  return `${dias[d.getDay()]}, ${d.getDate()} ${meses[d.getMonth()]} ${d.getFullYear()}`;
+}
+
+function toast(msg) {
+  const t = qs('#toast'); t.textContent = msg; t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2000);
+}
+
+// ── storage ───────────────────────────────────────────────────────────────
+function gd(k)   { try{ return JSON.parse(localStorage.getItem('gab_'+k)||'null'); }catch(e){ return null; } }
+function sd(k,v) { localStorage.setItem('gab_'+k, JSON.stringify(v)); }
+
+// estrutura do dia: { tv:{perfis:[], notas:''}, clap:{empresas:[]}, portfolio:{item:''}, visitas:{lista:[]}, fechamento:{notas:''}, relatorio:{...} }
+function getDayData(date) {
+  return gd('dia_'+date) || {
+    tv:        { perfis: [], notas: '' },
+    clap:      { empresas: [] },
+    portfolio: { cliente:'', tipo:'', obs:'' },
+    visitas:   { lista: [] },
+    fechamento:{ notas: '' },
+    relatorio: { amanha: '', obs: '' }
+  };
+}
+function saveDayData(date, data) {
+  sd('dia_'+date, data);
+  // manter índice de datas
+  let idx = gd('dias_idx') || [];
+  if(!idx.includes(date)) { idx.push(date); idx.sort((a,b)=>b.localeCompare(a)); sd('dias_idx', idx); }
+}
+
+// ── tabs ──────────────────────────────────────────────────────────────────
+function switchTab(id) {
+  document.querySelectorAll('.panel').forEach(p => p.classList.remove('on'));
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('on'));
+  qs('#panel-'+id).classList.add('on');
+  qs('#tab-'+id).classList.add('on');
+  if(id === 'historico') renderHistorico();
+}
+
+// ── BLOCOS DE CONTEÚDO ────────────────────────────────────────────────────
+const BLOCKS = [
+  {
+    id: 'tv', time: '08h30\n09h30', label: 'TV Sul Capixaba',
+    sub: 'Crescimento de seguidores', color: 'teal', icon: '📱',
+    steps: [
+      'Abrir Instagram da TV Sul Capixaba',
+      'Entrar nos perfis: Prefeitura de Piúma, Marataízes, Itapemirim, Anchieta, Presidente Kennedy',
+      'Também: eventos locais, comércio e páginas da região',
+      'Abrir a lista de seguidores de cada perfil',
+      'Seguir 30 pessoas — foto real, perfil ativo, mora na região, comenta assuntos locais',
+      'Curtir 2 publicações de cada pessoa seguida',
+      'Responder comentários recebidos na TV',
+      'Compartilhar 2 matérias nos stories',
+      'Publicar 2 matérias já aprovadas'
+    ],
+    renderForm: renderFormTV,
+    renderSummary: summaryTV
+  },
+  {
+    id: 'clap', time: '09h30\n10h30', label: 'CLAP — Prospecção',
+    sub: 'Encontrar possíveis clientes', color: 'coral', icon: '🏪',
+    steps: [
+      'Procurar empresas locais: restaurantes, lojas, clínicas, academias, salões, oficinas',
+      'Seguir 20 empresas no Instagram',
+      'Anotar aqui embaixo: nome, Instagram, telefone, cidade',
+      'Curtir 3 publicações de cada empresa',
+      'Verificar: postam pouco? fazem vídeo? poucos seguidores? respondem comentários?',
+      'Enviar mensagem para 5 empresas — sem vender no primeiro contato'
+    ],
+    msg: '"Olá! Tudo bem? Estamos acompanhando o perfil de vocês. Somos da CLAP Comunicação e gostamos muito do trabalho da empresa."',
+    renderForm: renderFormCLAP,
+    renderSummary: summaryCLAP
+  },
+  {
+    id: 'portfolio', time: '11h00\n12h00', label: 'CLAP — Portfólio',
+    sub: 'Criar conteúdo de amostra', color: 'violet', icon: '🎨',
+    steps: [
+      'Escolher uma empresa para trabalhar',
+      'Tirar print do Instagram dela',
+      'Analisar: erros, oportunidades, sugestões de conteúdo',
+      'Criar 1 arte, 1 carrossel ou 1 roteiro de vídeo',
+      'Salvar na pasta: PORTFÓLIO CLAP'
+    ],
+    renderForm: renderFormPortfolio,
+    renderSummary: summaryPortfolio
+  },
+  {
+    id: 'visitas', time: '13h30\n15h30', label: 'Rua — Visitas',
+    sub: 'Criar relacionamento comercial', color: 'gold', icon: '🚶',
+    steps: [
+      'Visitar 3 estabelecimentos',
+      'Conversar com o responsável',
+      'Perguntar: quem cuida do Instagram? fazem anúncios? já divulgaram na TV Marataízes?',
+      'Anotar aqui embaixo: nome, telefone, interesse',
+      'Entregar contato'
+    ],
+    renderForm: renderFormVisitas,
+    renderSummary: summaryVisitas
+  },
+  {
+    id: 'fechamento', time: '16h00\n17h00', label: 'Fechamento',
+    sub: 'Follow-up e organização', color: 'blue', icon: '💬',
+    steps: [
+      'Responder mensagens recebidas',
+      'Organizar contatos do dia',
+      'Enviar follow-up para quem visitou',
+      'Publicar stories da CLAP',
+      'Atualizar os registros aqui'
+    ],
+    msg: '"Prazer em conhecer vocês hoje. Qualquer coisa estamos à disposição."',
+    renderForm: renderFormFechamento,
+    renderSummary: summaryFechamento
+  },
+  {
+    id: 'relatorio', time: '17h00\n17h30', label: 'Relatório',
+    sub: 'Anotar resultados e planos', color: 'violet', icon: '📋',
+    steps: [],
+    renderForm: renderFormRelatorio,
+    renderSummary: summaryRelatorio
+  }
+];
+
+const C = { teal:'#00CDB8', coral:'#FF6B50', violet:'#9B7FFF', gold:'#FFB830', blue:'#5BA3FF' };
+const CD = {
+  teal:'rgba(0,205,184,.14)', coral:'rgba(255,107,80,.14)',
+  violet:'rgba(155,127,255,.14)', gold:'rgba(255,184,48,.14)', blue:'rgba(91,163,255,.14)'
+};
+
+// ── BUILD TIMELINE ────────────────────────────────────────────────────────
+function buildTimeline() {
+  const tl = qs('#timeline'); tl.innerHTML = '';
+  BLOCKS.forEach((b, i) => {
+    const isLast = i === BLOCKS.length - 1;
+    const times = b.time.split('\n');
+    const item = document.createElement('div');
+    item.className = 'tl-item';
+    item.innerHTML = `
+      <div class="tl-time">${times[0]}<br><span style="opacity:.45">${times[1]}</span></div>
+      <div class="tl-line">
+        <div class="tl-dot" style="background:${C[b.color]}"></div>
+        ${isLast ? '' : '<div class="tl-pipe"></div>'}
+      </div>
+      <div>
+        <div class="card" id="card-${b.id}">
+          <div class="card-head" onclick="toggleCard('${b.id}')">
+            <div class="card-icon" style="background:${CD[b.color]}">${b.icon}</div>
+            <div style="flex:1">
+              <div class="card-title">${b.label}</div>
+              <div class="card-sub">${b.sub}</div>
+            </div>
+            <svg class="card-chev" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+          </div>
+          <div class="card-body" id="body-${b.id}"></div>
+        </div>
+      </div>`;
+    tl.appendChild(item);
+    renderCardBody(b.id);
+  });
+  toggleCard('tv', true);
+}
+
+function toggleCard(id, forceOpen) {
+  const card = qs('#card-'+id);
+  const body = qs('#body-'+id);
+  const isOpen = body.classList.contains('open');
+  const willOpen = forceOpen !== undefined ? forceOpen : !isOpen;
+  body.classList.toggle('open', willOpen);
+  card.classList.toggle('open', willOpen);
+}
+
+function renderCardBody(id) {
+  const b = BLOCKS.find(x => x.id === id);
+  const body = qs('#body-'+id);
+  let html = '';
+
+  // passos
+  if(b.steps.length) {
+    html += `<div class="steps">`;
+    b.steps.forEach((s,i) => {
+      html += `<div class="step">
+        <span class="snum" style="background:${CD[b.color]};color:${C[b.color]}">${i+1}</span>
+        <span class="stxt">${s}</span>
+      </div>`;
+    });
+    html += `</div>`;
+  }
+
+  // mensagem pronta
+  if(b.msg) {
+    html += `<div style="background:var(--s2);border-left:3px solid ${C[b.color]};border-radius:0 var(--rs) var(--rs) 0;padding:10px 12px;margin-bottom:12px">
+      <div style="font-size:10px;font-weight:700;color:var(--text3);letter-spacing:.5px;text-transform:uppercase;margin-bottom:4px">Mensagem pronta</div>
+      <div style="font-size:12px;color:var(--text2);font-style:italic;line-height:1.5">${b.msg}</div>
+    </div>`;
+  }
+
+  // formulário inline
+  html += `<div id="form-${id}"></div>`;
+
+  body.innerHTML = html;
+  b.renderForm(id);
+}
+
+// ── FORMULÁRIO: TV SUL CAPIXABA ───────────────────────────────────────────
+function renderFormTV(id) {
+  const d = getDayData(today());
+  const container = qs('#form-'+id);
+  const perfis = d.tv.perfis || [];
+
+  let html = `<div class="reg-title">📝 Registrar perfis seguidos hoje</div>`;
+  html += `<div class="fgrid">
+    <div class="field"><label>@ do perfil</label><input type="text" id="tv-inp-arroba" placeholder="@joaosilva"></div>
+    <div class="field"><label>Cidade</label><input type="text" id="tv-inp-cidade" placeholder="Marataízes"></div>
+  </div>
+  <div class="row-actions">
+    <button class="btn btn-teal btn-sm" onclick="addPerfilTV()">+ Adicionar perfil</button>
+  </div>`;
+
+  // meta box
+  const pct = Math.min(perfis.length / 30, 1);
+  html += `<div class="meta-box" style="margin-top:14px">
+    <div>
+      <div class="meta-num" style="color:${C.teal}">${perfis.length}</div>
+      <div class="meta-label">perfis seguidos</div>
+    </div>
+    <div class="meta-of">de 30</div>
+    <div class="prog-bg"><div class="prog-fill" style="width:${Math.round(pct*100)}%;background:${C.teal}"></div></div>
+  </div>`;
+
+  // lista
+  if(perfis.length) {
+    html += `<div class="reg-list">`;
+    perfis.forEach((p,i) => {
+      html += `<div class="reg-item">
+        <div class="reg-item-content">
+          <div class="reg-main" style="color:${C.teal}">${p.arroba}</div>
+          <div class="reg-detail">${p.cidade||''}</div>
+        </div>
+        <button class="reg-del" onclick="delItemTV(${i})">✕</button>
+      </div>`;
+    });
+    html += `</div>`;
+  } else {
+    html += `<div class="empty">Nenhum perfil anotado ainda hoje.</div>`;
+  }
+
+  // notas gerais
+  html += `<div class="reg-title">Observações do bloco</div>
+  <div class="field"><textarea id="tv-notas" placeholder="Ex: perfis mais engajados, horário com mais resposta...">${d.tv.notas||''}</textarea></div>
+  <div class="row-actions"><button class="btn btn-teal btn-sm" onclick="saveNotasTV()">Salvar notas</button></div>`;
+
+  container.innerHTML = html;
+}
+
+function addPerfilTV() {
+  const arroba = qs('#tv-inp-arroba').value.trim();
+  if(!arroba) { toast('Digite o @ do perfil'); return; }
+  const d = getDayData(today());
+  d.tv.perfis.push({ arroba, cidade: qs('#tv-inp-cidade').value.trim() });
+  saveDayData(today(), d);
+  qs('#tv-inp-arroba').value = ''; qs('#tv-inp-cidade').value = '';
+  renderFormTV('tv'); toast('Perfil anotado ✓');
+}
+function delItemTV(i) {
+  const d = getDayData(today()); d.tv.perfis.splice(i,1);
+  saveDayData(today(), d); renderFormTV('tv');
+}
+function saveNotasTV() {
+  const d = getDayData(today()); d.tv.notas = qs('#tv-notas').value;
+  saveDayData(today(), d); toast('Notas salvas ✓');
+}
+function summaryTV(date) {
+  const d = getDayData(date);
+  const p = d.tv.perfis || [];
+  return p.length ? `${p.length} perfis seguidos` : 'TV: nada registrado';
+}
+
+// ── FORMULÁRIO: CLAP PROSPECÇÃO ───────────────────────────────────────────
+function renderFormCLAP(id) {
+  const d = getDayData(today());
+  const empresas = d.clap.empresas || [];
+  const container = qs('#form-'+id);
+
+  let html = `<div class="reg-title">📝 Registrar empresa mapeada</div>
+  <div class="fgrid">
+    <div class="field"><label>Nome da empresa</label><input type="text" id="cl-nome" placeholder="Ex: Salão Bella"></div>
+    <div class="field"><label>Cidade</label><input type="text" id="cl-cidade" placeholder="Piúma"></div>
+    <div class="field"><label>Instagram</label><input type="text" id="cl-insta" placeholder="@salao"></div>
+    <div class="field"><label>Telefone</label><input type="text" id="cl-tel" placeholder="(28) 9..."></div>
+  </div>
+  <div class="fgrid" style="margin-top:8px">
+    <div class="field"><label>Mensagem enviada?</label>
+      <select id="cl-msg"><option value="Não">Não</option><option value="Sim">Sim</option></select>
+    </div>
+    <div class="field"><label>Observação rápida</label><input type="text" id="cl-obs" placeholder="Posta pouco, sem vídeo..."></div>
+  </div>
+  <div class="row-actions"><button class="btn btn-teal btn-sm" onclick="addEmpresaCLAP()">+ Adicionar empresa</button></div>`;
+
+  const pct = Math.min(empresas.length / 20, 1);
+  html += `<div class="meta-box" style="margin-top:14px">
+    <div>
+      <div class="meta-num" style="color:${C.coral}">${empresas.length}</div>
+      <div class="meta-label">empresas mapeadas</div>
+    </div>
+    <div class="meta-of">de 20</div>
+    <div class="prog-bg"><div class="prog-fill" style="width:${Math.round(pct*100)}%;background:${C.coral}"></div></div>
+  </div>`;
+
+  if(empresas.length) {
+    html += `<div class="reg-list">`;
+    empresas.forEach((e,i) => {
+      html += `<div class="reg-item">
+        <div class="reg-item-content">
+          <div class="reg-main">${e.nome} <span style="color:${C.coral};font-size:11px">${e.insta||''}</span></div>
+          <div class="reg-detail">${[e.cidade, e.tel, e.obs].filter(Boolean).join(' · ')}</div>
+          <div class="reg-detail">Mensagem: <span style="color:${e.msg==='Sim'?C.teal:'var(--text3)'}">${e.msg}</span></div>
+        </div>
+        <button class="reg-del" onclick="delEmpresaCLAP(${i})">✕</button>
+      </div>`;
+    });
+    html += `</div>`;
+  } else {
+    html += `<div class="empty">Nenhuma empresa anotada ainda hoje.</div>`;
+  }
+
+  container.innerHTML = html;
+}
+
+function addEmpresaCLAP() {
+  const nome = qs('#cl-nome').value.trim();
+  if(!nome) { toast('Digite o nome da empresa'); return; }
+  const d = getDayData(today());
+  d.clap.empresas.push({
+    nome, cidade: qs('#cl-cidade').value.trim(),
+    insta: qs('#cl-insta').value.trim(), tel: qs('#cl-tel').value.trim(),
+    msg: qs('#cl-msg').value, obs: qs('#cl-obs').value.trim()
+  });
+  saveDayData(today(), d);
+  ['cl-nome','cl-cidade','cl-insta','cl-tel','cl-obs'].forEach(id => qs('#'+id).value='');
+  qs('#cl-msg').value='Não';
+  renderFormCLAP('clap'); toast('Empresa anotada ✓');
+}
+function delEmpresaCLAP(i) {
+  const d = getDayData(today()); d.clap.empresas.splice(i,1);
+  saveDayData(today(), d); renderFormCLAP('clap');
+}
+function summaryCLAP(date) {
+  const d = getDayData(date);
+  const e = d.clap.empresas || [];
+  const msgs = e.filter(x=>x.msg==='Sim').length;
+  return e.length ? `${e.length} empresas · ${msgs} msgs enviadas` : 'CLAP: nada registrado';
+}
+
+// ── FORMULÁRIO: PORTFÓLIO ─────────────────────────────────────────────────
+function renderFormPortfolio(id) {
+  const d = getDayData(today());
+  const p = d.portfolio || {};
+  const container = qs('#form-'+id);
+
+  let html = `<div class="reg-title">📝 Registrar conteúdo criado hoje</div>
+  <div class="fgrid">
+    <div class="field"><label>Empresa / Cliente</label><input type="text" id="pf-cliente" placeholder="Nome da empresa" value="${p.cliente||''}"></div>
+    <div class="field"><label>Tipo de conteúdo</label>
+      <select id="pf-tipo">
+        ${['Arte','Carrossel','Roteiro de Vídeo','Reels','Story','Post Feed','Outro'].map(t=>`<option${p.tipo===t?' selected':''}>${t}</option>`).join('')}
+      </select>
+    </div>
+  </div>
+  <div class="field" style="margin-top:8px"><label>Observações / descrição</label>
+    <textarea id="pf-obs" placeholder="Ex: carrossel com 5 slides sobre promoção de inverno...">${p.obs||''}</textarea>
+  </div>
+  <div class="row-actions"><button class="btn btn-teal btn-sm" onclick="savePortfolio()">Salvar conteúdo</button></div>`;
+
+  if(p.cliente) {
+    html += `<div class="meta-box" style="margin-top:14px">
+      <div>
+        <div class="meta-num" style="color:${C.violet}">✓</div>
+        <div class="meta-label">conteúdo registrado</div>
+      </div>
+      <div style="font-size:12px;color:var(--text2);margin-left:8px"><strong>${p.cliente}</strong> — ${p.tipo}</div>
+    </div>`;
+  } else {
+    html += `<div class="empty" style="margin-top:10px">Nenhum conteúdo registrado ainda hoje.</div>`;
+  }
+
+  container.innerHTML = html;
+}
+
+function savePortfolio() {
+  const cliente = qs('#pf-cliente').value.trim();
+  if(!cliente) { toast('Digite o nome do cliente'); return; }
+  const d = getDayData(today());
+  d.portfolio = { cliente, tipo: qs('#pf-tipo').value, obs: qs('#pf-obs').value.trim() };
+  saveDayData(today(), d);
+  renderFormPortfolio('portfolio'); toast('Conteúdo salvo ✓');
+}
+function summaryPortfolio(date) {
+  const d = getDayData(date);
+  const p = d.portfolio;
+  return p && p.cliente ? `Portfólio: ${p.cliente} (${p.tipo})` : 'Portfólio: nada criado';
+}
+
+// ── FORMULÁRIO: VISITAS ───────────────────────────────────────────────────
+function renderFormVisitas(id) {
+  const d = getDayData(today());
+  const lista = d.visitas.lista || [];
+  const container = qs('#form-'+id);
+
+  let html = `<div class="reg-title">📝 Registrar visita</div>
+  <div class="fgrid">
+    <div class="field"><label>Estabelecimento</label><input type="text" id="vi-empresa" placeholder="Nome do lugar"></div>
+    <div class="field"><label>Responsável</label><input type="text" id="vi-resp" placeholder="Nome"></div>
+    <div class="field"><label>Telefone / WhatsApp</label><input type="text" id="vi-tel" placeholder="(28) 9..."></div>
+    <div class="field"><label>Interesse</label>
+      <select id="vi-interesse">
+        <option>Nenhum</option><option>Baixo</option><option>Médio</option><option>Alto</option>
+      </select>
+    </div>
+  </div>
+  <div class="field" style="margin-top:8px"><label>Observações</label>
+    <textarea id="vi-obs" placeholder="Ex: quer saber mais sobre redes sociais, cuida do próprio Instagram..."></textarea>
+  </div>
+  <div class="row-actions"><button class="btn btn-teal btn-sm" onclick="addVisita()">+ Registrar visita</button></div>`;
+
+  const pct = Math.min(lista.length / 3, 1);
+  html += `<div class="meta-box" style="margin-top:14px">
+    <div>
+      <div class="meta-num" style="color:${C.gold}">${lista.length}</div>
+      <div class="meta-label">visitas realizadas</div>
+    </div>
+    <div class="meta-of">de 3</div>
+    <div class="prog-bg"><div class="prog-fill" style="width:${Math.round(pct*100)}%;background:${C.gold}"></div></div>
+  </div>`;
+
+  if(lista.length) {
+    const INT_C = {Nenhum:'var(--text3)',Baixo:C.blue,Médio:C.gold,Alto:C.teal};
+    html += `<div class="reg-list">`;
+    lista.forEach((v,i) => {
+      html += `<div class="reg-item">
+        <div class="reg-item-content">
+          <div class="reg-main">${v.empresa}</div>
+          <div class="reg-detail">${[v.resp, v.tel].filter(Boolean).join(' · ')}</div>
+          <div class="reg-detail">Interesse: <span style="color:${INT_C[v.interesse]||'var(--text2)'};font-weight:600">${v.interesse}</span>${v.obs?' · '+v.obs:''}</div>
+        </div>
+        <button class="reg-del" onclick="delVisita(${i})">✕</button>
+      </div>`;
+    });
+    html += `</div>`;
+  } else {
+    html += `<div class="empty">Nenhuma visita registrada ainda hoje.</div>`;
+  }
+
+  container.innerHTML = html;
+}
+
+function addVisita() {
+  const empresa = qs('#vi-empresa').value.trim();
+  if(!empresa) { toast('Digite o nome do estabelecimento'); return; }
+  const d = getDayData(today());
+  d.visitas.lista.push({
+    empresa, resp: qs('#vi-resp').value.trim(),
+    tel: qs('#vi-tel').value.trim(), interesse: qs('#vi-interesse').value,
+    obs: qs('#vi-obs').value.trim()
+  });
+  saveDayData(today(), d);
+  ['vi-empresa','vi-resp','vi-tel','vi-obs'].forEach(id => qs('#'+id).value='');
+  qs('#vi-interesse').value='Nenhum';
+  renderFormVisitas('visitas'); toast('Visita registrada ✓');
+}
+function delVisita(i) {
+  const d = getDayData(today()); d.visitas.lista.splice(i,1);
+  saveDayData(today(), d); renderFormVisitas('visitas');
+}
+function summaryVisitas(date) {
+  const d = getDayData(date);
+  const l = d.visitas.lista || [];
+  return l.length ? `${l.length} visita${l.length>1?'s':''}` : 'Visitas: nenhuma';
+}
+
+// ── FORMULÁRIO: FECHAMENTO ────────────────────────────────────────────────
+function renderFormFechamento(id) {
+  const d = getDayData(today());
+  const container = qs('#form-'+id);
+  container.innerHTML = `
+    <div class="reg-title">📝 Observações do fechamento</div>
+    <div class="field"><textarea id="fe-notas" placeholder="Ex: respondeu 5 DMs, follow-up enviado para Farmácia Central...">${d.fechamento.notas||''}</textarea></div>
+    <div class="row-actions"><button class="btn btn-teal btn-sm" onclick="saveFechamento()">Salvar</button></div>`;
+}
+function saveFechamento() {
+  const d = getDayData(today()); d.fechamento.notas = qs('#fe-notas').value;
+  saveDayData(today(), d); toast('Salvo ✓');
+}
+function summaryFechamento(date) {
+  const d = getDayData(date);
+  return d.fechamento.notas ? d.fechamento.notas.slice(0,60)+(d.fechamento.notas.length>60?'...':'') : '';
+}
+
+// ── FORMULÁRIO: RELATÓRIO ─────────────────────────────────────────────────
+function renderFormRelatorio(id) {
+  const d = getDayData(today());
+  const r = d.relatorio || {};
+  const tv = d.tv.perfis||[];
+  const cl = d.clap.empresas||[];
+  const msgs = cl.filter(x=>x.msg==='Sim').length;
+  const vis = d.visitas.lista||[];
+  const pf = d.portfolio;
+
+  const container = qs('#form-'+id);
+  let html = `
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:16px">
+      <div style="background:var(--s2);border-radius:var(--rs);padding:12px;text-align:center">
+        <div style="font-size:24px;font-weight:700;color:${C.teal}">${tv.length}</div>
+        <div style="font-size:10px;color:var(--text3)">perfis seguidos</div>
+      </div>
+      <div style="background:var(--s2);border-radius:var(--rs);padding:12px;text-align:center">
+        <div style="font-size:24px;font-weight:700;color:${C.coral}">${cl.length}</div>
+        <div style="font-size:10px;color:var(--text3)">empresas mapeadas</div>
+      </div>
+      <div style="background:var(--s2);border-radius:var(--rs);padding:12px;text-align:center">
+        <div style="font-size:24px;font-weight:700;color:${C.blue}">${msgs}</div>
+        <div style="font-size:10px;color:var(--text3)">mensagens enviadas</div>
+      </div>
+      <div style="background:var(--s2);border-radius:var(--rs);padding:12px;text-align:center">
+        <div style="font-size:24px;font-weight:700;color:${C.gold}">${vis.length}</div>
+        <div style="font-size:10px;color:var(--text3)">visitas presenciais</div>
+      </div>
+      <div style="background:var(--s2);border-radius:var(--rs);padding:12px;text-align:center">
+        <div style="font-size:24px;font-weight:700;color:${C.violet}">${pf&&pf.cliente?1:0}</div>
+        <div style="font-size:10px;color:var(--text3)">conteúdo criado</div>
+      </div>
+    </div>
+    <div class="reg-title">O que fará amanhã</div>
+    <div class="field"><textarea id="rel-amanha" placeholder="Escreva os planos para amanhã...">${r.amanha||''}</textarea></div>
+    <div class="reg-title">Observações gerais do dia</div>
+    <div class="field"><textarea id="rel-obs" placeholder="Como foi o dia, dificuldades, conquistas...">${r.obs||''}</textarea></div>
+    <div class="row-actions"><button class="btn btn-teal btn-sm" onclick="saveRelatorio()">Fechar o dia ✓</button></div>`;
+
+  container.innerHTML = html;
+}
+
+function saveRelatorio() {
+  const d = getDayData(today());
+  d.relatorio = { amanha: qs('#rel-amanha').value, obs: qs('#rel-obs').value };
+  saveDayData(today(), d);
+  toast('Dia registrado ✓');
+}
+function summaryRelatorio(date) {
+  const d = getDayData(date);
+  return d.relatorio && d.relatorio.amanha ? 'Amanhã: '+d.relatorio.amanha.slice(0,60) : '';
+}
+
+// ── HISTÓRICO ─────────────────────────────────────────────────────────────
+function renderHistorico() {
+  const idx = gd('dias_idx') || [];
+  const container = qs('#hist-list');
+  if(!idx.length) {
+    container.innerHTML = '<div class="empty">Nenhum dia registrado ainda.</div>'; return;
+  }
+  container.innerHTML = '';
+  idx.forEach(date => {
+    const d = getDayData(date);
+    const tv = d.tv.perfis||[];
+    const cl = d.clap.empresas||[];
+    const msgs = cl.filter(x=>x.msg==='Sim').length;
+    const vis = d.visitas.lista||[];
+    const pf = d.portfolio;
+
+    const div = document.createElement('div');
+    div.className = 'hist-day';
+    div.innerHTML = `
+      <div class="hist-day-head" onclick="toggleHist('${date}')">
+        <div>
+          <div class="hist-day-date">${fmtDateLong(date)}</div>
+          <div class="hist-chips" style="margin-top:5px">
+            ${tv.length?`<span class="chip" style="background:rgba(0,205,184,.15);color:${C.teal}">📱 ${tv.length} perfis</span>`:''}
+            ${cl.length?`<span class="chip" style="background:rgba(255,107,80,.15);color:${C.coral}">🏪 ${cl.length} empresas</span>`:''}
+            ${msgs?`<span class="chip" style="background:rgba(91,163,255,.15);color:${C.blue}">💬 ${msgs} msgs</span>`:''}
+            ${vis.length?`<span class="chip" style="background:rgba(255,184,48,.15);color:${C.gold}">🚶 ${vis.length} visitas</span>`:''}
+            ${pf&&pf.cliente?`<span class="chip" style="background:rgba(155,127,255,.15);color:${C.violet}">🎨 ${pf.tipo}</span>`:''}
+          </div>
+        </div>
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--text3)" stroke-width="2" id="hchev-${date}"><polyline points="6 9 12 15 18 9"/></svg>
+      </div>
+      <div class="hist-day-body" id="hbody-${date}">
+        ${buildHistBody(d, date)}
+      </div>`;
+    container.appendChild(div);
+  });
+}
+
+function toggleHist(date) {
+  const body = qs('#hbody-'+date);
+  const chev = qs('#hchev-'+date);
+  const open = body.classList.toggle('open');
+  chev.style.transform = open ? 'rotate(180deg)' : '';
+}
+
+function buildHistBody(d, date) {
+  let html = '';
+  const tv = d.tv.perfis||[];
+  if(tv.length) {
+    html += `<div class="hist-section"><div class="hist-section-title">📱 Perfis seguidos (${tv.length})</div>`;
+    html += tv.map(p=>`<span style="font-size:11px;color:${C.teal};margin-right:8px">${p.arroba}${p.cidade?' ('+p.cidade+')':''}</span>`).join('');
+    if(d.tv.notas) html += `<div style="font-size:11px;color:var(--text2);margin-top:6px">${d.tv.notas}</div>`;
+    html += `</div>`;
+  }
+  const cl = d.clap.empresas||[];
+  if(cl.length) {
+    html += `<div class="hist-section"><div class="hist-section-title">🏪 Empresas mapeadas (${cl.length})</div>`;
+    html += `<div class="reg-list">`;
+    cl.forEach(e => {
+      html += `<div class="reg-item"><div class="reg-item-content">
+        <div class="reg-main">${e.nome} <span style="color:${C.coral};font-size:11px">${e.insta||''}</span></div>
+        <div class="reg-detail">${[e.cidade,e.tel,e.obs].filter(Boolean).join(' · ')}</div>
+        <div class="reg-detail">Msg: <span style="color:${e.msg==='Sim'?C.teal:'var(--text3)'}">${e.msg}</span></div>
+      </div></div>`;
+    });
+    html += `</div></div>`;
+  }
+  const pf = d.portfolio;
+  if(pf && pf.cliente) {
+    html += `<div class="hist-section"><div class="hist-section-title">🎨 Conteúdo criado</div>
+      <div style="font-size:12px;color:var(--text2)"><strong style="color:${C.violet}">${pf.cliente}</strong> — ${pf.tipo}${pf.obs?' · '+pf.obs:''}</div>
+    </div>`;
+  }
+  const vis = d.visitas.lista||[];
+  if(vis.length) {
+    html += `<div class="hist-section"><div class="hist-section-title">🚶 Visitas (${vis.length})</div><div class="reg-list">`;
+    vis.forEach(v => {
+      html += `<div class="reg-item"><div class="reg-item-content">
+        <div class="reg-main">${v.empresa}</div>
+        <div class="reg-detail">${[v.resp,v.tel].filter(Boolean).join(' · ')} · Interesse: ${v.interesse}</div>
+        ${v.obs?`<div class="reg-detail">${v.obs}</div>`:''}
+      </div></div>`;
+    });
+    html += `</div></div>`;
+  }
+  if(d.relatorio && d.relatorio.amanha) {
+    html += `<div class="hist-section"><div class="hist-section-title">📋 Plano para o dia seguinte</div>
+      <div style="font-size:12px;color:var(--text2)">${d.relatorio.amanha}</div>
+    </div>`;
+  }
+  if(d.relatorio && d.relatorio.obs) {
+    html += `<div class="hist-section"><div class="hist-section-title">💬 Observações gerais</div>
+      <div style="font-size:12px;color:var(--text2)">${d.relatorio.obs}</div>
+    </div>`;
+  }
+  if(!html) html = '<div style="font-size:12px;color:var(--text3)">Nenhum detalhe registrado neste dia.</div>';
+  return html;
+}
+
+// ── BACKUP ────────────────────────────────────────────────────────────────
+function openBackup()  { qs('#backupModal').classList.add('open'); }
+function closeBackup() { qs('#backupModal').classList.remove('open'); }
+qs('#backupModal').addEventListener('click', function(e){ if(e.target===this) closeBackup(); });
+
+function exportData() {
+  const idx = gd('dias_idx') || [];
+  const data = { version: 3, exportDate: new Date().toISOString(), dias_idx: idx, dias: {} };
+  idx.forEach(date => { data.dias[date] = getDayData(date); });
+  const blob = new Blob([JSON.stringify(data, null, 2)], {type:'application/json'});
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = `gabriel-backup-${today()}.json`;
+  a.click(); URL.revokeObjectURL(a.href);
+  toast('Backup exportado ✓'); closeBackup();
+}
+
+function importData(e) {
+  const file = e.target.files[0]; if(!file) return;
+  const reader = new FileReader();
+  reader.onload = function(ev) {
+    try {
+      const data = JSON.parse(ev.target.result);
+      if(data.dias_idx) sd('dias_idx', data.dias_idx);
+      if(data.dias) Object.entries(data.dias).forEach(([date, d]) => sd('dia_'+date, d));
+      closeBackup(); buildTimeline(); toast('Dados importados ✓');
+    } catch(err) { toast('Arquivo inválido'); }
+  };
+  reader.readAsText(file);
+}
+
+// ── INIT ──────────────────────────────────────────────────────────────────
+const d = new Date();
+const DIAS = ['domingo','segunda','terça','quarta','quinta','sexta','sábado'];
+const MESES = ['jan','fev','mar','abr','mai','jun','jul','ago','set','out','nov','dez'];
+qs('#currentDate').textContent = `${DIAS[d.getDay()]}, ${d.getDate()} ${MESES[d.getMonth()]} ${d.getFullYear()}`;
+
+buildTimeline();
+</script>
+</body>
+</html>
