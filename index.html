@@ -3,461 +3,416 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Agência Clap — Seu negócio vendendo mais no Sul do ES</title>
-<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,900;1,700;1,900&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<title>CLAP IA — Descubra onde sua empresa mais perde tempo hoje</title>
+<meta name="description" content="Diagnóstico gratuito para empresários: descubra onde você mais perde tempo hoje e o que fazer primeiro para vender mais e economizar tempo usando Inteligência Artificial.">
+<meta name="keywords" content="diagnóstico de IA para empresa, IA para pequenos negócios, IA para whatsapp, IA para propaganda, kit de IA para empresários">
+<link rel="canonical" href="https://agenciaclap.com.br/">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="CLAP IA">
+<meta property="og:title" content="Descubra onde sua empresa mais perde tempo hoje">
+<meta property="og:description" content="Diagnóstico gratuito de 2 minutos. Receba uma recomendação personalizada para sua empresa.">
+<meta property="og:url" content="https://agenciaclap.com.br/">
+<meta property="og:locale" content="pt_BR">
+<meta name="twitter:card" content="summary_large_image">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,500;0,9..144,600;0,9..144,700;1,9..144,500;1,9..144,600&family=DM+Sans:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+
 <style>
 :root{
-  --y:#FFD000;
-  --b:#0A0A0A;
-  --w:#ffffff;
-  --g:#777;
-  --lg:#F5F5F3;
-  --border:#E8E8E4;
+  --bg:#0A0B0F; --bg-2:#111219;
+  --line:rgba(255,255,255,0.09);
+  --ink:#F4F2ED; --muted:#9A9AA6; --muted-2:#6B6B76;
+  --gold:#F5B942; --gold-2:#FFD37A;
+  --green:#8FBF9A;
 }
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 html{scroll-behavior:smooth}
-body{background:var(--b);color:var(--w);font-family:'DM Sans',sans-serif;overflow-x:hidden;-webkit-font-smoothing:antialiased}
-.container{max-width:1120px;margin:0 auto;padding:0 32px}
+body{background:var(--bg);color:var(--ink);font-family:'DM Sans',sans-serif;overflow-x:hidden;-webkit-font-smoothing:antialiased}
+@media (prefers-reduced-motion: reduce){*{animation-duration:0.01ms !important;animation-iteration-count:1 !important;transition-duration:0.01ms !important;scroll-behavior:auto !important}}
+::selection{background:var(--gold);color:#0A0B0F}
+.container{max-width:900px;margin:0 auto;padding:0 32px}
+.eyebrow{font-family:'JetBrains Mono',monospace;font-size:11.5px;letter-spacing:0.14em;text-transform:uppercase;color:var(--gold);display:inline-flex;align-items:center;gap:9px;margin-bottom:18px}
+.eyebrow::before{content:'';width:6px;height:6px;border-radius:50%;background:var(--gold)}
+h1,h2,h3{font-family:'Fraunces',serif;letter-spacing:-0.01em;color:var(--ink)}
+em{font-style:italic;color:var(--gold);font-weight:500}
+a{color:inherit}
+.reveal{opacity:0;transform:translateY(20px);transition:opacity .6s ease,transform .6s ease}
+.reveal.in{opacity:1;transform:translateY(0)}
+a:focus-visible, button:focus-visible{outline:2px solid var(--gold);outline-offset:3px;border-radius:4px}
 
-/* ── NAV ── */
-nav{position:fixed;top:0;left:0;right:0;z-index:100;padding:18px 0;background:rgba(10,10,10,0.95);backdrop-filter:blur(16px);border-bottom:1px solid rgba(255,255,255,0.06)}
-.nav-in{display:flex;align-items:center;justify-content:space-between}
-.logo{display:flex;align-items:center;gap:10px;text-decoration:none}
-.logo-box{width:30px;height:30px;background:var(--y);border-radius:5px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
-.logo-box svg{width:17px;height:17px}
-.logo-name{font-family:'Playfair Display',serif;font-weight:700;font-size:18px;color:var(--w);letter-spacing:-0.01em}
-.logo-name em{font-style:italic;color:var(--y)}
-.nav-btn{background:var(--y);color:var(--b);font-family:'DM Sans',sans-serif;font-weight:600;font-size:13px;padding:10px 22px;border-radius:3px;text-decoration:none;letter-spacing:0.02em;transition:opacity .15s,transform .15s}
-.nav-btn:hover{opacity:.88;transform:translateY(-1px)}
+nav{position:fixed;top:0;left:0;right:0;z-index:100;padding:16px 0;background:rgba(10,11,15,0.72);backdrop-filter:blur(18px);border-bottom:1px solid var(--line)}
+.nav-in{display:flex;align-items:center;justify-content:space-between;max-width:900px;margin:0 auto;padding:0 32px}
+.logo{font-family:'Fraunces',serif;font-weight:600;font-size:18px;text-decoration:none}
+.logo em{font-style:normal;color:var(--gold)}
+.btn{font-family:'DM Sans',sans-serif;font-weight:600;font-size:14px;padding:11px 22px;border-radius:8px;text-decoration:none;transition:transform .15s ease, box-shadow .15s ease;display:inline-flex;align-items:center;gap:8px;border:none;cursor:pointer}
+.btn-gold{background:linear-gradient(150deg,var(--gold-2),var(--gold));color:#1a1103}
+.btn-gold:hover{transform:translateY(-2px);box-shadow:0 10px 26px -8px rgba(245,185,66,0.45)}
+.btn-big{font-size:16px;padding:16px 32px}
 
-/* ── HERO ── */
-.hero{min-height:100vh;display:flex;align-items:center;padding:120px 0 80px;position:relative;overflow:hidden;background:var(--b)}
-.hero-inner{display:grid;grid-template-columns:1.1fr 0.9fr;gap:80px;align-items:center}
-.hero-label{display:inline-flex;align-items:center;gap:8px;font-size:11px;font-weight:500;letter-spacing:0.14em;text-transform:uppercase;color:var(--y);margin-bottom:24px}
-.hero-label::before{content:'';width:5px;height:5px;border-radius:50%;background:var(--y);animation:blink 2s infinite}
-@keyframes blink{0%,100%{opacity:1}50%{opacity:.2}}
-.hero h1{font-family:'Playfair Display',serif;font-weight:900;font-size:clamp(54px,5.5vw,80px);line-height:1.0;letter-spacing:-0.03em;margin-bottom:28px;color:var(--w)}
-.hero h1 em{font-style:italic;color:var(--y)}
-.hero-copy{font-size:17px;line-height:1.72;color:#999;margin-bottom:44px;max-width:460px;font-weight:300}
-.hero-actions{display:flex;gap:12px;flex-wrap:wrap;align-items:center}
-.btn-main{background:var(--y);color:var(--b);font-weight:600;font-size:15px;padding:16px 34px;border-radius:3px;text-decoration:none;transition:opacity .15s,transform .15s;letter-spacing:0.01em}
-.btn-main:hover{opacity:.88;transform:translateY(-2px)}
-.btn-line{color:#555;font-size:14px;font-weight:400;text-decoration:none;letter-spacing:0.01em;transition:color .15s}
-.btn-line:hover{color:#999}
-.hero-right{display:flex;flex-direction:column;gap:1px}
-.h-stat{background:#111;padding:28px 32px;display:flex;flex-direction:column;gap:4px;border-left:1px solid #1a1a1a;transition:border-color .2s}
-.h-stat:first-child{border-top:1px solid #1a1a1a}
-.h-stat:hover{border-left-color:var(--y)}
-.h-num{font-family:'Playfair Display',serif;font-weight:900;font-size:44px;color:var(--y);line-height:1}
-.h-label{font-size:13px;color:#555;line-height:1.4;font-weight:400}
+.hero{min-height:88vh;display:flex;align-items:center;padding:130px 0 60px;position:relative;overflow:hidden;text-align:center}
+.hero::before{content:'';position:absolute;top:-260px;left:50%;transform:translateX(-50%);width:820px;height:700px;border-radius:50%;background:radial-gradient(circle,rgba(245,185,66,0.16),transparent 68%);pointer-events:none}
+.hero-in{max-width:680px;margin:0 auto;position:relative;z-index:1}
+.hero h1{font-weight:600;font-size:clamp(32px,4.6vw,50px);line-height:1.14;margin-bottom:20px}
+.hero-copy{font-size:16.5px;line-height:1.65;color:var(--muted);max-width:520px;margin:0 auto 34px}
+.hero-note{font-size:13px;color:var(--muted-2);font-family:'JetBrains Mono',monospace;margin-top:14px}
 
-/* ── TICKER ── */
-.ticker{background:var(--y);padding:13px 0;overflow:hidden}
-.tick-track{display:flex;width:max-content;animation:tick 22s linear infinite}
-.tick-item{font-family:'DM Sans',sans-serif;font-weight:600;font-size:13px;letter-spacing:0.1em;text-transform:uppercase;color:var(--b);padding:0 28px;white-space:nowrap}
-.tick-item::after{content:'·';margin-left:28px;opacity:.4}
-@keyframes tick{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+.tick-wrap{padding:0 0 90px}
+.tick-card{background:var(--bg-2);border:1px solid var(--line);border-radius:18px;padding:28px;max-width:640px;margin:0 auto}
+.tick-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:20px}
+.tick-label{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--muted-2);letter-spacing:0.08em;text-transform:uppercase}
+.tick-dot{width:7px;height:7px;border-radius:50%;background:var(--green)}
+.tick-row{display:flex;align-items:center;justify-content:space-between;padding:14px 0;border-bottom:1px dashed var(--line);min-height:72px;gap:20px}
+.tick-row:last-child{border-bottom:none}
+.tick-who{font-size:13px;color:var(--muted);font-family:'JetBrains Mono',monospace}
+.tick-task{font-size:15.5px;font-weight:500;margin-top:3px}
+.tick-time{text-align:right;font-family:'Fraunces',serif;flex-shrink:0}
+.tick-time .before{font-size:12px;color:var(--muted-2);text-decoration:line-through;display:block}
+.tick-time .after{font-size:18px;color:var(--gold);font-weight:600}
+.tick-card .caption{font-size:11.5px;color:var(--muted-2);margin-top:12px;text-align:center;font-family:'JetBrains Mono',monospace}
 
-/* ── SEÇÕES ── */
-section{padding:96px 0}
-.eyebrow{font-size:11px;font-weight:500;letter-spacing:0.14em;text-transform:uppercase;color:var(--y);margin-bottom:14px;display:flex;align-items:center;gap:10px}
-.eyebrow::before{content:'';display:block;width:20px;height:1px;background:var(--y)}
-h2{font-family:'Playfair Display',serif;font-weight:900;font-size:clamp(36px,4vw,54px);line-height:1.05;letter-spacing:-0.025em;color:var(--w)}
-h2 em{font-style:italic;color:var(--y)}
+section{padding:80px 0}
+.section-alt{background:var(--bg-2);border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
+.sec-head{max-width:560px;margin:0 auto 40px;text-align:center}
+.sec-head h2{font-size:clamp(24px,3vw,32px);font-weight:600;line-height:1.2;margin-bottom:12px}
+.sec-head p{color:var(--muted);font-size:15px;line-height:1.6}
 
-/* ── PROBLEMA ── */
-.prob{background:#0C0C0C}
-.prob-grid{display:grid;grid-template-columns:1fr 1fr;gap:64px;align-items:center;margin-bottom:56px}
-.prob-body{font-size:16px;line-height:1.75;color:#666;margin-top:20px;font-weight:300}
-.prob-big{background:var(--y);border-radius:4px;padding:56px 48px;text-align:center}
-.prob-num{font-family:'Playfair Display',serif;font-weight:900;font-size:88px;color:var(--b);line-height:1;letter-spacing:-0.04em}
-.prob-sub{font-size:15px;color:rgba(0,0,0,.55);margin-top:10px;font-weight:500;line-height:1.4}
-.prob-cards{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:#1a1a1a;border-radius:4px;overflow:hidden}
-.prob-card{background:#111;padding:28px 24px}
-.prob-card h4{font-family:'Playfair Display',serif;font-weight:700;font-size:16px;margin-bottom:10px;color:var(--w)}
-.prob-card p{font-size:13px;color:#555;line-height:1.6;font-weight:300}
+.diag-box{border:1px solid rgba(245,185,66,0.32);background:linear-gradient(160deg,rgba(245,185,66,0.10),var(--bg-2) 65%);border-radius:20px;padding:44px;text-align:center;max-width:640px;margin:0 auto}
+.diag-box h3{font-size:22px;margin-bottom:12px}
+.diag-box p{color:var(--muted);font-size:15px;margin-bottom:26px;line-height:1.6}
 
-/* ── SOLUÇÃO ── */
-.sol{background:var(--b)}
-.sol-intro{display:grid;grid-template-columns:1fr 1fr;gap:64px;align-items:end;margin-bottom:56px}
-.sol-copy{font-size:15px;line-height:1.75;color:#555;font-weight:300}
-.sol-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:#1a1a1a;border-radius:4px;overflow:hidden}
-.sol-card{background:#0E0E0E;padding:36px 28px;transition:background .2s}
-.sol-card:hover{background:#131313}
-.sol-n{font-family:'Playfair Display',serif;font-weight:900;font-size:40px;color:rgba(255,208,0,.1);line-height:1;margin-bottom:16px}
-.sol-card h3{font-family:'Playfair Display',serif;font-weight:700;font-size:19px;color:var(--w);margin-bottom:10px;line-height:1.2}
-.sol-card p{font-size:13px;color:#555;line-height:1.65;font-weight:300}
+.ads-box{max-width:680px;margin:0 auto;border:1px solid var(--line);border-radius:16px;padding:34px;background:var(--bg-2)}
+.ads-box p{font-size:15px;color:var(--muted);line-height:1.7;margin-bottom:14px}
+.ads-box p:last-child{margin-bottom:0}
+.ads-box b{color:var(--ink)}
 
-/* ── PLANOS ── */
-.planos{background:#0C0C0C}
-.planos-head{display:grid;grid-template-columns:1fr 1fr;gap:64px;align-items:end;margin-bottom:56px}
-.planos-note-top{font-size:14px;color:#444;font-weight:300;line-height:1.65}
-.plans-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:#1a1a1a;border-radius:4px;overflow:hidden}
-.plan{background:#0E0E0E;padding:40px 32px;position:relative;display:flex;flex-direction:column}
-.plan.feat{background:#111;border:1px solid rgba(255,208,0,.3)}
-.plan-badge{display:inline-block;background:var(--y);color:var(--b);font-size:10px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;padding:4px 12px;border-radius:2px;margin-bottom:20px}
-.plan-code{font-size:10px;font-weight:500;letter-spacing:.14em;text-transform:uppercase;color:#444;margin-bottom:8px}
-.plan h3{font-family:'Playfair Display',serif;font-weight:900;font-size:24px;color:var(--w);margin-bottom:6px}
-.plan-sub{font-size:13px;color:#444;margin-bottom:20px;font-weight:300}
-.plan-div{height:1px;background:#1a1a1a;margin-bottom:20px}
-.plan.feat .plan-div{background:#222}
-.plan-price{font-family:'Playfair Display',serif;font-weight:900;font-size:46px;color:var(--y);line-height:1;margin-bottom:4px}
-.plan-mo{font-size:12px;color:#444;margin-bottom:24px}
-.plan-items{list-style:none;flex:1;margin-bottom:28px}
-.plan-items li{font-size:13px;color:#555;padding:7px 0;border-bottom:1px solid #141414;display:flex;gap:10px;line-height:1.4;font-weight:300}
-.plan.feat .plan-items li{color:#888;border-bottom-color:#1c1c1c}
-.plan-items li::before{content:'—';color:var(--y);flex-shrink:0;font-weight:400}
-.plan-cta{display:block;text-align:center;padding:13px;border-radius:3px;font-size:13px;font-weight:600;letter-spacing:.03em;text-decoration:none;transition:all .15s;margin-top:auto}
-.cta-outline{border:1px solid #222;color:#444}
-.cta-outline:hover{border-color:#444;color:#777}
-.cta-solid{background:var(--y);color:var(--b)}
-.cta-solid:hover{opacity:.88}
-.plans-foot{text-align:center;font-size:12px;color:#333;margin-top:20px;font-weight:300}
+.task-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;max-width:760px;margin:0 auto}
+.task-chip{background:var(--bg-2);border:1px solid var(--line);border-radius:12px;padding:18px;font-size:14px;display:flex;align-items:flex-start;gap:10px;line-height:1.45}
+.task-chip .ck{color:var(--gold);font-weight:700;flex-shrink:0}
+@media(max-width:700px){.task-grid{grid-template-columns:1fr 1fr}}
+@media(max-width:480px){.task-grid{grid-template-columns:1fr}}
 
-/* ── COMO ── */
-.como{background:var(--b)}
-.como-steps{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:#1a1a1a;border-radius:4px;overflow:hidden;margin-top:56px}
-.step{background:#0E0E0E;padding:36px 28px;position:relative}
-.step-n{font-family:'Playfair Display',serif;font-weight:900;font-size:52px;color:rgba(255,208,0,.07);line-height:1;margin-bottom:18px}
-.step h4{font-family:'Playfair Display',serif;font-weight:700;font-size:17px;color:var(--w);margin-bottom:10px}
-.step p{font-size:13px;color:#444;line-height:1.65;font-weight:300}
-.step-arr{position:absolute;top:36px;right:-1px;width:2px;height:32px;background:var(--y);opacity:.4}
-.step:last-child .step-arr{display:none}
+.test-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:16px;max-width:760px;margin:0 auto}
+.test-card{background:var(--bg);border:1px solid var(--line);border-radius:14px;padding:22px}
+.test-card p{font-size:14px;line-height:1.65;color:var(--ink);margin-bottom:16px;font-style:italic;font-family:'Fraunces',serif}
+.test-who{display:flex;align-items:center;gap:10px}
+.test-avatar{width:32px;height:32px;border-radius:50%;background:linear-gradient(150deg,var(--gold-2),var(--gold));flex-shrink:0}
+.test-name{font-size:12.5px;font-weight:600}
+.test-role{font-size:11.5px;color:var(--muted-2)}
+@media(max-width:640px){.test-grid{grid-template-columns:1fr}}
 
-/* ── CTA FINAL ── */
-.cta-sec{background:#0C0C0C;padding:96px 0}
-.cta-wrap{border:1px solid #1a1a1a;border-radius:4px;padding:80px 64px;text-align:center}
-.cta-wrap h2{margin-bottom:16px}
-.cta-sub{font-size:16px;color:#444;margin-bottom:44px;font-weight:300}
-.cta-btns{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;margin-bottom:48px}
-.cta-divider{height:1px;background:#1a1a1a;margin-bottom:40px}
-.cta-contacts{display:flex;gap:48px;justify-content:center;flex-wrap:wrap}
-.cta-c{text-align:left}
-.cta-c-label{font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:#333;margin-bottom:5px;font-weight:500}
-.cta-c-val{font-family:'Playfair Display',serif;font-weight:700;font-size:15px;color:#555;letter-spacing:-.01em}
-.guarantee{margin-top:48px;padding-top:40px;border-top:1px solid #1a1a1a;font-size:13px;color:#333;line-height:1.7;font-weight:300}
-.guarantee strong{color:#444;font-weight:500}
+.faq-list{max-width:640px;margin:0 auto}
+.faq-item{border-bottom:1px solid var(--line)}
+.faq-q{width:100%;text-align:left;background:none;border:none;padding:18px 0;display:flex;justify-content:space-between;align-items:center;cursor:pointer;color:var(--ink);font-size:15px;font-weight:500;gap:20px;font-family:'DM Sans',sans-serif}
+.faq-q .plus{font-family:'JetBrains Mono',monospace;color:var(--gold);font-size:18px;flex-shrink:0;transition:transform .25s}
+.faq-item.open .plus{transform:rotate(45deg)}
+.faq-a{max-height:0;overflow:hidden;transition:max-height .3s ease}
+.faq-a p{font-size:13.5px;line-height:1.65;color:var(--muted);padding-bottom:18px}
 
-/* ── FOOTER ── */
-footer{background:#070707;border-top:1px solid #111;padding:28px 0}
-.foot-in{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px}
-.foot-copy{font-size:12px;color:#2a2a2a;font-weight:300}
+.cta-final{text-align:center;max-width:560px;margin:0 auto}
+.cta-final h2{font-size:clamp(24px,3.2vw,32px);margin-bottom:14px}
+.cta-final p{color:var(--muted);font-size:15px;margin-bottom:26px}
 
-/* ── RESPONSIVE ── */
-@media(max-width:920px){
-  .hero-inner,.prob-grid,.sol-intro,.planos-head{grid-template-columns:1fr}
-  .hero-right,.h-stat:first-child{border-top:none}
-  .prob-cards{grid-template-columns:1fr 1fr}
-  .sol-grid,.plans-grid{grid-template-columns:1fr}
-  .como-steps{grid-template-columns:1fr 1fr}
-  .step-arr{display:none}
-  .cta-wrap{padding:48px 28px}
-  .cta-contacts{gap:28px}
-}
-@media(max-width:600px){
-  .prob-cards,.como-steps{grid-template-columns:1fr}
-  .hero h1{font-size:48px}
-}
+footer{padding:36px 0;text-align:center;font-size:12.5px;color:var(--muted-2);border-top:1px solid var(--line)}
+footer small{display:block;margin-top:4px}
+
+/* MODAL DIAGNÓSTICO */
+.modal-overlay{position:fixed;inset:0;background:rgba(6,7,9,0.8);backdrop-filter:blur(6px);z-index:200;display:none;align-items:center;justify-content:center;padding:18px}
+.modal-overlay.open{display:flex}
+.modal-box{background:var(--bg-2);border:1px solid var(--line);border-radius:20px;max-width:540px;width:100%;padding:34px;max-height:90vh;overflow-y:auto;position:relative}
+.modal-close{position:absolute;top:16px;right:16px;background:none;border:none;color:var(--muted);font-size:20px;cursor:pointer;line-height:1}
+.modal-close:hover{color:var(--ink)}
+.diag-progress{height:4px;background:var(--line);border-radius:4px;margin-bottom:22px;overflow:hidden}
+.diag-progress-fill{height:100%;background:var(--gold);width:10%;transition:width .3s ease}
+.diag-step-label{font-family:'JetBrains Mono',monospace;font-size:10.5px;color:var(--muted-2);letter-spacing:0.08em;text-transform:uppercase;margin-bottom:10px}
+.diag-q{font-size:18px;font-weight:600;font-family:'Fraunces',serif;margin-bottom:20px;line-height:1.35}
+.diag-opts{display:flex;flex-direction:column;gap:9px}
+.diag-opt{text-align:left;background:var(--bg);border:1px solid var(--line);border-radius:10px;padding:13px 15px;font-size:14px;color:var(--ink);cursor:pointer;transition:border-color .15s, background .15s;font-family:'DM Sans',sans-serif}
+.diag-opt:hover{border-color:var(--gold);background:rgba(245,185,66,0.06)}
+.diag-result h3{font-size:20px;margin-bottom:12px}
+.diag-result p{color:var(--muted);font-size:14px;line-height:1.6;margin-bottom:14px}
+.diag-math{background:var(--bg);border:1px solid var(--line);border-radius:12px;padding:18px;margin-bottom:18px}
+.diag-math .m-tag{font-family:'JetBrains Mono',monospace;font-size:10.5px;color:var(--muted-2);letter-spacing:0.06em;text-transform:uppercase;margin-bottom:8px}
+.diag-math .m-line{font-size:14px;color:var(--ink);line-height:1.6}
+.diag-math .m-line b{color:var(--gold)}
+.diag-report{background:linear-gradient(160deg,rgba(245,185,66,0.08),var(--bg));border:1px solid rgba(245,185,66,0.3);border-radius:12px;padding:20px;margin-bottom:20px}
+.diag-report .r-tag{font-family:'JetBrains Mono',monospace;font-size:10.5px;color:var(--gold);letter-spacing:0.06em;text-transform:uppercase;margin-bottom:10px}
+.diag-report h4{font-size:17px;margin-bottom:8px}
+.diag-report ul{list-style:none;display:flex;flex-direction:column;gap:7px;margin:12px 0 0}
+.diag-report li{font-size:13.5px;color:var(--muted);padding-left:16px;position:relative}
+.diag-report li::before{content:'→';position:absolute;left:0;color:var(--gold)}
 </style>
 </head>
 <body>
 
 <nav>
-  <div class="container nav-in">
-    <a href="#" class="logo">
-      <div class="logo-box">
-        <svg viewBox="0 0 18 18" fill="none"><rect x="1" y="4" width="13" height="2.2" rx="1" fill="#0A0A0A"/><rect x="1" y="4" width="1.8" height="9" rx=".9" fill="#0A0A0A"/><rect x="1" y="11.8" width="13" height="2.2" rx="1" fill="#0A0A0A"/><line x1="4" y1="4" x2="5.8" y2="6.2" stroke="#0A0A0A" stroke-width="1.3" stroke-linecap="round"/><line x1="7.2" y1="4" x2="9" y2="6.2" stroke="#0A0A0A" stroke-width="1.3" stroke-linecap="round"/><line x1="10.4" y1="4" x2="12.2" y2="6.2" stroke="#0A0A0A" stroke-width="1.3" stroke-linecap="round"/></svg>
-      </div>
-      <span class="logo-name">Agência <em>Clap</em></span>
-    </a>
-    <a href="#contato" class="nav-btn">Falar no WhatsApp</a>
+  <div class="nav-in">
+    <a href="#" class="logo">CLAP<em>.ia</em></a>
+    <button class="btn btn-gold" onclick="openDiag()">Fazer diagnóstico</button>
   </div>
 </nav>
 
-<!-- HERO -->
 <section class="hero">
-  <div class="container">
-    <div class="hero-inner">
-      <div>
-        <div class="hero-label">Sul do Espírito Santo</div>
-        <h1>Seu negócio<br>aparecendo pra<br>quem quer <em>comprar.</em></h1>
-        <p class="hero-copy">Ajudamos empresas do Sul do ES a aparecer, vender e crescer com conteúdo, vídeo e anúncios online. Sem achismo. Com resultado.</p>
-        <div class="hero-actions">
-          <a href="https://wa.me/5528999362584" class="btn-main">Quero mais clientes</a>
-          <a href="#planos" class="btn-line">Ver planos →</a>
-        </div>
-      </div>
-      <div class="hero-right">
-        <div class="h-stat">
-          <div class="h-num">+50</div>
-          <div class="h-label">negócios atendidos na região Sul do ES</div>
-        </div>
-        <div class="h-stat">
-          <div class="h-num">3×</div>
-          <div class="h-label">mais contatos em média após 60 dias</div>
-        </div>
-        <div class="h-stat">
-          <div class="h-num">3</div>
-          <div class="h-label">planos — do tamanho certo para o seu negócio</div>
-        </div>
-        <div class="h-stat">
-          <div class="h-num">0</div>
-          <div class="h-label">contratos longos ou letras miúdas</div>
-        </div>
-      </div>
-    </div>
+  <div class="container hero-in">
+    <div class="eyebrow reveal in">Diagnóstico gratuito · 2 minutos</div>
+    <h1 class="reveal in">Descubra onde sua empresa mais perde tempo hoje — e o que fazer primeiro.</h1>
+    <p class="hero-copy reveal in">Responda algumas perguntas rápidas sobre o seu negócio e receba uma recomendação personalizada, sem termo técnico e sem enrolação.</p>
+    <button class="btn btn-gold btn-big reveal in" onclick="openDiag()">Fazer meu diagnóstico gratuito</button>
+    <div class="hero-note reveal in">sem cadastro de cartão · resultado na hora</div>
   </div>
 </section>
 
-<!-- TICKER -->
-<div class="ticker">
-  <div class="tick-track">
-    <span class="tick-item">Mais clientes</span>
-    <span class="tick-item">Mais pedidos no WhatsApp</span>
-    <span class="tick-item">Mais agendamentos</span>
-    <span class="tick-item">Mais orçamentos</span>
-    <span class="tick-item">Resultado real</span>
-    <span class="tick-item">Marataízes</span>
-    <span class="tick-item">Itapemirim</span>
-    <span class="tick-item">Piúma</span>
-    <span class="tick-item">Cachoeiro</span>
-    <span class="tick-item">Presidente Kennedy</span>
-    <span class="tick-item">Mais clientes</span>
-    <span class="tick-item">Mais pedidos no WhatsApp</span>
-    <span class="tick-item">Mais agendamentos</span>
-    <span class="tick-item">Mais orçamentos</span>
-    <span class="tick-item">Resultado real</span>
-    <span class="tick-item">Marataízes</span>
-    <span class="tick-item">Itapemirim</span>
-    <span class="tick-item">Piúma</span>
-    <span class="tick-item">Cachoeiro</span>
-    <span class="tick-item">Presidente Kennedy</span>
+<div class="container tick-wrap">
+  <div class="tick-card reveal in">
+    <div class="tick-head"><span class="tick-label">Tarefas do dia a dia, com e sem IA</span><span class="tick-dot"></span></div>
+    <div id="tickBody"></div>
+    <div class="caption">exemplos ilustrativos — os resultados variam conforme o uso</div>
   </div>
 </div>
 
-<!-- PROBLEMA -->
-<section class="prob" id="sobre">
+<section class="section-alt" id="diagnostico">
   <div class="container">
-    <div class="prob-grid">
-      <div>
-        <div class="eyebrow">O problema</div>
-        <h2>A maioria dos negócios locais é <em>invisível.</em></h2>
-        <p class="prob-body">Quando o cliente pesquisa no Google ou no Instagram, ele não encontra você. Encontra o concorrente. E você perde o cliente antes mesmo de falar com ele.</p>
-      </div>
-      <div class="prob-big">
-        <div class="prob-num">9/10</div>
-        <div class="prob-sub">negócios locais sem<br>presença digital real</div>
-      </div>
-    </div>
-    <div class="prob-cards">
-      <div class="prob-card">
-        <h4>Instagram parado</h4>
-        <p>Perfil desatualizado afasta o cliente antes de qualquer conversa.</p>
-      </div>
-      <div class="prob-card">
-        <h4>Invisível no digital</h4>
-        <p>Seu concorrente aparece primeiro. Você perde sem nem saber.</p>
-      </div>
-      <div class="prob-card">
-        <h4>Dinheiro sem retorno</h4>
-        <p>Impulsionar post sem estratégia não é marketing — é desperdício.</p>
-      </div>
-      <div class="prob-card">
-        <h4>Sem números reais</h4>
-        <p>Não sabe quantos clientes vieram do digital. Não sabe o que funciona.</p>
-      </div>
+    <div class="diag-box reveal">
+      <h3>Não sabe por onde começar? A gente descobre por você.</h3>
+      <p>Em 2 minutos você recebe uma leitura honesta de onde está perdendo mais tempo — e qual é o passo certo para o seu momento, não uma lista de produtos.</p>
+      <button class="btn btn-gold" onclick="openDiag()">Fazer diagnóstico gratuito</button>
     </div>
   </div>
 </section>
 
-<!-- SOLUÇÃO -->
-<section class="sol" id="servicos">
+<section id="ads">
   <div class="container">
-    <div class="sol-intro">
-      <div>
-        <div class="eyebrow">O que fazemos</div>
-        <h2>Fazemos seu negócio aparecer <em>para quem quer comprar.</em></h2>
-      </div>
-      <div>
-        <p class="sol-copy">Não vendemos curtidas. Não vendemos seguidores. Vendemos resultado: clientes ligando, mandando mensagem e entrando pela sua porta.</p>
-      </div>
-    </div>
-    <div class="sol-grid">
-      <div class="sol-card">
-        <div class="sol-n">01</div>
-        <h3>Anúncios que trazem clientes</h3>
-        <p>Campanhas no Meta e Google para seu negócio aparecer para quem está procurando o que você vende — agora, na sua cidade.</p>
-      </div>
-      <div class="sol-card">
-        <div class="sol-n">02</div>
-        <h3>Redes sociais que vendem</h3>
-        <p>Gestão completa do Instagram: posts, stories, reels e legendas que geram confiança e fazem o cliente querer falar com você.</p>
-      </div>
-      <div class="sol-card">
-        <div class="sol-n">03</div>
-        <h3>Vídeos que convencem</h3>
-        <p>Vídeos curtos para anúncios e redes sociais. Seu produto, seu espaço, sua equipe — de um jeito que gera desejo de compra.</p>
-      </div>
-      <div class="sol-card">
-        <div class="sol-n">04</div>
-        <h3>Landing page de conversão</h3>
-        <p>Página focada em capturar contatos, gerar agendamentos e fechar pedidos — integrada às suas campanhas pagas.</p>
-      </div>
-      <div class="sol-card">
-        <div class="sol-n">05</div>
-        <h3>Conteúdo estratégico</h3>
-        <p>Artes, textos e identidade visual para feed e stories. Tudo alinhado com o que seu cliente quer ver antes de comprar.</p>
-      </div>
-      <div class="sol-card">
-        <div class="sol-n">06</div>
-        <h3>Relatório de resultado</h3>
-        <p>Números reais todo mês: alcance, cliques, leads e vendas. Você sabe exatamente onde está o seu retorno.</p>
-      </div>
+    <div class="sec-head reveal"><div class="eyebrow">Antes de gastar mais em anúncio</div><h2>Investir mais nem sempre é o problema</h2></div>
+    <div class="ads-box reveal">
+      <p>Muita empresa aumenta o valor investido em anúncio no Facebook e no Instagram sem saber se está usando bem o que já investe.</p>
+      <p>Antes de aumentar o orçamento, vale entender: <b>o conteúdo do anúncio está bom? A oferta está clara? O texto foi pensado ou feito na pressa?</b></p>
+      <p>Conhecimento gera mais resultado do que simplesmente gastar mais. O diagnóstico também te mostra isso, se for o seu caso.</p>
     </div>
   </div>
 </section>
 
-<!-- PLANOS -->
-<section class="planos" id="planos">
+<section class="section-alt" id="tarefas">
   <div class="container">
-    <div class="planos-head">
-      <div>
-        <div class="eyebrow">Planos</div>
-        <h2>Comece pelo tamanho certo <em>do seu negócio.</em></h2>
-      </div>
-      <p class="planos-note-top">Sem contrato longo. Sem letras miúdas. Você começa quando quiser e encerra com 30 dias de aviso. Nosso compromisso é com resultado.</p>
-    </div>
-    <div class="plans-grid">
-      <div class="plan">
-        <div class="plan-code">Take 1</div>
-        <h3>Presença</h3>
-        <div class="plan-sub">Para quem quer existir no digital</div>
-        <div class="plan-div"></div>
-        <div class="plan-price">R$600</div>
-        <div class="plan-mo">por mês</div>
-        <ul class="plan-items">
-          <li>12 posts/mês no Instagram</li>
-          <li>Stories 3× por semana</li>
-          <li>Bio e perfil otimizados</li>
-          <li>Criação de arte e texto</li>
-          <li>Relatório mensal</li>
-        </ul>
-        <a href="https://wa.me/5528999362584?text=Olá! Tenho interesse no plano Take 1." class="plan-cta cta-outline">Quero o Take 1</a>
-      </div>
-      <div class="plan feat">
-        <div class="plan-badge">Mais vendido</div>
-        <div class="plan-code">Take 2</div>
-        <h3>Crescimento</h3>
-        <div class="plan-sub">Para quem quer vender mais</div>
-        <div class="plan-div"></div>
-        <div class="plan-price">R$1.200</div>
-        <div class="plan-mo">por mês</div>
-        <ul class="plan-items">
-          <li>20 posts + reels por mês</li>
-          <li>Stories todos os dias</li>
-          <li>Anúncios Meta (até R$300 ads)</li>
-          <li>1 vídeo de venda por mês</li>
-          <li>Relatório quinzenal</li>
-        </ul>
-        <a href="https://wa.me/5528999362584?text=Olá! Tenho interesse no plano Take 2." class="plan-cta cta-solid">Quero vender mais</a>
-      </div>
-      <div class="plan">
-        <div class="plan-code">Take 3</div>
-        <h3>Dominância</h3>
-        <div class="plan-sub">Para quem quer liderar a região</div>
-        <div class="plan-div"></div>
-        <div class="plan-price">R$2.200</div>
-        <div class="plan-mo">por mês</div>
-        <ul class="plan-items">
-          <li>Gestão completa das redes</li>
-          <li>Anúncios avançados (até R$800 ads)</li>
-          <li>2 vídeos de venda por mês</li>
-          <li>Landing page dedicada</li>
-          <li>Suporte via WhatsApp direto</li>
-          <li>Relatório semanal</li>
-          <li>Estratégia mensal personalizada</li>
-        </ul>
-        <a href="https://wa.me/5528999362584?text=Olá! Tenho interesse no plano Take 3." class="plan-cta cta-outline">Quero ser referência</a>
-      </div>
-    </div>
-    <p class="plans-foot">* Valor de anúncios é investimento separado, pago diretamente às plataformas (Meta/Google).</p>
-  </div>
-</section>
-
-<!-- COMO FUNCIONA -->
-<section class="como" id="como">
-  <div class="container">
-    <div class="eyebrow">Como funciona</div>
-    <h2>Simples, direto <em>e sem enrolação.</em></h2>
-    <div class="como-steps">
-      <div class="step">
-        <div class="step-arr"></div>
-        <div class="step-n">01</div>
-        <h4>Conversa inicial</h4>
-        <p>Gratuita, sem compromisso. Entendemos seu negócio, seus objetivos e o que está travando suas vendas hoje.</p>
-      </div>
-      <div class="step">
-        <div class="step-arr"></div>
-        <div class="step-n">02</div>
-        <h4>Estratégia personalizada</h4>
-        <p>Montamos um plano específico para o seu segmento e cidade — sem fórmula genérica de agência de São Paulo.</p>
-      </div>
-      <div class="step">
-        <div class="step-arr"></div>
-        <div class="step-n">03</div>
-        <h4>Execução e resultado</h4>
-        <p>Colocamos tudo no ar, acompanhamos os números e ajustamos o que for necessário para gerar resultado.</p>
-      </div>
-      <div class="step">
-        <div class="step-n">04</div>
-        <h4>Crescimento contínuo</h4>
-        <p>Você vê resultado em dados reais. Escalamos o que funciona e eliminamos o que não traz retorno.</p>
-      </div>
+    <div class="sec-head reveal"><div class="eyebrow">O que dá para resolver</div><h2>Tarefas reais, não conceitos de tecnologia</h2></div>
+    <div class="task-grid">
+      <div class="task-chip reveal"><span class="ck">✔</span>Responder WhatsApp mais rápido</div>
+      <div class="task-chip reveal"><span class="ck">✔</span>Criar anúncio e post prontos</div>
+      <div class="task-chip reveal"><span class="ck">✔</span>Montar proposta e orçamento</div>
+      <div class="task-chip reveal"><span class="ck">✔</span>Criar promoção de fim de mês</div>
+      <div class="task-chip reveal"><span class="ck">✔</span>Responder avaliações de clientes</div>
+      <div class="task-chip reveal"><span class="ck">✔</span>Organizar agenda e estoque</div>
     </div>
   </div>
 </section>
 
-<!-- CTA FINAL -->
-<section class="cta-sec" id="contato">
+<section id="depoimentos">
   <div class="container">
-    <div class="cta-wrap">
-      <h2>Pronto para <em>mais clientes?</em></h2>
-      <p class="cta-sub">A conversa inicial é gratuita e sem compromisso.</p>
-      <div class="cta-btns">
-        <a href="https://wa.me/5528999362584?text=Olá! Quero saber mais sobre a Agência Clap." class="btn-main">Falar no WhatsApp agora</a>
-        <a href="mailto:agenciaclap25@gmail.com" class="btn-line">Enviar e-mail →</a>
-      </div>
-      <div class="cta-divider"></div>
-      <div class="cta-contacts">
-        <div class="cta-c">
-          <div class="cta-c-label">Instagram</div>
-          <div class="cta-c-val">@agenciaclap.es</div>
-        </div>
-        <div class="cta-c">
-          <div class="cta-c-label">E-mail</div>
-          <div class="cta-c-val">agenciaclap25@gmail.com</div>
-        </div>
-        <div class="cta-c">
-          <div class="cta-c-label">Região</div>
-          <div class="cta-c-val">Sul do Espírito Santo</div>
-        </div>
-      </div>
-      <p class="guarantee"><strong>Sem contrato longo. Sem letras miúdas.</strong> Você começa quando quiser e encerra com 30 dias de aviso. Se crescer, fica. Se não crescer, conversamos.</p>
+    <div class="sec-head reveal"><div class="eyebrow">Quem já fez o diagnóstico</div><h2>Empresários comuns, recomendação certa</h2></div>
+    <div class="test-grid">
+      <div class="test-card reveal"><p>"Achei que precisaria comprar um curso caro. O diagnóstico me mostrou que o Kit já resolvia o meu problema agora."</p><div class="test-who"><div class="test-avatar"></div><div><div class="test-name">Regina Alves</div><div class="test-role">Farmácia — Interior de SP</div></div></div></div>
+      <div class="test-card reveal"><p>"Em 2 minutos entendi onde estava perdendo tempo. Não me senti empurrando comprando nada."</p><div class="test-who"><div class="test-avatar"></div><div><div class="test-name">Carlos Menezes</div><div class="test-role">Restaurante — Belo Horizonte</div></div></div></div>
+    </div>
+  </div>
+</section>
+
+<section class="section-alt" id="faq">
+  <div class="container">
+    <div class="sec-head reveal"><div class="eyebrow">Perguntas frequentes</div><h2>Antes de começar</h2></div>
+    <div class="faq-list reveal" id="faqList">
+      <div class="faq-item"><button class="faq-q">O diagnóstico é mesmo gratuito?<span class="plus">+</span></button><div class="faq-a"><p>Sim, sem custo e sem pedir cartão. É um questionário rápido para te orientar.</p></div></div>
+      <div class="faq-item"><button class="faq-q">Vou receber uma lista de produtos para comprar?<span class="plus">+</span></button><div class="faq-a"><p>Não. Você recebe apenas a recomendação mais indicada para o seu momento — não empurramos vários produtos de uma vez.</p></div></div>
+      <div class="faq-item"><button class="faq-q">Preciso saber programar ou entender de tecnologia?<span class="plus">+</span></button><div class="faq-a"><p>Não. Tudo é pensado para empresários que tocam o negócio no dia a dia, sem termo técnico.</p></div></div>
+      <div class="faq-item"><button class="faq-q">Já uso ChatGPT ou outra IA. Vale a pena fazer o diagnóstico?<span class="plus">+</span></button><div class="faq-a"><p>Vale, sim — o resultado é diferente para quem já usa IA no dia a dia, e a recomendação leva isso em conta.</p></div></div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="container">
+    <div class="cta-final reveal">
+      <h2>Dois minutos separam você de saber o próximo passo certo.</h2>
+      <p>Sem termo técnico. Sem lista de produtos. Uma recomendação, para o seu momento.</p>
+      <button class="btn btn-gold btn-big" onclick="openDiag()">Fazer diagnóstico gratuito</button>
     </div>
   </div>
 </section>
 
 <footer>
-  <div class="container foot-in">
-    <a href="#" class="logo">
-      <div class="logo-box">
-        <svg viewBox="0 0 18 18" fill="none"><rect x="1" y="4" width="13" height="2.2" rx="1" fill="#0A0A0A"/><rect x="1" y="4" width="1.8" height="9" rx=".9" fill="#0A0A0A"/><rect x="1" y="11.8" width="13" height="2.2" rx="1" fill="#0A0A0A"/><line x1="4" y1="4" x2="5.8" y2="6.2" stroke="#0A0A0A" stroke-width="1.3" stroke-linecap="round"/><line x1="7.2" y1="4" x2="9" y2="6.2" stroke="#0A0A0A" stroke-width="1.3" stroke-linecap="round"/><line x1="10.4" y1="4" x2="12.2" y2="6.2" stroke="#0A0A0A" stroke-width="1.3" stroke-linecap="round"/></svg>
-      </div>
-      <span class="logo-name">Agência <em>Clap</em></span>
-    </a>
-    <span class="foot-copy">© 2026 Agência Clap · Sul do Espírito Santo</span>
-  </div>
+  © 2026 CLAP IA
+  <small>Uma solução desenvolvida pela Agência CLAP.</small>
 </footer>
 
+<div class="modal-overlay" id="diagModal">
+  <div class="modal-box">
+    <button class="modal-close" onclick="closeDiag()" aria-label="Fechar">✕</button>
+    <div id="diagContent"></div>
+  </div>
+</div>
+
+<script>
+const revealEls = document.querySelectorAll('.reveal');
+const io = new IntersectionObserver((entries)=>{entries.forEach(e=>{if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target);}});},{threshold:0.14});
+revealEls.forEach(el=>io.observe(el));
+
+document.querySelectorAll('.faq-item').forEach(item=>{
+  const q = item.querySelector('.faq-q'); const a = item.querySelector('.faq-a');
+  q.addEventListener('click',()=>{
+    const isOpen = item.classList.contains('open');
+    document.querySelectorAll('.faq-item.open').forEach(o=>{o.classList.remove('open');o.querySelector('.faq-a').style.maxHeight=null;});
+    if(!isOpen){item.classList.add('open');a.style.maxHeight = a.scrollHeight+'px';}
+  });
+});
+
+const tasks = [
+  {who:'FARMÁCIA', task:'Responder dúvida sobre remédio no WhatsApp', before:'8 min', after:'12 seg'},
+  {who:'RESTAURANTE', task:'Criar legenda e post do prato do dia', before:'25 min', after:'40 seg'},
+  {who:'ESCRITÓRIO DE ADVOCACIA', task:'Resumir um processo de 40 páginas', before:'1h 30', after:'3 min'},
+  {who:'CLÍNICA', task:'Confirmar consultas do dia seguinte', before:'40 min', after:'automático'},
+  {who:'IMOBILIÁRIA', task:'Descrever um imóvel para anúncio', before:'20 min', after:'30 seg'},
+];
+const tickBody = document.getElementById('tickBody');
+function renderTicks(activeIndex){
+  tickBody.innerHTML = tasks.map((t,i)=>{
+    const idx=(activeIndex+i)%tasks.length; const d=tasks[idx];
+    return `<div class="tick-row" style="${i===0?'':'opacity:'+(1-i*0.28)+''}"><div><div class="tick-who">${d.who}</div><div class="tick-task">${d.task}</div></div><div class="tick-time"><span class="before">${d.before}</span><span class="after">${d.after}</span></div></div>`;
+  }).slice(0,3).join('');
+}
+let tickIndex=0; renderTicks(0);
+setInterval(()=>{tickIndex=(tickIndex+1)%tasks.length; renderTicks(tickIndex);},3400);
+
+/* ===== DIAGNÓSTICO — 10 perguntas ===== */
+const diagQuestions = [
+  {q:'Qual desses mais parece com o seu negócio?', field:'cat', opts:[
+    {l:'Atendo cliente direto (loja, clínica, escritório)', v:'atendimento'},
+    {l:'Vendo produto físico (comércio, farmácia, restaurante)', v:'organizacao'},
+    {l:'Presto serviço e faço proposta/orçamento', v:'vendas'},
+    {l:'Cuido de marketing e conteúdo da empresa', v:'marketing'}]},
+  {q:'O que mais consome seu tempo hoje?', field:'cat', opts:[
+    {l:'Responder as mesmas perguntas repetidas', v:'atendimento'},
+    {l:'Criar post, propaganda ou promoção', v:'marketing'},
+    {l:'Montar orçamento ou proposta comercial', v:'vendas'},
+    {l:'Controlar estoque e organização interna', v:'organizacao'}]},
+  {q:'Como você responde clientes hoje?', field:'cat', opts:[
+    {l:'Eu mesmo, um por um, no WhatsApp', v:'atendimento'},
+    {l:'Tenho alguém que faz isso, mas é lento', v:'atendimento'},
+    {l:'Uso algum sistema, mas ainda é manual', v:'organizacao'},
+    {l:'Quase não recebo mensagem, é mais presencial', v:'vendas'}]},
+  {q:'Com que frequência você publica algo (post, anúncio, promoção)?', field:'cat', opts:[
+    {l:'Quase nunca, não tenho tempo', v:'marketing'},
+    {l:'Uma vez por semana ou menos', v:'marketing'},
+    {l:'Pago uma agência ou freelancer', v:'marketing'},
+    {l:'Não é algo que eu priorize', v:'organizacao'}]},
+  {q:'Quantas pessoas trabalham com você hoje?', field:'team', opts:[
+    {l:'Só eu', v:'1'},
+    {l:'2 a 5 pessoas', v:'2-5'},
+    {l:'6 a 15 pessoas', v:'6-15'},
+    {l:'Mais de 15 pessoas', v:'15+'}]},
+  {q:'Você já perdeu venda por demorar para responder?', field:'cat', opts:[
+    {l:'Sim, isso acontece com frequência', v:'atendimento'},
+    {l:'Já aconteceu algumas vezes', v:'atendimento'},
+    {l:'Raramente', v:'vendas'},
+    {l:'Não sei dizer', v:'organizacao'}]},
+  {q:'Quanto tempo por dia você gasta em tarefas repetitivas (responder mensagem, criar conteúdo, montar proposta)?', field:'hours', opts:[
+    {l:'Menos de 30 minutos', v:'0.5'},
+    {l:'Cerca de 1 hora', v:'1'},
+    {l:'Cerca de 2 horas', v:'2'},
+    {l:'3 horas ou mais', v:'3.5'}]},
+  {q:'Quanto você investe hoje em anúncio (Facebook, Instagram, Google)?', field:'budget', opts:[
+    {l:'Não invisto em anúncio', v:'0'},
+    {l:'Até R$100 por mês', v:'100'},
+    {l:'Entre R$100 e R$500 por mês', v:'300'},
+    {l:'Mais de R$500 por mês', v:'600'}]},
+  {q:'Você já utiliza alguma Inteligência Artificial no trabalho?', field:'level', opts:[
+    {l:'Nunca usei', v:'0'},
+    {l:'Já testei uma vez ou outra (ChatGPT, Claude, Gemini, Copilot...)', v:'1'},
+    {l:'Uso de vez em quando para alguma tarefa', v:'2'},
+    {l:'Uso praticamente todos os dias no trabalho', v:'3'}]},
+  {q:'O que você mais gostaria de resolver primeiro?', field:'cat', opts:[
+    {l:'Respostas no WhatsApp', v:'atendimento'},
+    {l:'Criação de conteúdo e propaganda', v:'marketing'},
+    {l:'Orçamentos e propostas', v:'vendas'},
+    {l:'Organização interna (estoque, agenda, relatórios)', v:'organizacao'}]},
+];
+
+const catInfo = {
+  atendimento:{title:'atendimento', desc:'boa parte do seu tempo hoje vai para responder as mesmas perguntas — é aí que a IA devolve mais tempo primeiro.', steps:['Modelos prontos de resposta para as perguntas mais comuns','Um roteiro simples para o WhatsApp responder o básico por você']},
+  marketing:{title:'marketing e conteúdo', desc:'divulgar a empresa consome tempo que podia ir para atender e vender — a IA pode assumir a primeira versão de tudo isso.', steps:['Modelos prontos para post, legenda e promoção','Rotina simples: 1 comando, 1 conteúdo pronto para revisar']},
+  vendas:{title:'orçamento e proposta', desc:'quanto mais rápido você responde, maior a chance de fechar — a IA agiliza essa etapa sem perder o seu tom.', steps:['Modelo pronto de orçamento e proposta comercial','Roteiro para responder pedidos no mesmo dia']},
+  organizacao:{title:'organização interna', desc:'estoque, agenda e controle manual custam tempo invisível todos os dias.', steps:['Checklist de organização com apoio de IA','Rotina simples de controle e alerta automático']}
+};
+
+let diagState = {step:0, answers:{}, scores:{atendimento:0,marketing:0,vendas:0,organizacao:0}};
+
+function openDiag(){
+  diagState = {step:0, answers:{}, scores:{atendimento:0,marketing:0,vendas:0,organizacao:0}};
+  document.getElementById('diagModal').classList.add('open');
+  renderDiag();
+}
+function closeDiag(){ document.getElementById('diagModal').classList.remove('open'); }
+
+function renderDiag(){
+  const el = document.getElementById('diagContent');
+  if(diagState.step < diagQuestions.length){
+    const q = diagQuestions[diagState.step];
+    const pct = Math.round((diagState.step/diagQuestions.length)*100);
+    el.innerHTML = `
+      <div class="diag-progress"><div class="diag-progress-fill" style="width:${pct}%"></div></div>
+      <div class="diag-step-label">Pergunta ${diagState.step+1} de ${diagQuestions.length}</div>
+      <div class="diag-q">${q.q}</div>
+      <div class="diag-opts">${q.opts.map((o)=>`<button class="diag-opt" data-field="${q.field}" data-val="${o.v}">${o.l}</button>`).join('')}</div>
+    `;
+    el.querySelectorAll('.diag-opt').forEach(btn=>{
+      btn.addEventListener('click',()=>{
+        const field = btn.dataset.field, val = btn.dataset.val;
+        if(field==='cat'){ diagState.scores[val]++; }
+        else { diagState.answers[field] = val; }
+        diagState.step++;
+        renderDiag();
+      });
+    });
+  } else {
+    const top = Object.entries(diagState.scores).sort((a,b)=>b[1]-a[1])[0][0];
+    const info = catInfo[top];
+    const hours = parseFloat(diagState.answers.hours || '1');
+    const monthlyHours = Math.round(hours*22);
+    const budget = parseInt(diagState.answers.budget || '0');
+    const level = parseInt(diagState.answers.level || '0');
+    const team = diagState.answers.team || '1';
+
+    let mathLines = `<div class="m-line">Você gasta cerca de <b>${hours}h por dia</b> em tarefas repetitivas — isso é aproximadamente <b>${monthlyHours}h por mês</b>.</div>`;
+    if(budget>0){ mathLines += `<div class="m-line" style="margin-top:8px">Você investe cerca de <b>R$${budget}/mês</b> em anúncio. Antes de aumentar esse valor, vale garantir que o conteúdo está sendo bem aproveitado.</div>`; }
+
+    let levelNote = '';
+    let advanced = (level>=3 && (team==='6-15' || team==='15+'));
+    if(level===0){ levelNote = 'Você ainda não usa IA no dia a dia — é exatamente o momento certo para começar pelo básico, sem complicação.'; }
+    else if(level<=2){ levelNote = 'Você já testou IA algumas vezes — falta aplicar isso direto nas tarefas da sua empresa, de forma organizada.'; }
+    else { levelNote = 'Você já usa IA no trabalho com frequência. Isso significa que você pode ir direto para os modelos aplicados ao seu negócio, sem precisar do básico.'; }
+
+    el.innerHTML = `
+      <div class="diag-result">
+        <div class="diag-step-label">Seu diagnóstico</div>
+        <h3>Sua maior oportunidade está em ${info.title}.</h3>
+        <p>${info.desc} ${levelNote}</p>
+        <div class="diag-math">
+          <div class="m-tag">A sua conta</div>
+          ${mathLines}
+        </div>
+        <div class="diag-report">
+          <div class="r-tag">Recomendação para agora</div>
+          <h4>${advanced ? 'Kit Essencial de IA + acesso prioritário ao Curso completo' : 'Kit Essencial de IA para Empresários — R$27'}</h4>
+          <p style="margin-bottom:0">Não recomendamos comprar vários produtos agora. Comece por aqui — o próximo passo só faz sentido depois que este estiver dominado.</p>
+          <ul>${info.steps.map(s=>`<li>${s}</li>`).join('')}</ul>
+        </div>
+        <div style="display:flex;gap:12px;flex-wrap:wrap">
+          <a href="/kit-essencial.html" class="btn btn-gold">Quero o Kit Essencial — R$27</a>
+          <button class="btn" style="border:1px solid var(--line);color:var(--ink)" onclick="closeDiag()">Fechar</button>
+        </div>
+      </div>
+    `;
+  }
+}
+document.getElementById('diagModal').addEventListener('click',(e)=>{ if(e.target.id==='diagModal') closeDiag(); });
+</script>
 </body>
 </html>
