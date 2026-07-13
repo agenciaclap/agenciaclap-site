@@ -192,6 +192,15 @@ footer small{display:block;margin-top:4px}
 .diag-report ul{list-style:none;display:flex;flex-direction:column;gap:7px;margin:12px 0 0}
 .diag-report li{font-size:13.5px;color:var(--muted);padding-left:16px;position:relative}
 .diag-report li::before{content:'→';position:absolute;left:0;color:var(--gold)}
+
+/* GATE DE CAPTURA — mesma linguagem visual do modal de diagnóstico */
+.diag-lead-form{display:flex;flex-direction:column;gap:10px;margin:18px 0}
+.diag-input{background:var(--bg);border:1px solid var(--line);border-radius:10px;padding:12px 14px;font-size:14px;color:var(--ink);font-family:'DM Sans',sans-serif;width:100%}
+.diag-input:focus{outline:none;border-color:var(--gold)}
+.diag-input::placeholder{color:var(--muted-2)}
+.diag-lead-checks{display:flex;flex-direction:column;gap:6px;margin:14px 0 20px}
+.diag-lead-checks span{font-size:12.5px;color:var(--muted);display:flex;gap:8px;align-items:flex-start}
+.diag-lead-checks span b{color:var(--green);flex-shrink:0}
 </style>
 </head>
 <body>
@@ -309,6 +318,19 @@ footer small{display:block;margin-top:4px}
         <button class="btn btn-gold" onclick="openDiag()">Fazer diagnóstico gratuito</button>
         <a href="/kit-essencial.html" class="soft-link">Já sei que quero o CLAP Start →</a>
       </div>
+    </div>
+  </div>
+</section>
+
+<section id="autoridade">
+  <div class="container">
+    <div class="sec-head reveal"><div class="eyebrow">Quem está por trás disso</div><h2>Testado em operação real, todos os dias — não em teoria</h2></div>
+    <div class="ads-box reveal">
+      <p>A CLAP IA nasce dentro da Agência CLAP, responsável por um ecossistema de mídia regional no Sul do Espírito Santo: TV Marataízes, TV Piúma, TV Sul Capixaba e o Portal Regional.</p>
+      <p>São operações que produzem conteúdo, atendem público e vendem anúncio todos os dias — usando os mesmos princípios de comunicação por trás dos prompts deste diagnóstico. Não é teoria de curso: é o que já colocamos no ar para rodar emissoras de verdade.</p>
+    </div>
+    <div class="kit-list reveal" style="margin-top:20px">
+      <span>TV Marataízes</span><span>TV Piúma</span><span>TV Sul Capixaba</span><span>Portal Regional</span>
     </div>
   </div>
 </section>
@@ -463,10 +485,10 @@ const catInfo = {
   organizacao:{title:'organização interna', desc:'estoque, agenda e controle manual custam tempo invisível todos os dias.', steps:['Checklist de organização com apoio de IA','Rotina simples de controle e alerta automático']}
 };
 
-let diagState = {step:0, answers:{}, scores:{atendimento:0,marketing:0,vendas:0,organizacao:0}};
+let diagState = {step:0, answers:{}, scores:{atendimento:0,marketing:0,vendas:0,organizacao:0}, leadCaptured:false, lead:{}};
 
 function openDiag(){
-  diagState = {step:0, answers:{}, scores:{atendimento:0,marketing:0,vendas:0,organizacao:0}};
+  diagState = {step:0, answers:{}, scores:{atendimento:0,marketing:0,vendas:0,organizacao:0}, leadCaptured:false, lead:{}};
   document.getElementById('diagModal').classList.add('open');
   renderDiag();
 }
@@ -491,6 +513,38 @@ function renderDiag(){
         diagState.step++;
         renderDiag();
       });
+    });
+  } else if (!diagState.leadCaptured) {
+    el.innerHTML = `
+      <div class="diag-step-label">Seu diagnóstico está pronto</div>
+      <h3 style="font-size:20px;margin-bottom:10px">Seu diagnóstico está pronto!</h3>
+      <p style="color:var(--muted);font-size:14px;line-height:1.6;margin-bottom:4px">Seu diagnóstico é 100% gratuito. Você vai receber seu relatório personalizado imediatamente, sem qualquer cobrança.</p>
+      <p style="color:var(--muted);font-size:14px;line-height:1.6;margin-bottom:16px">Para liberar seu resultado e poder consultar essa análise novamente no futuro, informe os dados abaixo.</p>
+      <form class="diag-lead-form" id="leadForm">
+        <input class="diag-input" type="text" name="nome" placeholder="Nome" required>
+        <input class="diag-input" type="text" name="empresa" placeholder="Nome da empresa (opcional)">
+        <input class="diag-input" type="text" name="cidade" placeholder="Cidade" required>
+        <input class="diag-input" type="tel" name="whatsapp" placeholder="WhatsApp" required>
+        <input class="diag-input" type="email" name="email" placeholder="E-mail" required>
+        <button type="submit" class="btn btn-gold" style="justify-content:center;margin-top:4px">Ver meu diagnóstico gratuito</button>
+      </form>
+      <div class="diag-lead-checks">
+        <span><b>✔</b> Não será cobrado nada para visualizar seu diagnóstico.</span>
+        <span><b>✔</b> A oferta de um produto aparece apenas depois de você receber, gratuitamente, todo o seu resultado personalizado.</span>
+      </div>
+    `;
+    document.getElementById('leadForm').addEventListener('submit', (e)=>{
+      e.preventDefault();
+      const fd = new FormData(e.target);
+      diagState.lead = {
+        nome: fd.get('nome'), empresa: fd.get('empresa'), cidade: fd.get('cidade'),
+        whatsapp: fd.get('whatsapp'), email: fd.get('email')
+      };
+      // TODO: substituir por envio real do lead (ex: webhook para Google Sheets, Zapier, CRM ou Hotmart).
+      // Por enquanto o lead só fica em memória nesta sessão do navegador — nada é armazenado de fato.
+      try { console.log('Lead capturado (diagnóstico):', diagState.lead); } catch(err) {}
+      diagState.leadCaptured = true;
+      renderDiag();
     });
   } else {
     const top = Object.entries(diagState.scores).sort((a,b)=>b[1]-a[1])[0][0];
