@@ -3,13 +3,13 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>CLAP IA — Descubra onde sua empresa mais perde tempo hoje</title>
+<title>CLAP IA — Descubra onde sua empresa perde tempo e recupere horas toda semana</title>
 <meta name="description" content="Diagnóstico gratuito para empresários: descubra onde você mais perde tempo hoje e o que fazer primeiro para vender mais e economizar tempo usando Inteligência Artificial.">
 <meta name="keywords" content="diagnóstico de IA para empresa, IA para pequenos negócios, IA para whatsapp, IA para propaganda, kit de IA para empresários">
 <link rel="canonical" href="https://agenciaclap.com.br/">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="CLAP IA">
-<meta property="og:title" content="Descubra onde sua empresa mais perde tempo hoje">
+<meta property="og:title" content="Descubra onde sua empresa perde tempo e recupere horas toda semana">
 <meta property="og:description" content="Diagnóstico gratuito de 2 minutos. Receba uma recomendação personalizada para sua empresa.">
 <meta property="og:url" content="https://agenciaclap.com.br/">
 <meta property="og:locale" content="pt_BR">
@@ -102,6 +102,56 @@ section{padding:80px 0}
 .test-role{font-size:11.5px;color:var(--muted-2)}
 @media(max-width:640px){.test-grid{grid-template-columns:1fr}}
 
+/* KIT PREVIEW */
+.kit-preview{border:1px solid rgba(245,185,66,0.32);background:linear-gradient(160deg,rgba(245,185,66,0.08),var(--bg-2) 60%);border-radius:20px;padding:40px}
+.kit-preview-head{text-align:center;max-width:520px;margin:0 auto 30px}
+.kit-preview-head h3{font-size:24px;margin-bottom:10px}
+.kit-preview-head p{color:var(--muted);font-size:15px;line-height:1.6}
+.kit-list{display:flex;flex-wrap:wrap;gap:10px;justify-content:center;margin-bottom:30px}
+.kit-list span{font-size:13px;background:var(--bg);border:1px solid var(--line);border-radius:100px;padding:9px 16px;color:var(--ink);display:inline-flex;align-items:center;gap:6px}
+.kit-list span b{color:var(--gold);font-weight:700}
+.kit-cta{text-align:center;display:flex;gap:14px;justify-content:center;flex-wrap:wrap}
+.kit-cta .soft-link{font-size:13px;color:var(--muted);text-decoration:underline;align-self:center}
+
+/* PDF PAGE MOCKUPS */
+.mock-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:14px;margin-bottom:30px}
+.mock-card{background:var(--bg-2);border:1px solid var(--line);border-radius:12px;padding:16px}
+.mock-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}
+.mock-tag{font-family:'JetBrains Mono',monospace;font-size:9.5px;color:var(--gold);letter-spacing:0.06em;text-transform:uppercase}
+.mock-num{font-family:'Fraunces',serif;font-weight:600;color:var(--gold);font-size:13px}
+.mock-title{font-size:12.5px;font-weight:600;color:var(--ink);margin-bottom:8px}
+.mock-code{background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:10px 12px;font-family:'JetBrains Mono',monospace;font-size:9.5px;line-height:1.55;color:var(--muted)}
+.mock-code b{color:var(--gold-2);font-weight:500;font-style:normal}
+@media(max-width:640px){.mock-grid{grid-template-columns:1fr}}
+
+/* CUSTO OCULTO — ilustrativo */
+.cost-table{border:1px solid var(--line);border-radius:14px;overflow:hidden;background:var(--bg-2)}
+.cost-row{display:flex;align-items:center;justify-content:space-between;padding:18px 22px;border-bottom:1px solid var(--line);gap:16px}
+.cost-row:last-child{border-bottom:none}
+.cost-task{font-size:14.5px;color:var(--ink);font-weight:500}
+.cost-vals{display:flex;align-items:center;gap:10px;font-family:'Fraunces',serif;flex-shrink:0}
+.cost-before{font-size:13px;color:var(--muted-2);text-decoration:line-through}
+.cost-arrow{color:var(--muted-2);font-size:13px}
+.cost-after{font-size:16px;color:var(--gold);font-weight:600}
+.cost-note{margin-top:16px;font-size:12px;color:var(--muted-2);font-family:'JetBrains Mono',monospace;text-align:center}
+@media(max-width:600px){.cost-row{flex-direction:column;align-items:flex-start;gap:8px}}
+
+/* CHAT MOCKUP — simulação, não é depoimento */
+.chat-grid{display:grid;grid-template-columns:1fr 1fr;gap:18px;max-width:720px;margin:0 auto}
+.chat-mock{background:var(--bg-2);border:1px solid var(--line);border-radius:16px;overflow:hidden}
+.chat-mock.after{border-color:rgba(245,185,66,0.35)}
+.chat-head{padding:12px 16px;border-bottom:1px solid var(--line);display:flex;justify-content:space-between;align-items:center}
+.chat-head .tag{font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:0.08em;text-transform:uppercase;color:var(--muted-2)}
+.chat-mock.after .chat-head .tag{color:var(--gold)}
+.chat-head .time{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--muted-2)}
+.chat-body{padding:16px;display:flex;flex-direction:column;gap:9px;min-height:160px;justify-content:flex-end}
+.bubble{max-width:82%;padding:9px 13px;border-radius:14px;font-size:12.5px;line-height:1.45}
+.bubble.in{background:var(--bg);color:var(--ink);align-self:flex-start;border:1px solid var(--line);border-bottom-left-radius:4px}
+.bubble.out{background:linear-gradient(150deg,var(--gold-2),var(--gold));color:#1a1103;align-self:flex-end;border-bottom-right-radius:4px}
+.bubble.out.slow{background:var(--muted-2);color:var(--bg)}
+.chat-gap{align-self:center;font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--muted-2);margin:2px 0}
+@media(max-width:640px){.chat-grid{grid-template-columns:1fr}}
+
 .faq-list{max-width:640px;margin:0 auto}
 .faq-item{border-bottom:1px solid var(--line)}
 .faq-q{width:100%;text-align:left;background:none;border:none;padding:18px 0;display:flex;justify-content:space-between;align-items:center;cursor:pointer;color:var(--ink);font-size:15px;font-weight:500;gap:20px;font-family:'DM Sans',sans-serif}
@@ -156,8 +206,9 @@ footer small{display:block;margin-top:4px}
 <section class="hero">
   <div class="container hero-in">
     <div class="eyebrow reveal in">Diagnóstico gratuito · 2 minutos</div>
-    <h1 class="reveal in">Descubra onde sua empresa mais perde tempo hoje — e o que fazer primeiro.</h1>
+    <h1 class="reveal in">Descubra onde sua empresa perde tempo — e como recuperar horas toda semana usando IA.</h1>
     <p class="hero-copy reveal in">Responda algumas perguntas rápidas sobre o seu negócio e receba uma recomendação personalizada, sem termo técnico e sem enrolação.</p>
+    <p class="hero-copy reveal in" style="margin-top:-18px;font-style:italic;color:var(--gold-2)">Você não precisa aprender Inteligência Artificial. Só precisa copiar, colar e adaptar.</p>
     <button class="btn btn-gold btn-big reveal in" onclick="openDiag()">Fazer meu diagnóstico gratuito</button>
     <div class="hero-note reveal in">sem cadastro de cartão · resultado na hora</div>
   </div>
@@ -206,12 +257,82 @@ footer small{display:block;margin-top:4px}
   </div>
 </section>
 
+<section id="custo-oculto">
+  <div class="container">
+    <div class="sec-head reveal"><div class="eyebrow">O custo de continuar sem IA</div><h2>Quanto tempo isso representa na sua semana?</h2></div>
+    <div class="cost-table reveal">
+      <div class="cost-row"><span class="cost-task">Responder clientes no WhatsApp</span><span class="cost-vals"><span class="cost-before">2h/dia</span><span class="cost-arrow">→</span><span class="cost-after">10 min/dia</span></span></div>
+      <div class="cost-row"><span class="cost-task">Criar posts e anúncios</span><span class="cost-vals"><span class="cost-before">5h/semana</span><span class="cost-arrow">→</span><span class="cost-after">30 min/semana</span></span></div>
+      <div class="cost-row"><span class="cost-task">Montar orçamentos e propostas</span><span class="cost-vals"><span class="cost-before">3h/semana</span><span class="cost-arrow">→</span><span class="cost-after">15 min/semana</span></span></div>
+    </div>
+    <div class="cost-note">exemplo ilustrativo de aplicação — não é uma média de mercado, é o tipo de ganho que os prompts do CLAP Start entregam quando aplicados</div>
+  </div>
+</section>
+
+<section class="section-alt" id="kit">
+  <div class="container">
+    <div class="kit-preview reveal">
+      <div class="kit-preview-head">
+        <div class="eyebrow" style="justify-content:center">Se o diagnóstico indicar o CLAP Start</div>
+        <h3>Seu primeiro funcionário de IA</h3>
+        <p>Em menos de uma hora você aprende a responder clientes, criar anúncios, vender mais e organizar a empresa — usando prompts prontos, sem aprender IA de verdade.</p>
+      </div>
+      <div class="kit-list">
+        <span><b>100</b> prompts prontos</span>
+        <span>WhatsApp</span><span>Instagram</span><span>Vendas</span><span>Google Meu Negócio</span><span>Organização</span>
+        <span>Guia de aplicação</span>
+        <span>Funciona no ChatGPT, Claude, Gemini e Copilot</span>
+      </div>
+      <div class="mock-grid">
+        <div class="mock-card">
+          <div class="mock-head"><span class="mock-tag">WhatsApp</span><span class="mock-num">01</span></div>
+          <div class="mock-title">Responder dúvida repetida</div>
+          <div class="mock-code">Você é o atendimento da <b>[nome da empresa]</b>...<br>Nome da empresa:<br>Tom da comunicação:<br>Inclua uma chamada gentil para fechar.</div>
+        </div>
+        <div class="mock-card">
+          <div class="mock-head"><span class="mock-tag">Instagram</span><span class="mock-num">06</span></div>
+          <div class="mock-title">Post de promoção</div>
+          <div class="mock-code">Crie um post para Instagram sobre uma promoção.<br>Produto: <b>[produto]</b><br>Desconto: <b>[oferta]</b><br>Inclua legenda, hashtags e chamada para WhatsApp.</div>
+        </div>
+        <div class="mock-card">
+          <div class="mock-head"><span class="mock-tag">Google Meu Negócio</span><span class="mock-num">61</span></div>
+          <div class="mock-title">Responder avaliação 5 estrelas</div>
+          <div class="mock-code">Você é responsável pelo perfil no Google.<br>O que o cliente elogiou: <b>[elogio]</b><br>Resposta breve e genuína, em até 3 frases.</div>
+        </div>
+        <div class="mock-card">
+          <div class="mock-head"><span class="mock-tag">Organização</span><span class="mock-num">81</span></div>
+          <div class="mock-title">Planejamento semanal</div>
+          <div class="mock-code">Ajude a organizar minha semana.<br>Tarefas: <b>[liste]</b><br>Distribua por dia, priorizando o que tem mais impacto.</div>
+        </div>
+      </div>
+      <div class="kit-cta">
+        <button class="btn btn-gold" onclick="openDiag()">Fazer diagnóstico gratuito</button>
+        <a href="/kit-essencial.html" class="soft-link">Já sei que quero o CLAP Start →</a>
+      </div>
+    </div>
+  </div>
+</section>
+
 <section id="depoimentos">
   <div class="container">
-    <div class="sec-head reveal"><div class="eyebrow">Quem já fez o diagnóstico</div><h2>Empresários comuns, recomendação certa</h2></div>
-    <div class="test-grid">
-      <div class="test-card reveal"><p>"Achei que precisaria comprar um curso caro. O diagnóstico me mostrou que o Kit já resolvia o meu problema agora."</p><div class="test-who"><div class="test-avatar"></div><div><div class="test-name">Regina Alves</div><div class="test-role">Farmácia — Interior de SP</div></div></div></div>
-      <div class="test-card reveal"><p>"Em 2 minutos entendi onde estava perdendo tempo. Não me senti empurrando comprando nada."</p><div class="test-who"><div class="test-avatar"></div><div><div class="test-name">Carlos Menezes</div><div class="test-role">Restaurante — Belo Horizonte</div></div></div></div>
+    <div class="sec-head reveal"><div class="eyebrow">Simulação — não é depoimento real</div><h2>O mesmo atendimento, antes e depois de um prompt</h2></div>
+    <div class="chat-grid">
+      <div class="chat-mock reveal">
+        <div class="chat-head"><span class="tag">Antes</span><span class="time">resposta em 8 min</span></div>
+        <div class="chat-body">
+          <div class="bubble in">Bom dia, esse remédio precisa de receita?</div>
+          <div class="chat-gap">··· 8 minutos depois ···</div>
+          <div class="bubble out slow">Bom dia. Depende do tipo, alguns têm venda livre. Pode me dizer o nome exato que eu verifico.</div>
+        </div>
+      </div>
+      <div class="chat-mock after reveal">
+        <div class="chat-head"><span class="tag">Depois — com o CLAP Start</span><span class="time">resposta em 12 seg</span></div>
+        <div class="chat-body">
+          <div class="bubble in">Bom dia, esse remédio precisa de receita?</div>
+          <div class="chat-gap">··· 12 segundos depois ···</div>
+          <div class="bubble out">Bom dia! Esse pode pedir receita dependendo do tipo — me manda o nome certinho que já confirmo e vejo se temos em estoque 😊</div>
+        </div>
+      </div>
     </div>
   </div>
 </section>
