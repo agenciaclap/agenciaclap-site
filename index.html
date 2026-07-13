@@ -479,13 +479,62 @@ const diagQuestions = [
 ];
 
 const catInfo = {
-  atendimento:{title:'atendimento', desc:'boa parte do seu tempo hoje vai para responder as mesmas perguntas — é aí que a IA devolve mais tempo primeiro.', steps:['Modelos prontos de resposta para as perguntas mais comuns','Um roteiro simples para o WhatsApp responder o básico por você']},
-  marketing:{title:'marketing e conteúdo', desc:'divulgar a empresa consome tempo que podia ir para atender e vender — a IA pode assumir a primeira versão de tudo isso.', steps:['Modelos prontos para post, legenda e promoção','Rotina simples: 1 comando, 1 conteúdo pronto para revisar']},
-  vendas:{title:'orçamento e proposta', desc:'quanto mais rápido você responde, maior a chance de fechar — a IA agiliza essa etapa sem perder o seu tom.', steps:['Modelo pronto de orçamento e proposta comercial','Roteiro para responder pedidos no mesmo dia']},
-  organizacao:{title:'organização interna', desc:'estoque, agenda e controle manual custam tempo invisível todos os dias.', steps:['Checklist de organização com apoio de IA','Rotina simples de controle e alerta automático']}
+  atendimento:{title:'atendimento', desc:'boa parte do seu tempo hoje vai para responder as mesmas perguntas — é aí que a IA devolve mais tempo primeiro.', steps:['Modelos prontos de resposta para as perguntas mais comuns','Um roteiro simples para o WhatsApp responder o básico por você'],
+    findings:['O atendimento depende de você responder um a um, sem modelo pronto.','Isso pode estar custando venda para quem demora a responder primeiro.'],
+    plan:['Padronizar respostas no WhatsApp com modelos prontos.','Organizar o marketing utilizando prompts prontos.','Criar conteúdo de forma mais rápida.','Automatizar tarefas repetitivas do dia a dia.']},
+  marketing:{title:'marketing e conteúdo', desc:'divulgar a empresa consome tempo que podia ir para atender e vender — a IA pode assumir a primeira versão de tudo isso.', steps:['Modelos prontos para post, legenda e promoção','Rotina simples: 1 comando, 1 conteúdo pronto para revisar'],
+    findings:['Seu marketing depende muito de esforço manual, post a post.','Existe potencial para produzir mais conteúdo sem aumentar custo.'],
+    plan:['Organizar o marketing utilizando prompts prontos.','Padronizar respostas no WhatsApp.','Criar conteúdo de forma mais rápida e constante.','Automatizar tarefas repetitivas do dia a dia.']},
+  vendas:{title:'orçamento e proposta', desc:'quanto mais rápido você responde, maior a chance de fechar — a IA agiliza essa etapa sem perder o seu tom.', steps:['Modelo pronto de orçamento e proposta comercial','Roteiro para responder pedidos no mesmo dia'],
+    findings:['Orçamentos e propostas podem estar demorando mais do que o necessário para sair.','Cada proposta é escrita do zero, sem um modelo padrão.'],
+    plan:['Padronizar orçamento e proposta com modelos prontos.','Organizar o marketing utilizando prompts prontos.','Padronizar respostas no WhatsApp.','Automatizar tarefas repetitivas do dia a dia.']},
+  organizacao:{title:'organização interna', desc:'estoque, agenda e controle manual custam tempo invisível todos os dias.', steps:['Checklist de organização com apoio de IA','Rotina simples de controle e alerta automático'],
+    findings:['Estoque, agenda e controle interno ainda dependem de processo manual.','Existe oportunidade de automatizar parte do controle interno.'],
+    plan:['Organizar a rotina interna com apoio de IA.','Padronizar respostas no WhatsApp.','Organizar o marketing utilizando prompts prontos.','Automatizar tarefas repetitivas do dia a dia.']}
 };
 
 let diagState = {step:0, answers:{}, scores:{atendimento:0,marketing:0,vendas:0,organizacao:0}, leadCaptured:false, lead:{}};
+
+// Integração Google Sheets (Google Apps Script) — substitua pela URL do seu Web App após publicar.
+const LEADS_ENDPOINT = 'COLE_AQUI_A_URL_DO_SEU_APPS_SCRIPT_WEB_APP';
+
+function sendLeadToSheets(){
+  try{
+    const top = Object.entries(diagState.scores).sort((a,b)=>b[1]-a[1])[0][0];
+    const info = catInfo[top];
+    const hours = parseFloat(diagState.answers.hours || '1');
+    const monthlyHours = Math.round(hours*22);
+    const level = parseInt(diagState.answers.level || '0');
+    const team = diagState.answers.team || '1';
+    const advanced = (level>=3 && (team==='6-15' || team==='15+'));
+    const produtoRecomendado = advanced ? 'CLAP Start + acesso prioritário ao Curso completo' : 'CLAP Start — Kit Essencial de IA para Empresários';
+
+    const payload = {
+      nome: diagState.lead.nome || '',
+      empresa: diagState.lead.empresa || '',
+      cidade: diagState.lead.cidade || '',
+      whatsapp: diagState.lead.whatsapp || '',
+      email: diagState.lead.email || '',
+      segmento: diagState.answers.segmentoLabel || '',
+      maiorOportunidade: info.title,
+      horasEstimadasMes: monthlyHours,
+      produtoRecomendado: produtoRecomendado,
+      observacoes: `Nível de uso de IA: ${level} · Equipe: ${team} · Orçamento de anúncio: R$${diagState.answers.budget||0}/mês`
+    };
+
+    if(!LEADS_ENDPOINT || LEADS_ENDPOINT.indexOf('COLE_AQUI') === 0){
+      console.warn('LEADS_ENDPOINT não configurado — lead não foi enviado ao Google Sheets:', payload);
+      return;
+    }
+    fetch(LEADS_ENDPOINT, {
+      method: 'POST',
+      headers: { 'Content-Type': 'text/plain;charset=utf-8' }, // evita preflight CORS no Apps Script
+      body: JSON.stringify(payload)
+    }).catch(err => console.error('Falha ao enviar lead para o Sheets:', err));
+  } catch(err){
+    console.error('Erro ao montar payload do lead:', err);
+  }
+}
 
 function openDiag(){
   diagState = {step:0, answers:{}, scores:{atendimento:0,marketing:0,vendas:0,organizacao:0}, leadCaptured:false, lead:{}};
@@ -508,6 +557,7 @@ function renderDiag(){
     el.querySelectorAll('.diag-opt').forEach(btn=>{
       btn.addEventListener('click',()=>{
         const field = btn.dataset.field, val = btn.dataset.val;
+        if(diagState.step===0){ diagState.answers.segmentoLabel = btn.textContent.trim(); }
         if(field==='cat'){ diagState.scores[val]++; }
         else { diagState.answers[field] = val; }
         diagState.step++;
@@ -540,9 +590,7 @@ function renderDiag(){
         nome: fd.get('nome'), empresa: fd.get('empresa'), cidade: fd.get('cidade'),
         whatsapp: fd.get('whatsapp'), email: fd.get('email')
       };
-      // TODO: substituir por envio real do lead (ex: webhook para Google Sheets, Zapier, CRM ou Hotmart).
-      // Por enquanto o lead só fica em memória nesta sessão do navegador — nada é armazenado de fato.
-      try { console.log('Lead capturado (diagnóstico):', diagState.lead); } catch(err) {}
+      sendLeadToSheets();
       diagState.leadCaptured = true;
       renderDiag();
     });
@@ -551,33 +599,64 @@ function renderDiag(){
     const info = catInfo[top];
     const hours = parseFloat(diagState.answers.hours || '1');
     const monthlyHours = Math.round(hours*22);
+    const yearlyHours = Math.round(hours*22*12);
     const budget = parseInt(diagState.answers.budget || '0');
     const level = parseInt(diagState.answers.level || '0');
     const team = diagState.answers.team || '1';
 
-    let mathLines = `<div class="m-line">Você gasta cerca de <b>${hours}h por dia</b> em tarefas repetitivas — isso é aproximadamente <b>${monthlyHours}h por mês</b>.</div>`;
-    if(budget>0){ mathLines += `<div class="m-line" style="margin-top:8px">Você investe cerca de <b>R$${budget}/mês</b> em anúncio. Antes de aumentar esse valor, vale garantir que o conteúdo está sendo bem aproveitado.</div>`; }
+    let mathLines = `<div class="m-line">Você informou gastar aproximadamente <b>${hours}h por dia</b> em tarefas repetitivas. Isso representa cerca de:</div>
+      <div class="m-line" style="margin-top:6px">→ <b>${monthlyHours}h por mês</b></div>
+      <div class="m-line">→ <b>mais de ${yearlyHours}h por ano</b></div>
+      <div class="m-line" style="margin-top:8px">Essas horas podem ser parcialmente recuperadas utilizando Inteligência Artificial nas tarefas mais repetitivas.</div>`;
+    if(budget>0){ mathLines += `<div class="m-line" style="margin-top:8px">Você também investe cerca de <b>R$${budget}/mês</b> em anúncio — antes de aumentar esse valor, vale garantir que o conteúdo está sendo bem aproveitado.</div>`; }
 
     let levelNote = '';
     let advanced = (level>=3 && (team==='6-15' || team==='15+'));
-    if(level===0){ levelNote = 'Você ainda não usa IA no dia a dia — é exatamente o momento certo para começar pelo básico, sem complicação.'; }
-    else if(level<=2){ levelNote = 'Você já testou IA algumas vezes — falta aplicar isso direto nas tarefas da sua empresa, de forma organizada.'; }
-    else { levelNote = 'Você já usa IA no trabalho com frequência. Isso significa que você pode ir direto para os modelos aplicados ao seu negócio, sem precisar do básico.'; }
+    if(level===0){ levelNote = 'Você ainda não usa Inteligência Artificial no dia a dia — é exatamente o momento certo para começar pelo básico, sem complicação.'; }
+    else if(level<=2){ levelNote = 'Hoje você já utiliza Inteligência Artificial em alguns momentos, mas ainda não transformou isso em um processo organizado dentro da empresa.'; }
+    else { levelNote = 'Você já usa Inteligência Artificial no trabalho com frequência — o maior ganho agora está em organizar isso em um processo, não em aprender o básico.'; }
+
+    const findings = ['Você perde tempo em tarefas repetitivas que poderiam ser mais rápidas.', ...info.findings];
+    if(budget>0){ findings.push('Seu marketing conta com investimento em anúncio, mas ainda sem uma produção de conteúdo organizada por trás.'); }
 
     el.innerHTML = `
       <div class="diag-result">
-        <div class="diag-step-label">Seu diagnóstico</div>
+        <div class="diag-step-label">1. Resumo do diagnóstico</div>
         <h3>Sua maior oportunidade está em ${info.title}.</h3>
-        <p>${info.desc} ${levelNote}</p>
+        <p>${levelNote} ${info.desc}</p>
+
+        <div class="diag-report">
+          <div class="r-tag">2. O que identificamos</div>
+          <ul>${findings.map(f=>`<li>${f}</li>`).join('')}</ul>
+        </div>
+
         <div class="diag-math">
-          <div class="m-tag">A sua conta</div>
+          <div class="m-tag">3. Impacto estimado</div>
           ${mathLines}
         </div>
+
         <div class="diag-report">
-          <div class="r-tag">Recomendação para agora</div>
-          <h4>${advanced ? 'Kit Essencial de IA + acesso prioritário ao Curso completo' : 'Kit Essencial de IA para Empresários — R$27'}</h4>
-          <p style="margin-bottom:0">Não recomendamos comprar vários produtos agora. Comece por aqui — o próximo passo só faz sentido depois que este estiver dominado.</p>
-          <ul>${info.steps.map(s=>`<li>${s}</li>`).join('')}</ul>
+          <div class="r-tag">4. Plano recomendado</div>
+          <ul>${info.plan.map((s,i)=>`<li><b>${['Primeiro passo','Segundo passo','Terceiro passo','Quarto passo'][i]}:</b> ${s}</li>`).join('')}</ul>
+        </div>
+
+        <div style="border-top:1px solid var(--line); margin:22px 0 20px"></div>
+
+        <div class="diag-step-label">5. Como resolver isso na prática</div>
+        <h3>${advanced ? 'CLAP Start + acesso prioritário ao Curso completo' : 'CLAP Start — Kit Essencial de IA para Empresários'}</h3>
+        <p>Com base no seu diagnóstico, identificamos que o CLAP Start é o material mais indicado para o seu momento. Nele você encontra as ferramentas para resolver exatamente os pontos identificados acima.</p>
+        <div class="diag-report">
+          <ul>
+            <li>Prompts prontos para ChatGPT, Claude, Gemini e Copilot</li>
+            <li>Modelos para WhatsApp</li>
+            <li>Modelos para Instagram</li>
+            <li>Estratégias para criação de conteúdo</li>
+            <li>Organização da rotina</li>
+            <li>Atendimento ao cliente</li>
+            <li>Marketing utilizando Inteligência Artificial</li>
+            <li>Técnicas aplicadas pela Agência CLAP em operações reais</li>
+          </ul>
+          <p style="margin-top:10px;margin-bottom:0"><b>Investimento único: R$27</b></p>
         </div>
         <div style="display:flex;gap:12px;flex-wrap:wrap">
           <a href="/kit-essencial.html" class="btn btn-gold">Quero o Kit Essencial — R$27</a>
