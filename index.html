@@ -829,6 +829,7 @@ a:focus-visible, button:focus-visible, input:focus-visible{ outline:2px solid va
 
 <!-- SDK oficial do Mercado Pago (Checkout Bricks) -->
 <script src="https://sdk.mercadopago.com/js/v2"></script>
+<script src="instagram-integration.js"></script>
 <script>
 /* ============================================================================
    CONFIG — único ponto de edição para preços, pacotes, textos e FAQ.
@@ -881,13 +882,6 @@ const CONFIG = {
     { q: "Preciso seguir alguma conta para comprar?", a: "Não. Nenhum pacote exige seguir outra conta." }
   ],
 
-  // Config de integração com a verificação real de perfil do Instagram.
-  // Ver instagramProvider mais abaixo — o endpoint aponta para o SEU backend,
-  // nunca diretamente para a Graph API (o token de acesso precisa ficar no servidor).
-  instagramApi: {
-    lookupEndpoint: "/api/instagram/lookup" // TODO: ajustar para a URL real do seu backend
-  },
-
   // Mercado Pago Checkout Bricks. A publicKey é segura no frontend (é
   // literalmente feita para isso). O Access Token NUNCA aparece aqui —
   // ele fica só no backend (ver server.js).
@@ -922,54 +916,12 @@ function formatCompact(v){
   return String(v);
 }
 
-/**
- * Normaliza o texto digitado pelo usuário para um @usuario limpo.
- * Aceita "@usuario", "usuario" ou um link completo do Instagram.
- */
-function normalizeInstagramInput(raw){
-  let v = (raw || '').trim();
-  if(!v) return '';
-  // extrai o caminho de uma URL do instagram, se houver
-  const urlMatch = v.match(/instagram\.com\/([^/?#]+)/i);
-  if(urlMatch){ v = urlMatch[1]; }
-  v = v.replace(/^@/, '').replace(/\/+$/,'');
-  return v.toLowerCase();
-}
-
-/**
- * ============================================================================
- * PROVEDOR DE VERIFICAÇÃO DE PERFIL DO INSTAGRAM
- * ============================================================================
- * Contrato único que qualquer fonte de dados precisa cumprir:
- *
- *   async function lookup(username) -> {
- *     username, name, profilePictureUrl, followers, following, posts, verified
- *   } | null
- *
- * Implementação atual: chama o SEU backend (server.js), que consulta a
- * HikerAPI — cobre contas pessoais e de negócio, com foto real de perfil.
- * Esse provedor opera fazendo engenharia reversa de endpoints privados do
- * Instagram, fora dos Termos de Uso da plataforma — decisão de risco já
- * validada nas rodadas anteriores.
- *
- * Para trocar de provedor no futuro: reescreva só a função `lookup` abaixo
- * (e o endpoint correspondente em server.js) mantendo o mesmo contrato —
- * nenhuma outra parte do checkout precisa mudar.
- */
-const instagramProvider = {
-  async lookup(username){
-    const url = `${CONFIG.instagramApi.lookupEndpoint}?username=${encodeURIComponent(username)}`;
-    const res = await fetch(url);
-    if(res.status === 404) return null; // perfil não encontrado
-    if(!res.ok) throw new Error(`Falha ao verificar perfil (HTTP ${res.status})`);
-    return res.json();
-  }
-};
-
+// Usada pelo painel admin (renderAdminOrders) quando um pedido não tem foto
+// salva. Gera um avatar ilustrativo com iniciais — não é uma foto real.
+// (A busca de Instagram no checkout tem sua própria cópia isolada dentro
+// de instagram-integration.js — de propósito, pra o módulo não depender
+// de nada fora dele.)
 function avatarFallback(seed){
-  // Usado só quando não há profilePictureUrl (ex: perfil informado manualmente,
-  // sem confirmação da API). Gera um avatar ilustrativo com iniciais — não é
-  // uma foto real do perfil.
   return `https://api.dicebear.com/7.x/initials/svg?seed=${encodeURIComponent(seed)}&backgroundType=gradientLinear`;
 }
 
@@ -1153,11 +1105,7 @@ function openCheckout(serviceId, serviceLabel, qty, price){
   checkoutState.paymentId = null;
 
   // reset da UI
-  document.getElementById('igSearchInput').value = '';
-  hideVerifyStatus();
-  document.getElementById('igEmptyState').innerHTML = '';
-  document.getElementById('igProfileCard').innerHTML = '';
-  document.getElementById('igContinueBtn').disabled = true;
+  InstagramIntegration.reset();
   document.getElementById('custEmail').value = '';
   document.getElementById('custWhats').value = '';
   document.getElementById('custTerms').checked = false;
@@ -1187,100 +1135,10 @@ function goToStep(step){
   if(step === 3) mountPaymentBrick();
 }
 
-/* ---------- Step 1: busca de Instagram ---------- */
-function selectProfile(profile){
-  checkoutState.profile = profile;
-  document.getElementById('igEmptyState').innerHTML = '';
-  hideVerifyStatus();
-
-  const photo = profile.profilePictureUrl || avatarFallback(profile.username);
-  const hasRealStats = profile.followers != null;
-
-  document.getElementById('igProfileCard').innerHTML = `
-    <div class="ig-profile-card">
-      <img src="${photo}" alt="">
-      <div>
-        <div class="name">${profile.name || '@' + profile.username}</div>
-        <div class="user">@${profile.username}</div>
-        ${profile.verified
-          ? `<span class="ig-verified-tag">✓ Verificado via Instagram</span>`
-          : `<span class="ig-verified-tag" style="color:var(--text-soft);">@ informado manualmente — não verificado</span>`}
-        ${hasRealStats ? `
-        <div class="ig-stats" style="margin-top:8px;">
-          <div><b>${formatCompact(profile.followers)}</b>Seguidores</div>
-          <div><b>${formatCompact(profile.following ?? 0)}</b>Seguindo</div>
-          <div><b>${formatCompact(profile.posts ?? 0)}</b>Publicações</div>
-        </div>` : ''}
-      </div>
-    </div>
-  `;
-  document.getElementById('igContinueBtn').disabled = false;
-}
-
-function showVerifyStatus(html){
-  const el = document.getElementById('igVerifyStatus');
-  el.innerHTML = html;
-  el.style.display = 'flex';
-}
-function hideVerifyStatus(){
-  document.getElementById('igVerifyStatus').style.display = 'none';
-}
-
-function setupInstagramSearch(){
-  const input = document.getElementById('igSearchInput');
-  let debounceTimer = null;
-  let requestId = 0; // evita que uma resposta antiga sobrescreva uma mais nova
-
-  input.addEventListener('input', () => {
-    clearTimeout(debounceTimer);
-    checkoutState.profile = null;
-    document.getElementById('igProfileCard').innerHTML = '';
-    document.getElementById('igEmptyState').innerHTML = '';
-    document.getElementById('igContinueBtn').disabled = true;
-    hideVerifyStatus();
-
-    const normalized = normalizeInstagramInput(input.value);
-    if(normalized.length < 2) return;
-
-    debounceTimer = setTimeout(async () => {
-      const myRequestId = ++requestId;
-      showVerifyStatus('<span class="spinner"></span> Verificando perfil...');
-
-      try{
-        const profile = await instagramProvider.lookup(normalized);
-        if(myRequestId !== requestId) return; // resposta obsoleta, ignora
-
-        hideVerifyStatus();
-        if(profile){
-          selectProfile({ ...profile, verified: true });
-        } else {
-          renderNotFound(normalized);
-        }
-      } catch(err){
-        if(myRequestId !== requestId) return;
-        hideVerifyStatus();
-        console.error('[CLAP] Erro ao verificar perfil:', err);
-        renderNotFound(normalized, true);
-      }
-    }, 500);
-  });
-}
-
-function renderNotFound(normalized, isError){
-  document.getElementById('igEmptyState').innerHTML = `
-    <div class="ig-empty-state">
-      ${isError
-        ? 'Não conseguimos verificar esse perfil agora (falha na consulta).'
-        : 'Não encontramos esse perfil no Instagram — confira se o @ está certo.'}
-      <br>
-      <button id="useAnywayBtn">Usar @${normalized} mesmo assim</button>
-    </div>
-  `;
-  document.getElementById('useAnywayBtn').addEventListener('click', () => {
-    document.getElementById('igEmptyState').innerHTML = '';
-    selectProfile({ username: normalized, name: null, followers: null, following: null, posts: null, verified: false });
-  });
-}
+/* ---------- Step 1: busca de Instagram ----------
+   A lógica de busca/seleção de perfil agora vive inteira em
+   instagram-integration.js. Este arquivo só recebe o perfil já pronto
+   através do callback onSelect, configurado em initStorefront(). */
 
 /* ---------- Step 2: dados do cliente + resumo ---------- */
 function renderOrderSummary(){
@@ -1624,7 +1482,22 @@ function initStorefront(){
   renderFAQ();
   setupReveal();
   setupStickyCta();
-  setupInstagramSearch();
+  InstagramIntegration.init({
+    onSelect: (profile) => {
+      // Mapeia o formato padronizado do módulo (fullName/avatar) pro shape
+      // interno que o resto do checkout já usa (name/profilePictureUrl) —
+      // assim nenhuma outra parte do checkout precisa mudar.
+      checkoutState.profile = {
+        username: profile.username,
+        name: profile.fullName,
+        profilePictureUrl: profile.avatar,
+        followers: profile.followers,
+        following: profile.following,
+        posts: profile.posts,
+        verified: profile.verified
+      };
+    }
+  });
   setupBuyButtons();
   setupTrackOrder();
   setupSocialProof();
