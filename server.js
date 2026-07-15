@@ -215,6 +215,7 @@ app.get('/api/instagram/lookup', async (req, res) => {
 // só esta função; o contrato de saída e o resto do projeto não mudam.
 // ============================================================================
 const HIKER_TIMEOUT_MS = 8000;
+const HIKER_MAX_ATTEMPTS = 2; // 1 tentativa original + 1 retry automático em falha transitória
 
 function isValidHikerProfilePayload(data) {
   // Validação mínima de forma: precisa ser um objeto e ter pelo menos um
@@ -223,12 +224,10 @@ function isValidHikerProfilePayload(data) {
   return !!(data && typeof data === 'object' && (data.username || data.pk));
 }
 
-async function searchInstagramProfile(username) {
-  if (!HIKER_API_KEY) {
-    console.error('[instagram-service] HIKER_API_KEY não configurada');
-    return { success: false, error: 'unavailable' };
-  }
-
+// Uma única tentativa de consulta. Devolve um resultado interno mais rico
+// que o contrato público, pra quem chama decidir se vale a pena tentar de
+// novo (ex: timeout e 5xx valem retry; 401/403/404 nunca valem).
+async function attemptHikerLookup(username) {
   const url = `${HIKER_API_BASE}/v1/user/by/username?username=${encodeURIComponent(username)}`;
   const controller = new AbortController();
   const timeoutId = setTimeout(() => controller.abort(), HIKER_TIMEOUT_MS);
@@ -245,52 +244,87 @@ async function searchInstagramProfile(username) {
       `[instagram-service] ${isTimeout ? 'timeout' : 'exceção de rede'} ao consultar o fornecedor:`,
       err?.message || err, '| url:', url
     );
-    return { success: false, error: 'unavailable' };
+    return { outcome: 'retryable' };
   } finally {
     clearTimeout(timeoutId);
   }
 
-  // "not encontrado" é um fato de negócio, não um erro técnico — é o único
-  // motivo que o frontend tem permissão de conhecer além de sucesso/falha.
   if (hikerRes.status === 404) {
-    return { success: false, error: 'not_found' };
+    return { outcome: 'not_found' };
   }
 
   const rawBody = await hikerRes.text();
   let parsedBody = rawBody;
   try { parsedBody = JSON.parse(rawBody); } catch { /* corpo não é JSON */ }
 
+  if (hikerRes.status === 401 || hikerRes.status === 403) {
+    // Log separado e bem chamativo — se algum dia essa for a causa de novo,
+    // não deve exigir mais nenhuma investigação pra identificar: é a
+    // primeira coisa que aparece nos Logs do Render.
+    console.error(
+      '🔴🔴🔴 [instagram-service] HIKERAPI RECUSOU A CHAVE (HTTP', hikerRes.status, ') — gere um novo token em hikerapi.com/tokens e atualize a variável HIKER_API_KEY no Render. 🔴🔴🔴',
+      '| resposta:', JSON.stringify(parsedBody)
+    );
+    return { outcome: 'fatal' }; // não adianta tentar de novo com a mesma chave
+  }
+
   if (!hikerRes.ok) {
-    // 401/403 (autenticação), 429 (limite de uso), 5xx (fornecedor fora do
-    // ar) — todos colapsam no mesmo resultado pro chamador. O motivo técnico
-    // exato fica só no log, pra investigação, nunca na resposta ao frontend.
+    // 429 (limite de uso) e 5xx (fornecedor fora do ar) valem uma nova
+    // tentativa — costuma ser transitório.
     console.error(
       '[instagram-service] fornecedor respondeu com erro:',
       hikerRes.status, JSON.stringify(parsedBody), '| url:', url
     );
-    return { success: false, error: 'unavailable' };
+    return { outcome: 'retryable' };
   }
 
   if (!isValidHikerProfilePayload(parsedBody)) {
     console.error('[instagram-service] resposta do fornecedor em formato inesperado:', JSON.stringify(parsedBody), '| url:', url);
+    return { outcome: 'retryable' };
+  }
+
+  return { outcome: 'success', data: parsedBody };
+}
+
+async function searchInstagramProfile(username) {
+  if (!HIKER_API_KEY) {
+    console.error('[instagram-service] HIKER_API_KEY não configurada');
     return { success: false, error: 'unavailable' };
   }
 
-  // ---- Conversão HikerAPI -> formato padronizado da Agência CLAP ----
-  // Único trecho do projeto que conhece os nomes de campo da HikerAPI.
-  const data = parsedBody;
-  return {
-    success: true,
-    profile: {
-      username: data.username || username,
-      fullName: data.full_name || null,
-      avatar: data.profile_pic_url_hd || data.profile_pic_url || null,
-      followers: data.follower_count ?? null,
-      following: data.following_count ?? null,
-      posts: data.media_count ?? null,
-      verified: !!data.is_verified
+  let lastOutcome = null;
+  for (let attempt = 1; attempt <= HIKER_MAX_ATTEMPTS; attempt++) {
+    const result = await attemptHikerLookup(username);
+    lastOutcome = result;
+
+    if (result.outcome === 'not_found') {
+      return { success: false, error: 'not_found' };
     }
-  };
+    if (result.outcome === 'success') {
+      // ---- Conversão HikerAPI -> formato padronizado da Agência CLAP ----
+      // Único trecho do projeto que conhece os nomes de campo da HikerAPI.
+      const data = result.data;
+      return {
+        success: true,
+        profile: {
+          username: data.username || username,
+          fullName: data.full_name || null,
+          avatar: data.profile_pic_url_hd || data.profile_pic_url || null,
+          followers: data.follower_count ?? null,
+          following: data.following_count ?? null,
+          posts: data.media_count ?? null,
+          verified: !!data.is_verified
+        }
+      };
+    }
+    if (result.outcome === 'fatal') {
+      break; // chave inválida — repetir não muda o resultado
+    }
+    // 'retryable': tenta de novo se ainda houver tentativa disponível
+  }
+
+  console.error('[instagram-service] todas as tentativas falharam para', JSON.stringify(username), '| último motivo:', lastOutcome?.outcome);
+  return { success: false, error: 'unavailable' };
 }
 
 // ============================================================================
