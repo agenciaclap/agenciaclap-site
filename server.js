@@ -328,6 +328,21 @@ async function searchInstagramProfile(username) {
 }
 
 // ============================================================================
+// GET /api/config/mercadopago — devolve a Public Key sempre fresca.
+// ============================================================================
+// Existe pra não depender mais de a Public Key vir embutida no HTML (que
+// pode ficar em cache em algum ponto entre o servidor e o navegador). Essa
+// rota é chamada em tempo real, na hora exata de montar o Payment Brick —
+// sempre lê a variável de ambiente atual, nunca uma cópia antiga.
+// ============================================================================
+app.get('/api/config/mercadopago', (req, res) => {
+  res.set('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate');
+  res.set('Pragma', 'no-cache');
+  res.set('Expires', '0');
+  return res.status(200).json({ publicKey: MP_PUBLIC_KEY || null });
+});
+
+// ============================================================================
 // POST /api/instagram/search — API PRÓPRIA da Agência CLAP.
 // ============================================================================
 // Esta é a ÚNICA rota que o frontend (instagram-integration.js) conhece.
