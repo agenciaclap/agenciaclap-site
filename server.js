@@ -339,7 +339,27 @@ app.get('/api/config/mercadopago', (req, res) => {
   res.set('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate');
   res.set('Pragma', 'no-cache');
   res.set('Expires', '0');
-  return res.status(200).json({ publicKey: MP_PUBLIC_KEY || null });
+
+  const raw = process.env.MP_PUBLIC_KEY;
+  const trimmed = (raw || '').trim();
+
+  // Procura por qualquer variável de ambiente com nome parecido, caso a
+  // registrada no Render não seja exatamente "MP_PUBLIC_KEY" (espaço extra,
+  // maiúscula/minúscula diferente, nome ligeiramente diferente).
+  const similarVarNames = Object.keys(process.env).filter(
+    k => k !== 'MP_PUBLIC_KEY' && k.toUpperCase().replace(/[^A-Z]/g, '').includes('MPPUBLICKEY')
+  );
+
+  return res.status(200).json({
+    publicKey: trimmed || null,
+    diagnostic: {
+      rawValuePresent: raw !== undefined,
+      rawValueLength: raw ? raw.length : 0,
+      rawValueHasWhitespace: raw ? (raw !== raw.trim()) : false,
+      rawValuePreview: raw ? `${raw.slice(0, 10)}...${raw.slice(-6)}` : null,
+      similarEnvVarNamesFound: similarVarNames
+    }
+  });
 });
 
 // ============================================================================
