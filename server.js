@@ -139,55 +139,57 @@ app.get('/api/instagram/lookup', async (req, res) => {
     const requestHeaders = { 'x-access-key': HIKER_API_KEY, accept: 'application/json' };
     const hikerRes = await fetch(url, { headers: requestHeaders });
 
-    if (hikerRes.status === 404) {
-      return res.status(404).json({ error: 'perfil não encontrado' });
-    }
+    // Lê o corpo como texto primeiro (pode não ser JSON em erros 401/403/429),
+    // e tenta parsear como JSON só depois, sem quebrar se não for.
+    const rawBody = await hikerRes.text();
+    let parsedBody = rawBody;
+    try { parsedBody = JSON.parse(rawBody); } catch { /* corpo não é JSON, mantém como texto */ }
+
     if (!hikerRes.ok) {
-      // Lê o corpo como texto primeiro (pode não ser JSON em erros 401/403/429),
-      // e tenta parsear como JSON só depois, sem quebrar se não for.
-      const rawBody = await hikerRes.text();
-      let parsedBody = rawBody;
-      try { parsedBody = JSON.parse(rawBody); } catch { /* corpo não é JSON, mantém como texto */ }
+      // Sem mais mensagem genérica — devolve exatamente o que a HikerAPI respondeu,
+      // seja 401, 403, 404, 429 ou qualquer outro código.
+      const hikerMessage = (parsedBody && typeof parsedBody === 'object')
+        ? (parsedBody.message || parsedBody.error || parsedBody.detail || JSON.stringify(parsedBody))
+        : parsedBody;
 
       const diagnostic = {
         hikerStatus: hikerRes.status,
         hikerStatusText: hikerRes.statusText,
         hikerBody: parsedBody,
+        hikerMessage,
         endpoint: '/v1/user/by/username',
         requestUrl: url,
         requestHeaders: { 'x-access-key': '(omitido)', accept: requestHeaders.accept }
       };
 
       console.error('[instagram-lookup] HikerAPI respondeu com erro:', JSON.stringify(diagnostic));
-      return res.status(502).json({
-        error: 'falha ao consultar o provedor de dados do Instagram',
-        diagnostic
-      });
+      return res.status(hikerRes.status).json(diagnostic);
     }
 
-    const data = await hikerRes.json();
+    const data = parsedBody;
 
     // Nomes de campo seguem o padrão da API privada do Instagram. Se a
     // HikerAPI mudar o formato de resposta, ajustar o mapeamento aqui.
+    // TODO TEMPORÁRIO — inclui `raw` pra inspecionar os nomes de campo reais
+    // vindos da HikerAPI. Remover depois de confirmar o mapeamento.
     return res.status(200).json({
       username: data.username || username,
       name: data.full_name || null,
       profilePictureUrl: data.profile_pic_url_hd || data.profile_pic_url || null,
       followers: data.follower_count ?? null,
       following: data.following_count ?? null,
-      posts: data.media_count ?? null
+      posts: data.media_count ?? null,
+      raw: data
     });
   } catch (err) {
     const diagnostic = {
       exceptionName: err?.name || null,
       exceptionMessage: err?.message || String(err),
+      endpoint: '/v1/user/by/username',
       requestUrl: `${HIKER_API_BASE}/v1/user/by/username?username=${encodeURIComponent(username)}`
     };
     console.error('[instagram-lookup] exceção ao consultar HikerAPI:', JSON.stringify(diagnostic));
-    return res.status(502).json({
-      error: 'falha ao consultar o provedor de dados do Instagram',
-      diagnostic
-    });
+    return res.status(502).json(diagnostic);
   }
 });
 
