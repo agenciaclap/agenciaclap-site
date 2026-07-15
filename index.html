@@ -89,7 +89,15 @@ igInput.addEventListener('input', () => {
         return;
       }
 
-      const profile = await res.json();
+      const profile = await res.json().catch((parseErr) => {
+        console.error('[MVP] resposta não-JSON na busca de Instagram:', parseErr);
+        return null;
+      });
+      if (!profile) {
+        igStatus.textContent = 'Servidor respondeu algo inesperado (não é JSON). Tente novamente.';
+        igStatus.className = 'status error';
+        return;
+      }
       igStatus.textContent = '';
       igResult.style.display = 'block';
       igResult.innerHTML = `
@@ -124,7 +132,20 @@ pixBtn.addEventListener('click', async () => {
       body: JSON.stringify({ email: 'teste@agenciaclap.com.br' })
     });
 
-    const body = await res.json();
+    const rawText = await res.text();
+    let body;
+    try {
+      body = JSON.parse(rawText);
+    } catch (parseErr) {
+      // O servidor respondeu algo que não é JSON — normalmente uma página de
+      // erro de infraestrutura (ex: gateway timeout do Render durante o
+      // "cold start" do plano grátis), não um erro da nossa aplicação.
+      console.error('[MVP] resposta não-JSON do servidor:', rawText.slice(0, 300));
+      mpStatus.textContent = `Servidor respondeu algo inesperado (HTTP ${res.status}, não é JSON). Se o serviço acabou de subir, aguarde alguns segundos e tente de novo.`;
+      mpStatus.className = 'status error';
+      pixBtn.disabled = false;
+      return;
+    }
 
     if (!res.ok) {
       console.error('[MVP] erro ao criar pagamento:', body);
@@ -141,6 +162,9 @@ pixBtn.addEventListener('click', async () => {
       <label style="font-size:.8rem;color:#666;">Copia e Cola:</label>
       <input type="text" id="mpCopyCode" value="${body.qr_code || ''}" readonly onclick="this.select()">
     `;
+
+    // Polling de status — fecha o fluxo até "Pagamento aprovado".
+    pollPaymentStatus(body.id);
   } catch (err) {
     console.error('[MVP] exceção ao criar pagamento:', err);
     mpStatus.textContent = 'Falha de conexão ao criar o pagamento.';
@@ -149,6 +173,39 @@ pixBtn.addEventListener('click', async () => {
     pixBtn.disabled = false;
   }
 });
+
+function pollPaymentStatus(paymentId){
+  const intervalId = setInterval(async () => {
+    try {
+      const res = await fetch(`/api/mercadopago/payment-status/${paymentId}`);
+      if (!res.ok) return; // tenta de novo no próximo ciclo
+      const body = await res.json().catch(() => null);
+      if (!body) return; // resposta não-JSON isolada, tenta de novo no próximo ciclo
+
+      if (body.status === 'approved') {
+        clearInterval(intervalId);
+        mpResult.innerHTML = `
+          <div style="text-align:center;padding:20px 0;">
+            <div style="font-size:2.5rem;">✅</div>
+            <p style="font-weight:700;font-size:1.1rem;margin-top:8px;">Pagamento aprovado!</p>
+          </div>
+        `;
+        mpStatus.textContent = '';
+      } else if (['cancelled', 'rejected'].includes(body.status)) {
+        clearInterval(intervalId);
+        mpStatus.textContent = `Pagamento ${body.status === 'rejected' ? 'rejeitado' : 'cancelado'}.`;
+        mpStatus.className = 'status error';
+      }
+      // "pending" -> continua o polling normalmente
+    } catch (err) {
+      console.error('[MVP] erro no polling de status:', err);
+      // não para o polling por causa de uma falha isolada de rede
+    }
+  }, 3000);
+
+  // Não fica pra sempre: para depois de 5 minutos se ninguém pagar.
+  setTimeout(() => clearInterval(intervalId), 5 * 60 * 1000);
+}
 </script>
 
 </body>
