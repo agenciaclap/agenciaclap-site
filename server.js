@@ -1,4 +1,3 @@
-
 /**
  * MVP ISOLADO — Agência CLAP
  * ============================================================================
@@ -107,7 +106,10 @@ app.post('/api/mercadopago/create-payment', async (req, res) => {
         description: 'MVP de teste — Agência CLAP',
         payment_method_id: 'pix',
         payer: { email }
-      }
+      },
+      // Obrigatório desde a atualização de segurança do Mercado Pago (nov/2023):
+      // sem isso, a API rejeita com "Header X-Idempotency-Key can't be null".
+      requestOptions: { idempotencyKey: crypto.randomUUID() }
     });
 
     const txData = payment.point_of_interaction?.transaction_data;
