@@ -5,7 +5,8 @@
  * Serve o próprio index.html (em "/" e em "/admin") e expõe as 4 rotas
  * que precisam ficar protegidas do lado do servidor:
  *
- *   GET  /api/instagram/lookup?username=x        → busca real via HikerAPI
+ *   GET  /api/instagram/lookup?username=x        → (LEGADO, mantida por compatibilidade) busca via HikerAPI, expõe nomes de campo do fornecedor
+ *   POST /api/instagram/search                     → API própria da Agência CLAP; contrato estável, esconde o fornecedor
  *   POST /api/mercadopago/create-payment          → cria o Payment PIX
  *   POST /api/mercadopago/webhook                  → confirma pagamento
  *   GET  /api/admin/orders                         → dashboard + lista
@@ -190,6 +191,87 @@ app.get('/api/instagram/lookup', async (req, res) => {
     };
     console.error('[instagram-lookup] exceção ao consultar HikerAPI:', JSON.stringify(diagnostic));
     return res.status(502).json(diagnostic);
+  }
+});
+
+// ============================================================================
+// POST /api/instagram/search — API PRÓPRIA da Agência CLAP.
+// ============================================================================
+// Esta é a ÚNICA rota que o frontend (instagram-integration.js) conhece.
+// Ela é quem sabe que o fornecedor de dados hoje é a HikerAPI — o frontend
+// nunca vê o nome "HikerAPI", nem os nomes de campo originais dela
+// (full_name, profile_pic_url_hd, follower_count etc.).
+//
+// Contrato de resposta, sempre neste formato, não importa o fornecedor:
+//   sucesso:      { success: true,  profile: { username, fullName, avatar, followers, following, posts, verified } }
+//   não encontrado: { success: false, error: "not_found" }
+//   erro upstream:  { success: false, error: "upstream_error", debug: {...} }
+//
+// Se um dia o fornecedor mudar, só o miolo desta função muda — o contrato
+// de resposta (e portanto o frontend) continua exatamente igual.
+// ============================================================================
+app.post('/api/instagram/search', async (req, res) => {
+  const username = String(req.body?.username || '').trim().toLowerCase().replace(/^@/, '');
+
+  if (!username || !/^[a-z0-9._]{1,30}$/.test(username)) {
+    return res.status(400).json({ success: false, error: 'invalid_username' });
+  }
+  if (!HIKER_API_KEY) {
+    console.error('[instagram-search] HIKER_API_KEY não configurada');
+    return res.status(500).json({ success: false, error: 'provider_not_configured' });
+  }
+
+  try {
+    const url = `${HIKER_API_BASE}/v1/user/by/username?username=${encodeURIComponent(username)}`;
+    const hikerRes = await fetch(url, {
+      headers: { 'x-access-key': HIKER_API_KEY, accept: 'application/json' }
+    });
+
+    const rawBody = await hikerRes.text();
+    let parsedBody = rawBody;
+    try { parsedBody = JSON.parse(rawBody); } catch { /* corpo não é JSON */ }
+
+    if (hikerRes.status === 404) {
+      return res.status(404).json({ success: false, error: 'not_found' });
+    }
+
+    if (!hikerRes.ok) {
+      console.error('[instagram-search] fornecedor respondeu com erro:', hikerRes.status, JSON.stringify(parsedBody));
+      return res.status(502).json({
+        success: false,
+        error: 'upstream_error',
+        debug: {
+          hikerStatus: hikerRes.status,
+          hikerBody: parsedBody,
+          endpoint: '/v1/user/by/username',
+          requestUrl: url
+        }
+      });
+    }
+
+    // ---- Conversão HikerAPI -> formato padronizado da Agência CLAP ----
+    // Este é o ÚNICO lugar do projeto inteiro que conhece os nomes de campo
+    // da HikerAPI. Trocar de fornecedor no futuro = mudar só isto aqui.
+    const data = parsedBody;
+    return res.status(200).json({
+      success: true,
+      profile: {
+        username: data.username || username,
+        fullName: data.full_name || null,
+        avatar: data.profile_pic_url_hd || data.profile_pic_url || null,
+        followers: data.follower_count ?? null,
+        following: data.following_count ?? null,
+        posts: data.media_count ?? null,
+        verified: !!data.is_verified
+      }
+    });
+  } catch (err) {
+    console.error('[instagram-search] exceção ao consultar o fornecedor:', err?.message || err);
+    return res.status(502).json({
+      success: false,
+      error: 'exception',
+      debug: { exceptionMessage: err?.message || String(err) }
+    });
   }
 });
 
