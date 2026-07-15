@@ -195,20 +195,110 @@ app.get('/api/instagram/lookup', async (req, res) => {
 });
 
 // ============================================================================
+// SERVIÇO: busca de perfil do Instagram
+// ============================================================================
+// Camada de adaptação. Este é o ÚNICO lugar do projeto que sabe que o
+// fornecedor de dados hoje é a HikerAPI — nomes de campo, status HTTP dela,
+// timeouts, erros de autenticação, rate limit — tudo fica contido aqui.
+//
+// Contrato de saída, sempre um destes três, não importa o que aconteça
+// por trás (sucesso, timeout, 401, 403, 429, 500, resposta malformada,
+// exceção de rede):
+//
+//   { success: true,  profile: { username, fullName, avatar, followers, following, posts, verified } }
+//   { success: false, error: "not_found" }   — perfil não existe (fato de negócio)
+//   { success: false, error: "unavailable" } — qualquer outro motivo técnico
+//
+// O chamador (a rota Express, mais abaixo) NUNCA precisa saber qual dos
+// motivos técnicos gerou "unavailable" — só o log do servidor sabe disso,
+// pra investigação futura. Trocar de fornecedor no dia de amanhã = reescrever
+// só esta função; o contrato de saída e o resto do projeto não mudam.
+// ============================================================================
+const HIKER_TIMEOUT_MS = 8000;
+
+function isValidHikerProfilePayload(data) {
+  // Validação mínima de forma: precisa ser um objeto e ter pelo menos um
+  // identificador de usuário reconhecível. Sem isso, tratamos como resposta
+  // malformada em vez de arriscar devolver um perfil quebrado ao frontend.
+  return !!(data && typeof data === 'object' && (data.username || data.pk));
+}
+
+async function searchInstagramProfile(username) {
+  if (!HIKER_API_KEY) {
+    console.error('[instagram-service] HIKER_API_KEY não configurada');
+    return { success: false, error: 'unavailable' };
+  }
+
+  const url = `${HIKER_API_BASE}/v1/user/by/username?username=${encodeURIComponent(username)}`;
+  const controller = new AbortController();
+  const timeoutId = setTimeout(() => controller.abort(), HIKER_TIMEOUT_MS);
+
+  let hikerRes;
+  try {
+    hikerRes = await fetch(url, {
+      headers: { 'x-access-key': HIKER_API_KEY, accept: 'application/json' },
+      signal: controller.signal
+    });
+  } catch (err) {
+    const isTimeout = err?.name === 'AbortError';
+    console.error(
+      `[instagram-service] ${isTimeout ? 'timeout' : 'exceção de rede'} ao consultar o fornecedor:`,
+      err?.message || err, '| url:', url
+    );
+    return { success: false, error: 'unavailable' };
+  } finally {
+    clearTimeout(timeoutId);
+  }
+
+  // "not encontrado" é um fato de negócio, não um erro técnico — é o único
+  // motivo que o frontend tem permissão de conhecer além de sucesso/falha.
+  if (hikerRes.status === 404) {
+    return { success: false, error: 'not_found' };
+  }
+
+  const rawBody = await hikerRes.text();
+  let parsedBody = rawBody;
+  try { parsedBody = JSON.parse(rawBody); } catch { /* corpo não é JSON */ }
+
+  if (!hikerRes.ok) {
+    // 401/403 (autenticação), 429 (limite de uso), 5xx (fornecedor fora do
+    // ar) — todos colapsam no mesmo resultado pro chamador. O motivo técnico
+    // exato fica só no log, pra investigação, nunca na resposta ao frontend.
+    console.error(
+      '[instagram-service] fornecedor respondeu com erro:',
+      hikerRes.status, JSON.stringify(parsedBody), '| url:', url
+    );
+    return { success: false, error: 'unavailable' };
+  }
+
+  if (!isValidHikerProfilePayload(parsedBody)) {
+    console.error('[instagram-service] resposta do fornecedor em formato inesperado:', JSON.stringify(parsedBody), '| url:', url);
+    return { success: false, error: 'unavailable' };
+  }
+
+  // ---- Conversão HikerAPI -> formato padronizado da Agência CLAP ----
+  // Único trecho do projeto que conhece os nomes de campo da HikerAPI.
+  const data = parsedBody;
+  return {
+    success: true,
+    profile: {
+      username: data.username || username,
+      fullName: data.full_name || null,
+      avatar: data.profile_pic_url_hd || data.profile_pic_url || null,
+      followers: data.follower_count ?? null,
+      following: data.following_count ?? null,
+      posts: data.media_count ?? null,
+      verified: !!data.is_verified
+    }
+  };
+}
+
+// ============================================================================
 // POST /api/instagram/search — API PRÓPRIA da Agência CLAP.
 // ============================================================================
 // Esta é a ÚNICA rota que o frontend (instagram-integration.js) conhece.
-// Ela é quem sabe que o fornecedor de dados hoje é a HikerAPI — o frontend
-// nunca vê o nome "HikerAPI", nem os nomes de campo originais dela
-// (full_name, profile_pic_url_hd, follower_count etc.).
-//
-// Contrato de resposta, sempre neste formato, não importa o fornecedor:
-//   sucesso:      { success: true,  profile: { username, fullName, avatar, followers, following, posts, verified } }
-//   não encontrado: { success: false, error: "not_found" }
-//   erro upstream:  { success: false, error: "upstream_error", debug: {...} }
-//
-// Se um dia o fornecedor mudar, só o miolo desta função muda — o contrato
-// de resposta (e portanto o frontend) continua exatamente igual.
+// Toda a inteligência de tratar o fornecedor vive em searchInstagramProfile()
+// acima — esta rota só valida o input HTTP e devolve o que o serviço decidiu.
 // ============================================================================
 app.post('/api/instagram/search', async (req, res) => {
   const username = String(req.body?.username || '').trim().toLowerCase().replace(/^@/, '');
@@ -216,63 +306,10 @@ app.post('/api/instagram/search', async (req, res) => {
   if (!username || !/^[a-z0-9._]{1,30}$/.test(username)) {
     return res.status(400).json({ success: false, error: 'invalid_username' });
   }
-  if (!HIKER_API_KEY) {
-    console.error('[instagram-search] HIKER_API_KEY não configurada');
-    return res.status(500).json({ success: false, error: 'provider_not_configured' });
-  }
 
-  try {
-    const url = `${HIKER_API_BASE}/v1/user/by/username?username=${encodeURIComponent(username)}`;
-    const hikerRes = await fetch(url, {
-      headers: { 'x-access-key': HIKER_API_KEY, accept: 'application/json' }
-    });
-
-    const rawBody = await hikerRes.text();
-    let parsedBody = rawBody;
-    try { parsedBody = JSON.parse(rawBody); } catch { /* corpo não é JSON */ }
-
-    if (hikerRes.status === 404) {
-      return res.status(404).json({ success: false, error: 'not_found' });
-    }
-
-    if (!hikerRes.ok) {
-      console.error('[instagram-search] fornecedor respondeu com erro:', hikerRes.status, JSON.stringify(parsedBody));
-      return res.status(502).json({
-        success: false,
-        error: 'upstream_error',
-        debug: {
-          hikerStatus: hikerRes.status,
-          hikerBody: parsedBody,
-          endpoint: '/v1/user/by/username',
-          requestUrl: url
-        }
-      });
-    }
-
-    // ---- Conversão HikerAPI -> formato padronizado da Agência CLAP ----
-    // Este é o ÚNICO lugar do projeto inteiro que conhece os nomes de campo
-    // da HikerAPI. Trocar de fornecedor no futuro = mudar só isto aqui.
-    const data = parsedBody;
-    return res.status(200).json({
-      success: true,
-      profile: {
-        username: data.username || username,
-        fullName: data.full_name || null,
-        avatar: data.profile_pic_url_hd || data.profile_pic_url || null,
-        followers: data.follower_count ?? null,
-        following: data.following_count ?? null,
-        posts: data.media_count ?? null,
-        verified: !!data.is_verified
-      }
-    });
-  } catch (err) {
-    console.error('[instagram-search] exceção ao consultar o fornecedor:', err?.message || err);
-    return res.status(502).json({
-      success: false,
-      error: 'exception',
-      debug: { exceptionMessage: err?.message || String(err) }
-    });
-  }
+  const result = await searchInstagramProfile(username);
+  const statusCode = result.success ? 200 : (result.error === 'not_found' ? 404 : 502);
+  return res.status(statusCode).json(result);
 });
 
 // ============================================================================
