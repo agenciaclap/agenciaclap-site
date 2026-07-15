@@ -32,7 +32,7 @@
   'use strict';
 
   const DEFAULT_SEARCH_ENDPOINT = '/api/instagram/search';
-  const DEBOUNCE_MS = 500;
+  const DEBOUNCE_MS = 350;
   const MIN_LENGTH = 2;
 
   let searchEndpoint = DEFAULT_SEARCH_ENDPOINT;
