@@ -587,10 +587,19 @@ const INDEX_PATH = path.join(__dirname, 'index.html');
 
 function renderIndexHtml() {
   const raw = fs.readFileSync(INDEX_PATH, 'utf-8');
-  return raw.replace('__MP_PUBLIC_KEY__', MP_PUBLIC_KEY);
+  return raw.replaceAll('__MP_PUBLIC_KEY__', MP_PUBLIC_KEY);
 }
 
 app.get(['/', '/admin'], (req, res) => {
+  // Trava explícita contra cache: essa página é gerada dinamicamente (a
+  // MP_PUBLIC_KEY é injetada a cada request) e NUNCA pode ser servida de
+  // uma cópia antiga por navegador, CDN ou proxy intermediário. Sem isso,
+  // uma versão anterior (com o token não substituído) poderia continuar
+  // sendo exibida mesmo depois de o servidor já estar corrigido.
+  res.set('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate');
+  res.set('Pragma', 'no-cache');
+  res.set('Expires', '0');
+  res.set('Surrogate-Control', 'no-store');
   res.type('html').send(renderIndexHtml());
 });
 // { index: false } impede que este middleware sirva o index.html cru
