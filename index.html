@@ -1418,11 +1418,32 @@ async function mountPaymentBrick(){
   let publicKey;
   try{
     const res = await fetch('/api/config/mercadopago', { cache: 'no-store' });
-    const body = await res.json();
+
+    if(res.status === 404){
+      // A rota não existe no servidor que está respondendo agora — sinal
+      // quase certo de que o server.js publicado é uma versão anterior a
+      // essa rota ter sido criada.
+      showMpError('Pagamento indisponível: a rota /api/config/mercadopago não existe no servidor (HTTP 404). O server.js publicado provavelmente está desatualizado — envie novamente o server.js mais recente.');
+      return;
+    }
+    if(!res.ok){
+      showMpError(`Pagamento indisponível: o servidor respondeu com erro (HTTP ${res.status}) ao buscar a configuração do Mercado Pago.`);
+      return;
+    }
+
+    let body;
+    try{
+      body = await res.json();
+    } catch(parseErr){
+      // A resposta não é JSON válido — normalmente acontece quando a rota
+      // não existe e o servidor devolve uma página de erro em HTML.
+      showMpError('Pagamento indisponível: o servidor respondeu algo que não é JSON válido ao buscar a configuração do Mercado Pago (provável servidor desatualizado).');
+      return;
+    }
     publicKey = body?.publicKey || '';
   } catch(err){
     console.error('[CLAP] Falha ao buscar a Public Key do servidor:', err);
-    showMpError('Pagamento indisponível: não foi possível confirmar a configuração do Mercado Pago com o servidor. Tente novamente.');
+    showMpError(`Pagamento indisponível: falha de conexão ao buscar a configuração do Mercado Pago (${err?.message || 'erro desconhecido'}). Tente novamente.`);
     return;
   }
 
