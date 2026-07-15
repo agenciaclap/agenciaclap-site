@@ -1411,44 +1411,34 @@ async function mountPaymentBrick(){
   document.getElementById('mpErrorMsg').style.display = 'none';
   if(paymentBrickController){ paymentBrickController.unmount(); paymentBrickController = null; }
 
-  // Busca a Public Key em tempo real, direto do servidor — nunca confia no
-  // valor que veio embutido no HTML (que pode estar em cache em algum ponto
-  // entre o servidor e o navegador). Isso garante que a chave usada aqui é
-  // sempre a que está configurada AGORA no Render, sem exceção.
-  let publicKey;
+  // Busca a Public Key em tempo real, direto do servidor. Se essa rota não
+  // existir (server.js publicado numa versão anterior a ela), cai
+  // automaticamente pro mecanismo mais antigo (token substituído no próprio
+  // HTML) — que continua funcionando de qualquer forma. Ou seja: funciona
+  // com as duas versões possíveis de server.js, sem exigir sincronia perfeita
+  // entre os arquivos publicados.
+  let publicKey = '';
   try{
     const res = await fetch('/api/config/mercadopago', { cache: 'no-store' });
-
-    if(res.status === 404){
-      // A rota não existe no servidor que está respondendo agora — sinal
-      // quase certo de que o server.js publicado é uma versão anterior a
-      // essa rota ter sido criada.
-      showMpError('Pagamento indisponível: a rota /api/config/mercadopago não existe no servidor (HTTP 404). O server.js publicado provavelmente está desatualizado — envie novamente o server.js mais recente.');
-      return;
+    if(res.ok){
+      const body = await res.json().catch(() => null);
+      if(body?.publicKey) publicKey = body.publicKey;
     }
-    if(!res.ok){
-      showMpError(`Pagamento indisponível: o servidor respondeu com erro (HTTP ${res.status}) ao buscar a configuração do Mercado Pago.`);
-      return;
-    }
-
-    let body;
-    try{
-      body = await res.json();
-    } catch(parseErr){
-      // A resposta não é JSON válido — normalmente acontece quando a rota
-      // não existe e o servidor devolve uma página de erro em HTML.
-      showMpError('Pagamento indisponível: o servidor respondeu algo que não é JSON válido ao buscar a configuração do Mercado Pago (provável servidor desatualizado).');
-      return;
-    }
-    publicKey = body?.publicKey || '';
   } catch(err){
-    console.error('[CLAP] Falha ao buscar a Public Key do servidor:', err);
-    showMpError(`Pagamento indisponível: falha de conexão ao buscar a configuração do Mercado Pago (${err?.message || 'erro desconhecido'}). Tente novamente.`);
-    return;
+    console.error('[CLAP] Rota /api/config/mercadopago indisponível, usando mecanismo de substituição no HTML como alternativa:', err);
   }
 
   if(!publicKey){
-    showMpError('Pagamento indisponível: a Public Key do Mercado Pago não foi configurada no servidor (variável MP_PUBLIC_KEY).');
+    // Alternativa: a chave que o server.js (em qualquer uma das duas
+    // versões) já substitui direto no HTML antes de servir a página.
+    const embedded = CONFIG.mercadopago.publicKey;
+    if(embedded && embedded.indexOf('MP_PUBLIC_KEY') === -1){
+      publicKey = embedded;
+    }
+  }
+
+  if(!publicKey){
+    showMpError('Pagamento indisponível: a Public Key do Mercado Pago não foi configurada no servidor (variável MP_PUBLIC_KEY). Confirme essa variável no Render.');
     return;
   }
 
