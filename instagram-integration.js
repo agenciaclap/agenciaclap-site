@@ -74,7 +74,7 @@
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ username })
     });
-    return res.json().catch(() => ({ success: false, error: 'invalid_response' }));
+    return res.json().catch(() => ({ success: false, error: 'unavailable' }));
   }
 
   /* ---------- UI ---------- */
@@ -169,7 +169,11 @@
         if (result && result.success && result.profile) {
           renderPreview({ ...result.profile, verified: true });
         } else {
-          const isRealError = result && ['upstream_error', 'exception', 'provider_not_configured', 'invalid_response'].includes(result.error);
+          // O backend só devolve dois motivos possíveis: "not_found" (fato de
+          // negócio) ou "unavailable" (qualquer problema técnico, qualquer
+          // que seja o fornecedor por trás). Este módulo não precisa saber
+          // mais que isso.
+          const isRealError = result && result.error === 'unavailable';
           renderNotFound(normalized, !!isRealError);
         }
       } catch (err) {
