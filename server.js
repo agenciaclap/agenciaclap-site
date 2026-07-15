@@ -355,7 +355,11 @@ function renderIndexHtml() {
 app.get(['/', '/admin'], (req, res) => {
   res.type('html').send(renderIndexHtml());
 });
-app.use(express.static(__dirname));
+// { index: false } impede que este middleware sirva o index.html cru
+// automaticamente em "/" — isso garante que a rota acima (que injeta a
+// MP_PUBLIC_KEY) é sempre quem responde por essa página, independente da
+// ordem em que as linhas apareçam no arquivo.
+app.use(express.static(__dirname, { index: false }));
 
 app.listen(PORT, () => {
   console.log(`Agência CLAP rodando em http://localhost:${PORT}`);
