@@ -51,7 +51,7 @@ app.get('/api/instagram/lookup', async (req, res) => {
   }
 
   try {
-    const url = `${HIKER_API_BASE}/v2/user/by/username?username=${encodeURIComponent(username)}`;
+    const url = `${HIKER_API_BASE}/v1/user/by/username?username=${encodeURIComponent(username)}`;
     const hikerRes = await fetch(url, {
       headers: { 'x-access-key': HIKER_API_KEY, accept: 'application/json' }
     });
@@ -130,6 +130,24 @@ app.post('/api/mercadopago/create-payment', async (req, res) => {
   } catch (err) {
     console.error('[create-payment] erro ao criar pagamento:', err?.message || err);
     return res.status(502).json({ error: 'Falha ao criar o pagamento no Mercado Pago.', exceptionMessage: err?.message || String(err) });
+  }
+});
+
+// ============================================================================
+// GET /api/mercadopago/payment-status/:id — consulta de status (pro polling do
+// frontend depois de mostrar o QR Code — fecha o fluxo até "aprovado").
+// Documentado oficialmente como GET /v1/payments/{id}.
+// ============================================================================
+app.get('/api/mercadopago/payment-status/:id', async (req, res) => {
+  if (!paymentClient) {
+    return res.status(500).json({ error: 'MP_ACCESS_TOKEN não configurado no servidor' });
+  }
+  try {
+    const payment = await paymentClient.get({ id: req.params.id });
+    return res.status(200).json({ id: payment.id, status: payment.status });
+  } catch (err) {
+    console.error('[payment-status] erro ao consultar pagamento:', err?.message || err);
+    return res.status(502).json({ error: 'Falha ao consultar o status do pagamento.', exceptionMessage: err?.message || String(err) });
   }
 });
 
