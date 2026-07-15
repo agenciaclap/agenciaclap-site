@@ -121,28 +121,13 @@
     if (typeof onSelectCallback === 'function') onSelectCallback(profile);
   }
 
-  function renderNotFound(username, isError) {
+  function renderNotFound() {
     if (!els.emptyState) return;
     els.emptyState.innerHTML = `
       <div class="ig-empty-state">
-        ${isError
-          ? 'Não conseguimos verificar esse perfil agora (falha na consulta).'
-          : 'Não encontramos esse perfil no Instagram — confira se o @ está certo.'}
-        <br>
-        <button id="igUseAnywayBtn">Usar @${username} mesmo assim</button>
+        Não conseguimos confirmar a foto deste perfil agora — confira se o @ está certo antes de continuar.
       </div>
     `;
-    const btn = document.getElementById('igUseAnywayBtn');
-    if (btn) {
-      btn.addEventListener('click', () => {
-        els.emptyState.innerHTML = '';
-        renderPreview({
-          username, fullName: null, avatar: null,
-          followers: null, following: null, posts: null,
-          verified: false
-        });
-      });
-    }
   }
 
   function handleInput() {
@@ -167,20 +152,33 @@
         hideStatus();
 
         if (result && result.success && result.profile) {
+          // Perfil real, confirmado pelo fornecedor.
           renderPreview({ ...result.profile, verified: true });
         } else {
-          // O backend só devolve dois motivos possíveis: "not_found" (fato de
-          // negócio) ou "unavailable" (qualquer problema técnico, qualquer
-          // que seja o fornecedor por trás). Este módulo não precisa saber
-          // mais que isso.
-          const isRealError = result && result.error === 'unavailable';
-          renderNotFound(normalized, !!isRealError);
+          // O backend não conseguiu confirmar o perfil (seja porque não
+          // existe, seja por qualquer motivo técnico do fornecedor). Em vez
+          // de travar o checkout esperando um clique extra numa "solução
+          // alternativa", o fluxo segue automaticamente com o @ que a
+          // pessoa digitou — exatamente como aconteceria se o Instagram
+          // tivesse confirmado, só que sem o selo de verificado. A venda
+          // nunca fica bloqueada por uma falha de consulta.
+          renderPreview({
+            username: normalized, fullName: null, avatar: null,
+            followers: null, following: null, posts: null,
+            verified: false
+          });
+          renderNotFound();
         }
       } catch (err) {
         if (myRequestId !== requestId) return;
         hideStatus();
         console.error('[InstagramIntegration] erro ao consultar perfil:', err);
-        renderNotFound(normalized, true);
+        renderPreview({
+          username: normalized, fullName: null, avatar: null,
+          followers: null, following: null, posts: null,
+          verified: false
+        });
+        renderNotFound();
       }
     }, DEBOUNCE_MS);
   }
