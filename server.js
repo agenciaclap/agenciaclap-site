@@ -35,6 +35,7 @@ const fs = require('fs');
 const path = require('path');
 const crypto = require('crypto');
 const express = require('express');
+const nodemailer = require('nodemailer');
 const { MercadoPagoConfig, Payment } = require('mercadopago');
 
 const app = express();
@@ -56,12 +57,28 @@ const MP_WEBHOOK_SECRET = process.env.MP_WEBHOOK_SECRET;
 const ADMIN_PANEL_KEY = process.env.ADMIN_PANEL_KEY || 'TV2026';
 const PORT = process.env.PORT || 3000;
 
-// TODO TEMPORÁRIO — DIAGNÓSTICO. Remover depois de confirmar o problema.
-console.log('[DIAGNÓSTICO]', {
-  MP_PUBLIC_KEY: !!process.env.MP_PUBLIC_KEY,
-  MP_ACCESS_TOKEN: !!process.env.MP_ACCESS_TOKEN,
-  HIKER_API_KEY: !!process.env.HIKER_API_KEY
-});
+// ----------------------------------------------------------------------------
+// E-mail (Rastrear Pedido) — envia via SMTP, sem banco de dados.
+// Configure com as credenciais de um e-mail que possa enviar por SMTP.
+// Exemplo usando Gmail: SMTP_HOST=smtp.gmail.com, SMTP_PORT=465, SMTP_USER=
+// seu e-mail, SMTP_PASS=uma "Senha de app" gerada em myaccount.google.com/
+// apppasswords (a senha normal da conta Google não funciona aqui).
+// ----------------------------------------------------------------------------
+const SMTP_HOST = process.env.SMTP_HOST;
+const SMTP_PORT = Number(process.env.SMTP_PORT || 465);
+const SMTP_USER = process.env.SMTP_USER;
+const SMTP_PASS = process.env.SMTP_PASS;
+const SMTP_FROM = process.env.SMTP_FROM || SMTP_USER;
+const TRACK_ORDER_TO = process.env.TRACK_ORDER_TO || 'agenciaclap25@gmail.com';
+
+const mailTransporter = (SMTP_HOST && SMTP_USER && SMTP_PASS)
+  ? nodemailer.createTransport({
+      host: SMTP_HOST,
+      port: SMTP_PORT,
+      secure: SMTP_PORT === 465,
+      auth: { user: SMTP_USER, pass: SMTP_PASS }
+    })
+  : null;
 
 const mpClient = MP_ACCESS_TOKEN ? new MercadoPagoConfig({ accessToken: MP_ACCESS_TOKEN, options: { timeout: 8000 } }) : null;
 const paymentClient = mpClient ? new Payment(mpClient) : null;
@@ -119,16 +136,33 @@ app.get('/api/instagram/lookup', async (req, res) => {
 
   try {
     const url = `${HIKER_API_BASE}/v1/user/by/username?username=${encodeURIComponent(username)}`;
-    const hikerRes = await fetch(url, {
-      headers: { 'x-access-key': HIKER_API_KEY, accept: 'application/json' }
-    });
+    const requestHeaders = { 'x-access-key': HIKER_API_KEY, accept: 'application/json' };
+    const hikerRes = await fetch(url, { headers: requestHeaders });
 
     if (hikerRes.status === 404) {
       return res.status(404).json({ error: 'perfil não encontrado' });
     }
     if (!hikerRes.ok) {
-      console.error('[instagram-lookup] HikerAPI respondeu', hikerRes.status);
-      return res.status(502).json({ error: 'falha ao consultar o provedor de dados do Instagram' });
+      // Lê o corpo como texto primeiro (pode não ser JSON em erros 401/403/429),
+      // e tenta parsear como JSON só depois, sem quebrar se não for.
+      const rawBody = await hikerRes.text();
+      let parsedBody = rawBody;
+      try { parsedBody = JSON.parse(rawBody); } catch { /* corpo não é JSON, mantém como texto */ }
+
+      const diagnostic = {
+        hikerStatus: hikerRes.status,
+        hikerStatusText: hikerRes.statusText,
+        hikerBody: parsedBody,
+        endpoint: '/v1/user/by/username',
+        requestUrl: url,
+        requestHeaders: { 'x-access-key': '(omitido)', accept: requestHeaders.accept }
+      };
+
+      console.error('[instagram-lookup] HikerAPI respondeu com erro:', JSON.stringify(diagnostic));
+      return res.status(502).json({
+        error: 'falha ao consultar o provedor de dados do Instagram',
+        diagnostic
+      });
     }
 
     const data = await hikerRes.json();
@@ -144,8 +178,16 @@ app.get('/api/instagram/lookup', async (req, res) => {
       posts: data.media_count ?? null
     });
   } catch (err) {
-    console.error('[instagram-lookup] erro ao consultar HikerAPI:', err);
-    return res.status(502).json({ error: 'falha ao consultar o provedor de dados do Instagram' });
+    const diagnostic = {
+      exceptionName: err?.name || null,
+      exceptionMessage: err?.message || String(err),
+      requestUrl: `${HIKER_API_BASE}/v1/user/by/username?username=${encodeURIComponent(username)}`
+    };
+    console.error('[instagram-lookup] exceção ao consultar HikerAPI:', JSON.stringify(diagnostic));
+    return res.status(502).json({
+      error: 'falha ao consultar o provedor de dados do Instagram',
+      diagnostic
+    });
   }
 });
 
@@ -350,6 +392,40 @@ app.post('/api/admin/orders/:paymentId/status', (req, res) => {
 });
 
 // ============================================================================
+// POST /api/track-order — "Rastrear Pedido". Só dispara um e-mail, sem banco
+// de dados, sem consulta nenhuma. O cliente informa o e-mail e a equipe
+// responde manualmente por lá.
+// ============================================================================
+app.post('/api/track-order', async (req, res) => {
+  const email = String(req.body?.email || '').trim();
+  const emailOk = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+
+  if (!emailOk) {
+    return res.status(400).json({ error: 'e-mail inválido' });
+  }
+  if (!mailTransporter) {
+    console.error('[track-order] SMTP não configurado (SMTP_HOST/SMTP_USER/SMTP_PASS)');
+    return res.status(500).json({ error: 'envio de e-mail não configurado no servidor' });
+  }
+
+  const agora = new Date().toLocaleString('pt-BR', { timeZone: 'America/Sao_Paulo' });
+  const corpo = `Nova solicitação de rastreamento.\n\nE-mail informado:\n\n${email}\n\nData e hora:\n\n${agora}`;
+
+  try {
+    await mailTransporter.sendMail({
+      from: SMTP_FROM,
+      to: TRACK_ORDER_TO,
+      subject: 'Solicitação de Rastreamento de Pedido',
+      text: corpo
+    });
+    return res.status(200).json({ ok: true });
+  } catch (err) {
+    console.error('[track-order] erro ao enviar e-mail:', err);
+    return res.status(502).json({ error: 'falha ao enviar a solicitação' });
+  }
+});
+
+// ============================================================================
 // SITE ESTÁTICO — serve o próprio index.html em "/" e em "/admin"
 // ============================================================================
 const INDEX_PATH = path.join(__dirname, 'index.html');
@@ -372,5 +448,6 @@ app.listen(PORT, () => {
   console.log(`Agência CLAP rodando em http://localhost:${PORT}`);
   if (!MP_ACCESS_TOKEN) console.warn('⚠️  MP_ACCESS_TOKEN não definido — pagamentos vão falhar até configurar.');
   if (!MP_PUBLIC_KEY) console.warn('⚠️  MP_PUBLIC_KEY não definida — o Payment Brick não vai renderizar até configurar.');
+  if (!mailTransporter) console.warn('⚠️  SMTP não configurado (SMTP_HOST/SMTP_USER/SMTP_PASS) — Rastrear Pedido não vai enviar e-mail até configurar.');
   if (!MP_WEBHOOK_SECRET) console.warn('⚠️  MP_WEBHOOK_SECRET não definido — webhook vai rejeitar tudo até configurar.');
 });
