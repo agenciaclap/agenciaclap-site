@@ -785,7 +785,7 @@ const CONFIG = {
   // literalmente feita para isso). O Access Token NUNCA aparece aqui —
   // ele fica só no backend (ver server.js).
   mercadopago: {
-    publicKey: "TODO_SUA_PUBLIC_KEY_DE_PRODUCAO",
+    publicKey: "__MP_PUBLIC_KEY__",
     createPaymentEndpoint: "/api/mercadopago/create-payment"
   },
 
@@ -1218,6 +1218,14 @@ async function mountPaymentBrick(){
   document.getElementById('mpErrorMsg').style.display = 'none';
   if(paymentBrickController){ paymentBrickController.unmount(); paymentBrickController = null; }
 
+  // Guarda defensiva: se o server.js não substituiu o token pela chave real
+  // (ou a variável de ambiente MP_PUBLIC_KEY está vazia), nem tenta chamar
+  // o Mercado Pago — mostra logo um erro claro em vez de tela em branco.
+  if(!CONFIG.mercadopago.publicKey || CONFIG.mercadopago.publicKey.indexOf('MP_PUBLIC_KEY') !== -1){
+    showMpError('Pagamento indisponível: a Public Key do Mercado Pago não foi configurada no servidor (variável MP_PUBLIC_KEY).');
+    return;
+  }
+
   const settings = {
     initialization: {
       amount: checkoutState.price,
@@ -1268,6 +1276,7 @@ async function mountPaymentBrick(){
       },
       onError: (error) => {
         console.error('[CLAP] Payment Brick error:', error);
+        showMpError('Não foi possível carregar o formulário de pagamento. Verifique a Public Key do Mercado Pago configurada no servidor.');
       }
     }
   };
@@ -1293,7 +1302,10 @@ async function mountStatusScreenBrick(paymentId){
       initialization: { paymentId },
       callbacks: {
         onReady: () => { /* Brick pronto */ },
-        onError: (error) => { console.error('[CLAP] Status Screen Brick error:', error); }
+        onError: (error) => {
+          console.error('[CLAP] Status Screen Brick error:', error);
+          showMpError('Não foi possível carregar a tela de status do pagamento.');
+        }
       }
     });
   } catch(err){
