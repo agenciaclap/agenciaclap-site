@@ -51,6 +51,7 @@ const HIKER_API_KEY = process.env.HIKER_API_KEY || '8y0kak90tgugvs7zc86pflc584kx
 const HIKER_API_BASE = 'https://api.hikerapi.com';
 
 const MP_ACCESS_TOKEN = process.env.MP_ACCESS_TOKEN;
+const MP_PUBLIC_KEY = process.env.MP_PUBLIC_KEY || '';
 const MP_WEBHOOK_SECRET = process.env.MP_WEBHOOK_SECRET;
 const ADMIN_PANEL_KEY = process.env.ADMIN_PANEL_KEY || 'TV2026';
 const PORT = process.env.PORT || 3000;
@@ -344,11 +345,21 @@ app.post('/api/admin/orders/:paymentId/status', (req, res) => {
 // ============================================================================
 // SITE ESTÁTICO — serve o próprio index.html em "/" e em "/admin"
 // ============================================================================
-app.get('/admin', (req, res) => res.sendFile(path.join(__dirname, 'index.html')));
+const INDEX_PATH = path.join(__dirname, 'index.html');
+
+function renderIndexHtml() {
+  const raw = fs.readFileSync(INDEX_PATH, 'utf-8');
+  return raw.replace('__MP_PUBLIC_KEY__', MP_PUBLIC_KEY);
+}
+
+app.get(['/', '/admin'], (req, res) => {
+  res.type('html').send(renderIndexHtml());
+});
 app.use(express.static(__dirname));
 
 app.listen(PORT, () => {
   console.log(`Agência CLAP rodando em http://localhost:${PORT}`);
   if (!MP_ACCESS_TOKEN) console.warn('⚠️  MP_ACCESS_TOKEN não definido — pagamentos vão falhar até configurar.');
+  if (!MP_PUBLIC_KEY) console.warn('⚠️  MP_PUBLIC_KEY não definida — o Payment Brick não vai renderizar até configurar.');
   if (!MP_WEBHOOK_SECRET) console.warn('⚠️  MP_WEBHOOK_SECRET não definido — webhook vai rejeitar tudo até configurar.');
 });
