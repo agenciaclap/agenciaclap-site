@@ -1215,14 +1215,23 @@ function setupInstagramSearch(){
   let requestId = 0; // evita que uma resposta antiga sobrescreva uma mais nova
 
   input.addEventListener('input', () => {
+    const normalized = normalizeInstagramInput(input.value);
+
+    // Se o valor normalizado é exatamente o mesmo do perfil já confirmado,
+    // este evento de 'input' é espúrio (ex: autofill do navegador tocando
+    // no campo sem o usuário realmente mudar a escolha) — não invalida nada.
+    if(checkoutState.profile && normalized === checkoutState.profile.username){
+      return;
+    }
+
     clearTimeout(debounceTimer);
     checkoutState.profile = null;
     document.getElementById('igProfileCard').innerHTML = '';
     document.getElementById('igEmptyState').innerHTML = '';
     hideVerifyStatus();
+    document.getElementById('payNowBtn').disabled = true; // trava até a busca terminar, evita corrida
 
-    const normalized = normalizeInstagramInput(input.value);
-    if(normalized.length < 2) return;
+    if(normalized.length < 2){ document.getElementById('payNowBtn').disabled = false; return; }
 
     debounceTimer = setTimeout(async () => {
       const myRequestId = ++requestId;
@@ -1243,6 +1252,8 @@ function setupInstagramSearch(){
         hideVerifyStatus();
         console.error('[CLAP] Erro ao verificar perfil:', err);
         renderNotFound(normalized, true);
+      } finally {
+        if(myRequestId === requestId) document.getElementById('payNowBtn').disabled = false;
       }
     }, 500);
   });
