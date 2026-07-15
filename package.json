@@ -1,0 +1,19 @@
+{
+  "name": "agencia-clap",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Agência CLAP — loja de serviços para Instagram com checkout PIX (Mercado Pago Bricks), busca real de perfil (HikerAPI) e painel administrativo.",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node server.js"
+  },
+  "engines": {
+    "node": "22.x"
+  },
+  "dependencies": {
+    "express": "^5.2.1",
+    "mercadopago": "^3.2.0",
+    "nodemailer": "^9.0.3"
+  }
+}
