@@ -199,6 +199,18 @@ function renderIndexHtml() {
   return raw.replaceAll('__MP_PUBLIC_KEY__', MP_PUBLIC_KEY);
 }
 
+// ============================================================================
+// GET /health — rota temporária de diagnóstico, pra provar que o Render está
+// executando exatamente este arquivo. Remover depois de confirmado.
+// ============================================================================
+app.get('/health', (req, res) => {
+  res.json({
+    ok: true,
+    version: 'MVP-2026-07-15',
+    timestamp: new Date().toISOString()
+  });
+});
+
 app.get('/', (req, res) => {
   res.set('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate');
   res.set('Pragma', 'no-cache');
