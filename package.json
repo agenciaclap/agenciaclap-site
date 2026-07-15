@@ -1,8 +1,8 @@
 {
-  "name": "agencia-clap",
+  "name": "agencia-clap-mvp",
   "version": "1.0.0",
   "private": true,
-  "description": "Agência CLAP — loja de serviços para Instagram com checkout PIX (Mercado Pago Bricks), busca real de perfil (HikerAPI) e painel administrativo.",
+  "description": "MVP isolado — só prova que Instagram (HikerAPI) e Mercado Pago (PIX) funcionam neste ambiente.",
   "main": "server.js",
   "scripts": {
     "start": "node server.js",
