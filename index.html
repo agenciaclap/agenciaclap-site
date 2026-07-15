@@ -643,77 +643,68 @@ a:focus-visible, button:focus-visible, input:focus-visible{ outline:2px solid va
 
     <div class="checkout-head">
       <h2 id="checkoutTitle" class="font-display" style="font-size:1.15rem;">Finalizar pedido</h2>
-      <div class="checkout-steps" id="checkoutSteps">
-        <div class="step active" data-step="1"><span class="dot">1</span> Perfil</div>
-        <div class="step" data-step="2"><span class="dot">2</span> Dados</div>
-        <div class="step" data-step="3"><span class="dot">3</span> Pagamento</div>
-      </div>
       <button class="checkout-close" id="checkoutClose" aria-label="Fechar">
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><line x1="4" y1="4" x2="20" y2="20"/><line x1="20" y1="4" x2="4" y2="20"/></svg>
       </button>
     </div>
 
     <div class="checkout-body">
+      <div class="checkout-columns">
 
-      <!-- ---- STEP 1: VERIFICAÇÃO DE INSTAGRAM ---- -->
-      <div class="checkout-panel active" data-panel="1">
-        <p style="text-align:center;color:var(--text-soft);margin-bottom:20px;">Informe o @ exato, usuário ou link do perfil que vai receber o pedido.</p>
-        <div class="ig-search-wrap">
-          <input type="text" id="igSearchInput" class="ig-search-input" placeholder="@usuario, usuario ou link do Instagram" autocomplete="off">
-          <div class="ig-verify-status" id="igVerifyStatus" style="display:none;"></div>
-        </div>
-        <div id="igEmptyState"></div>
-        <div id="igProfileCard"></div>
-        <div style="text-align:center;margin-top:28px;">
-          <button class="btn btn-primary" id="igContinueBtn" disabled>Continuar</button>
-        </div>
-      </div>
-
-      <!-- ---- STEP 2: DADOS DO CLIENTE + RESUMO ---- -->
-      <div class="checkout-panel" data-panel="2">
-        <div class="checkout-columns">
-          <div>
-            <h3 style="font-size:1.1rem;margin-bottom:18px;">Seus dados</h3>
-            <div class="form-group">
-              <label for="custEmail">E-mail</label>
-              <input type="email" id="custEmail" placeholder="voce@email.com">
-              <div class="form-error" id="errEmail">Informe um e-mail válido.</div>
+        <!-- ---- COLUNA ESQUERDA: tudo em um formulário só, sem etapas ---- -->
+        <div>
+          <p style="color:var(--text-soft);margin-bottom:6px;font-weight:600;">Seu perfil precisa estar público</p>
+          <div class="form-group">
+            <label for="igSearchInput">@ do Perfil ou link</label>
+            <div class="ig-search-wrap">
+              <input type="text" id="igSearchInput" class="ig-search-input" placeholder="@ do Perfil ou link" autocomplete="off">
+              <div class="ig-verify-status" id="igVerifyStatus" style="display:none;"></div>
             </div>
-            <div class="form-group">
-              <label for="custWhats">WhatsApp</label>
-              <input type="tel" id="custWhats" placeholder="(00) 00000-0000">
-              <div class="form-error" id="errWhats">Informe um WhatsApp válido.</div>
-            </div>
-            <div class="form-group">
-              <label class="form-checkbox">
-                <input type="checkbox" id="custTerms">
-                <span>Li e aceito os <a href="#" style="text-decoration:underline;">Termos de Uso</a> e a <a href="#" style="text-decoration:underline;">Política de Privacidade</a>.</span>
-              </label>
-              <div class="form-error" id="errTerms">É necessário aceitar os termos para continuar.</div>
-            </div>
-            <button class="btn btn-primary" id="goToPaymentBtn" style="width:100%;margin-top:8px;">Ir para Pagamento</button>
+            <div id="igEmptyState"></div>
+            <div id="igProfileCard"></div>
           </div>
-          <div class="order-summary">
-            <h4>Resumo do pedido</h4>
-            <div class="order-row"><span id="sumService">—</span><span id="sumQty">—</span></div>
-            <div class="order-row"><span>Perfil</span><span id="sumProfile">—</span></div>
-            <div class="order-row"><span>Reposição</span><span>365 dias</span></div>
-            <div class="order-row total"><span>Total</span><span id="sumTotal">R$ 0,00</span></div>
+
+          <div class="form-group">
+            <label for="custEmail">Endereço de E-mail</label>
+            <input type="email" id="custEmail" placeholder="voce@email.com">
+            <div class="form-error" id="errEmail">Informe um e-mail válido.</div>
+          </div>
+
+          <div class="form-group">
+            <label for="custWhats">Seu WhatsApp</label>
+            <input type="tel" id="custWhats" placeholder="(00) 00000-0000">
+            <div class="form-error" id="errWhats">Informe um WhatsApp válido.</div>
+            <div style="font-size:.78rem;color:var(--text-soft);margin-top:4px;">Para receber atualizações referente ao seu pedido.</div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-checkbox">
+              <input type="checkbox" id="custTerms">
+              <span>Li e aceito os <a href="#" style="text-decoration:underline;">Termos de Uso</a> e a <a href="#" style="text-decoration:underline;">Política de Privacidade</a>.</span>
+            </label>
+            <div class="form-error" id="errTerms">É necessário aceitar os termos e localizar o perfil para continuar.</div>
+          </div>
+
+          <button class="btn btn-primary" id="payNowBtn" style="width:100%;margin-top:8px;">💳 Pagar Agora via PIX</button>
+
+          <!-- Aparece só depois de clicar em pagar, no lugar do formulário -->
+          <div class="mp-pix-wrap" id="mpPixWrap" style="display:none;margin-top:20px;">
+            <div id="paymentBrick_container"></div>
+            <div id="statusScreenBrick_container" style="display:none;"></div>
+            <div id="mpErrorMsg" class="mp-error-msg" style="display:none;"></div>
           </div>
         </div>
-      </div>
 
-      <!-- ---- STEP 3: PAGAMENTO PIX (Mercado Pago Checkout Bricks) ---- -->
-      <div class="checkout-panel" data-panel="3">
-        <div class="mp-pix-wrap">
-          <!-- Enquanto o pagamento ainda não foi criado: Payment Brick, restrito a PIX -->
-          <div id="paymentBrick_container"></div>
-          <!-- Depois de criado o Payment: Status Screen Brick mostra QR/copia-e-cola/status oficiais -->
-          <div id="statusScreenBrick_container" style="display:none;"></div>
-          <div id="mpErrorMsg" class="mp-error-msg" style="display:none;"></div>
+        <!-- ---- COLUNA DIREITA: resumo do pedido ---- -->
+        <div class="order-summary">
+          <h4>Resumo do pedido</h4>
+          <div class="order-row"><span id="sumService">—</span><span id="sumQty">—</span></div>
+          <div class="order-row"><span>Perfil</span><span id="sumProfile">—</span></div>
+          <div class="order-row"><span>Reposição</span><span>365 dias</span></div>
+          <div class="order-row total"><span>Total</span><span id="sumTotal">R$ 0,00</span></div>
         </div>
-      </div>
 
+      </div>
     </div>
   </div>
 </div>
@@ -1157,15 +1148,17 @@ function openCheckout(serviceId, serviceLabel, qty, price){
   hideVerifyStatus();
   document.getElementById('igEmptyState').innerHTML = '';
   document.getElementById('igProfileCard').innerHTML = '';
-  document.getElementById('igContinueBtn').disabled = true;
   document.getElementById('custEmail').value = '';
   document.getElementById('custWhats').value = '';
   document.getElementById('custTerms').checked = false;
   ['errEmail','errWhats','errTerms'].forEach(id => document.getElementById(id).style.display = 'none');
   unmountPaymentBricks();
   document.getElementById('mpErrorMsg').style.display = 'none';
+  document.getElementById('mpPixWrap').style.display = 'none';
+  document.getElementById('payNowBtn').style.display = '';
+  document.getElementById('payNowBtn').disabled = false;
 
-  goToStep(1);
+  renderOrderSummary();
   document.getElementById('checkoutOverlay').classList.add('open');
   document.body.style.overflow = 'hidden';
 }
@@ -1174,17 +1167,6 @@ function closeCheckout(){
   document.getElementById('checkoutOverlay').classList.remove('open');
   document.body.style.overflow = '';
   unmountPaymentBricks(); // a doc oficial exige destruir a instância ao sair da tela do Brick
-}
-
-function goToStep(step){
-  document.querySelectorAll('.checkout-panel').forEach(p => p.classList.toggle('active', Number(p.dataset.panel) === step));
-  document.querySelectorAll('.checkout-steps .step').forEach(s => {
-    const n = Number(s.dataset.step);
-    s.classList.toggle('active', n === step);
-    s.classList.toggle('done', n < step);
-  });
-  if(step === 2) renderOrderSummary();
-  if(step === 3) mountPaymentBrick();
 }
 
 /* ---------- Step 1: busca de Instagram ---------- */
@@ -1214,7 +1196,8 @@ function selectProfile(profile){
       </div>
     </div>
   `;
-  document.getElementById('igContinueBtn').disabled = false;
+  document.getElementById('igEmptyState').innerHTML = '';
+  renderOrderSummary();
 }
 
 function showVerifyStatus(html){
@@ -1236,7 +1219,6 @@ function setupInstagramSearch(){
     checkoutState.profile = null;
     document.getElementById('igProfileCard').innerHTML = '';
     document.getElementById('igEmptyState').innerHTML = '';
-    document.getElementById('igContinueBtn').disabled = true;
     hideVerifyStatus();
 
     const normalized = normalizeInstagramInput(input.value);
@@ -1436,8 +1418,21 @@ function setupBuyButtons(){
     openCheckout(btn.dataset.serviceId, btn.dataset.serviceLabel, btn.dataset.qty, btn.dataset.price);
   });
 
-  document.getElementById('igContinueBtn').addEventListener('click', () => goToStep(2));
-  document.getElementById('goToPaymentBtn').addEventListener('click', () => { if(validateCustomerForm()) goToStep(3); });
+  document.getElementById('payNowBtn').addEventListener('click', () => {
+    if(!checkoutState.profile){
+      document.getElementById('igEmptyState').innerHTML = `
+        <div class="ig-empty-state">Localize o perfil do Instagram antes de continuar.</div>
+      `;
+      document.getElementById('igSearchInput').scrollIntoView({ behavior:'smooth', block:'center' });
+      return;
+    }
+    if(!validateCustomerForm()) return;
+
+    // Some o formulário, revela a área de pagamento (Payment Brick) no lugar.
+    document.getElementById('payNowBtn').style.display = 'none';
+    document.getElementById('mpPixWrap').style.display = 'block';
+    mountPaymentBrick();
+  });
   document.getElementById('checkoutClose').addEventListener('click', closeCheckout);
   document.getElementById('checkoutOverlay').addEventListener('click', (e) => {
     if(e.target.id === 'checkoutOverlay') closeCheckout();
