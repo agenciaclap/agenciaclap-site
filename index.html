@@ -1418,11 +1418,13 @@ async function mountPaymentBrick(){
   // com as duas versões possíveis de server.js, sem exigir sincronia perfeita
   // entre os arquivos publicados.
   let publicKey = '';
+  let serverDiagnostic = null;
   try{
     const res = await fetch('/api/config/mercadopago', { cache: 'no-store' });
     if(res.ok){
       const body = await res.json().catch(() => null);
       if(body?.publicKey) publicKey = body.publicKey;
+      serverDiagnostic = body?.diagnostic || null;
     }
   } catch(err){
     console.error('[CLAP] Rota /api/config/mercadopago indisponível, usando mecanismo de substituição no HTML como alternativa:', err);
@@ -1438,7 +1440,14 @@ async function mountPaymentBrick(){
   }
 
   if(!publicKey){
-    showMpError('Pagamento indisponível: a Public Key do Mercado Pago não foi configurada no servidor (variável MP_PUBLIC_KEY). Confirme essa variável no Render.');
+    // Mostra exatamente o que o servidor enxerga pra essa variável, sem
+    // margem pra interpretação: presença, tamanho, espaços e nomes de
+    // variável parecidos que possam existir por engano no Render.
+    const d = serverDiagnostic;
+    const diagText = d
+      ? ` [Diagnóstico do servidor: variável presente=${d.rawValuePresent}, tamanho=${d.rawValueLength}, tem espaço em branco=${d.rawValueHasWhitespace}, prévia="${d.rawValuePreview || '(vazio)'}", variáveis parecidas encontradas=${JSON.stringify(d.similarEnvVarNamesFound)}]`
+      : ' [Não foi possível obter diagnóstico do servidor.]';
+    showMpError(`Pagamento indisponível: a Public Key do Mercado Pago não foi configurada no servidor (variável MP_PUBLIC_KEY).${diagText}`);
     return;
   }
 
