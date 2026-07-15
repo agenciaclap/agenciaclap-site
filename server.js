@@ -51,7 +51,7 @@ app.get('/api/instagram/lookup', async (req, res) => {
   }
 
   try {
-    const url = `${HIKER_API_BASE}/v1/user/by/username?username=${encodeURIComponent(username)}`;
+    const url = `${HIKER_API_BASE}/v2/user/by/username?username=${encodeURIComponent(username)}`;
     const hikerRes = await fetch(url, {
       headers: { 'x-access-key': HIKER_API_KEY, accept: 'application/json' }
     });
@@ -105,7 +105,15 @@ app.post('/api/mercadopago/create-payment', async (req, res) => {
         transaction_amount: 1.00,
         description: 'MVP de teste — Agência CLAP',
         payment_method_id: 'pix',
-        payer: { email }
+        payer: {
+          email,
+          first_name: 'Teste',
+          last_name: 'MVP',
+          // CPF de teste — o mesmo número usado em 100% dos exemplos oficiais
+          // da documentação da Mercado Pago (Node, Java, .NET, Python, Go, curl).
+          // Presente em todo exemplo oficial de PIX que existe, sem exceção.
+          identification: { type: 'CPF', number: '19119119100' }
+        }
       },
       // Obrigatório desde a atualização de segurança do Mercado Pago (nov/2023):
       // sem isso, a API rejeita com "Header X-Idempotency-Key can't be null".
