@@ -56,6 +56,13 @@ const MP_WEBHOOK_SECRET = process.env.MP_WEBHOOK_SECRET;
 const ADMIN_PANEL_KEY = process.env.ADMIN_PANEL_KEY || 'TV2026';
 const PORT = process.env.PORT || 3000;
 
+// TODO TEMPORÁRIO — DIAGNÓSTICO. Remover depois de confirmar o problema.
+console.log('[DIAGNÓSTICO]', {
+  MP_PUBLIC_KEY: !!process.env.MP_PUBLIC_KEY,
+  MP_ACCESS_TOKEN: !!process.env.MP_ACCESS_TOKEN,
+  HIKER_API_KEY: !!process.env.HIKER_API_KEY
+});
+
 const mpClient = MP_ACCESS_TOKEN ? new MercadoPagoConfig({ accessToken: MP_ACCESS_TOKEN, options: { timeout: 8000 } }) : null;
 const paymentClient = mpClient ? new Payment(mpClient) : null;
 
