@@ -55,6 +55,16 @@ const MP_ACCESS_TOKEN = process.env.MP_ACCESS_TOKEN;
 const MP_PUBLIC_KEY = process.env.MP_PUBLIC_KEY || '';
 const MP_WEBHOOK_SECRET = process.env.MP_WEBHOOK_SECRET;
 const ADMIN_PANEL_KEY = process.env.ADMIN_PANEL_KEY || 'TV2026';
+
+// TODO TEMPORÁRIO — diagnóstico da causa do "Public Key não configurada".
+// Aparece só nos Logs do Render, nunca na resposta ao cliente. Remover depois de confirmado.
+console.log('[DIAGNÓSTICO MP_PUBLIC_KEY]', {
+  presente: process.env.MP_PUBLIC_KEY !== undefined,
+  tamanho: (process.env.MP_PUBLIC_KEY || '').length,
+  temEspacoEmBranco: (process.env.MP_PUBLIC_KEY || '') !== (process.env.MP_PUBLIC_KEY || '').trim(),
+  prefixo: (process.env.MP_PUBLIC_KEY || '').slice(0, 8),
+  ultimos4: (process.env.MP_PUBLIC_KEY || '').slice(-4)
+});
 const PORT = process.env.PORT || 3000;
 
 // ----------------------------------------------------------------------------
