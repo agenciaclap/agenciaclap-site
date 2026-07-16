@@ -1262,9 +1262,7 @@ function setupInstagramSearch(){
 function renderNotFound(normalized, isError){
   document.getElementById('igEmptyState').innerHTML = `
     <div class="ig-empty-state">
-      ${isError
-        ? 'Não conseguimos verificar esse perfil agora (falha na consulta).'
-        : 'Não encontramos esse perfil no Instagram — confira se o @ está certo.'}
+      Confira se o seu @ está escrito exatamente como no Instagram. Pequenos erros de digitação podem impedir a identificação automática do perfil. Se estiver correto, você pode continuar normalmente com a compra. Você receberá um e-mail de confirmação após o pagamento.
       <br>
       <button id="useAnywayBtn">Usar @${normalized} mesmo assim</button>
     </div>
@@ -1430,13 +1428,17 @@ function setupBuyButtons(){
   });
 
   document.getElementById('payNowBtn').addEventListener('click', () => {
+    // A busca do Instagram é só confirmação visual — nunca bloqueia o pagamento.
+    // Se o cliente digitou um @ mas ele não foi confirmado pela HikerAPI,
+    // usamos o texto digitado mesmo assim (igual ao fluxo de "usar mesmo assim").
     if(!checkoutState.profile){
-      document.getElementById('igEmptyState').innerHTML = `
-        <div class="ig-empty-state">Localize o perfil do Instagram antes de continuar.</div>
-      `;
-      document.getElementById('igSearchInput').scrollIntoView({ behavior:'smooth', block:'center' });
-      return;
+      const typed = normalizeInstagramInput(document.getElementById('igSearchInput').value);
+      if(typed){
+        checkoutState.profile = { username: typed, name: null, followers: null, following: null, posts: null, verified: false };
+        renderOrderSummary();
+      }
     }
+
     if(!validateCustomerForm()) return;
 
     // Some o formulário, revela a área de pagamento (Payment Brick) no lugar.
