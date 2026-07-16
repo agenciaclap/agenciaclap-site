@@ -950,10 +950,16 @@ function normalizeInstagramInput(raw){
 const instagramProvider = {
   async lookup(username){
     const url = `${CONFIG.instagramApi.lookupEndpoint}?username=${encodeURIComponent(username)}`;
-    const res = await fetch(url);
-    if(res.status === 404) return null; // perfil não encontrado
-    if(!res.ok) throw new Error(`Falha ao verificar perfil (HTTP ${res.status})`);
-    return res.json();
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 6000); // nunca deixa o botão travado por um provedor que não responde
+    try{
+      const res = await fetch(url, { signal: controller.signal });
+      if(res.status === 404) return null; // perfil não encontrado
+      if(!res.ok) throw new Error(`Falha ao verificar perfil (HTTP ${res.status})`);
+      return await res.json();
+    } finally {
+      clearTimeout(timeoutId);
+    }
   }
 };
 
