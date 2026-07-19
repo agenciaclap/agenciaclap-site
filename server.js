@@ -494,6 +494,15 @@ app.get('/api/mercadopago/public-key', (req, res) => {
   res.json({ publicKey: MP_PUBLIC_KEY });
 });
 
+// NOVO ▸ consulta pública de status — só devolve o status (nada sensível:
+// sem e-mail, sem whatsapp, sem valor). É o que o front-end usa pra saber
+// quando o PIX foi pago de verdade, em vez de "fingir" com um temporizador.
+app.get('/api/mercadopago/payment-status/:paymentId', (req, res) => {
+  const order = getOrderByPaymentId(req.params.paymentId);
+  if (!order) return res.status(404).json({ error: 'pedido não encontrado' });
+  res.json({ status: order.status });
+});
+
 app.listen(PORT, () => {
   console.log(`Agência CLAP rodando em http://localhost:${PORT}`);
   if (!MP_ACCESS_TOKEN) console.warn('⚠️  MP_ACCESS_TOKEN não definido — pagamentos vão falhar até configurar.');
