@@ -234,10 +234,13 @@ app.post('/api/mercadopago/create-payment', async (req, res) => {
     return res.status(400).json({ error: 'formData ausente' });
   }
 
-  // Validação SERVER-SIDE: só pix é aceito aqui, ponto. A tela do Brick só
-  // mostrar PIX é cosmético — isso aqui é o que de fato impede cartão/boleto.
-  if (formData.payment_method_id !== 'pix') {
-    console.warn('[create-payment] tentativa de pagamento não-PIX bloqueada:', formData.payment_method_id);
+  const isPix = formData.payment_method_id === 'pix';
+
+  // NOVO ▸ a Agência CLAP continua só-PIX (decisão de negócio deles, sem
+  // mudança). A TV Sul Capixaba (origin === 'tvsulcapixaba') também aceita
+  // cartão de crédito — validado aqui no servidor, não só na tela do Brick.
+  if (origin !== 'tvsulcapixaba' && !isPix) {
+    console.warn('[create-payment] tentativa de pagamento não-PIX bloqueada (origin=' + (origin || 'clap') + '):', formData.payment_method_id);
     return res.status(400).json({ error: 'Apenas pagamentos via PIX são aceitos.' });
   }
 
@@ -251,17 +254,41 @@ app.post('/api/mercadopago/create-payment', async (req, res) => {
     return res.status(400).json({ error: 'e-mail do pagador ausente' });
   }
 
+  // NOVO ▸ cartão exige token gerado pelo Brick + CPF/CNPJ do pagador —
+  // sem isso o Mercado Pago rejeita o pagamento de qualquer forma, mas
+  // vale travar aqui também pra dar um erro claro.
+  if (!isPix && (!formData.token || !formData.payer?.identification)) {
+    return res.status(400).json({ error: 'dados do cartão incompletos' });
+  }
+
   try {
-    const idempotencyKey = external_reference || `clap-${Date.now()}-${Math.random().toString(36).slice(2)}`;
+    const idempotencyKey = external_reference || `pay-${Date.now()}-${Math.random().toString(36).slice(2)}`;
+
+    const paymentBody = isPix
+      ? {
+          transaction_amount: Number(formData.transaction_amount),
+          description: description || 'Agência CLAP',
+          payment_method_id: 'pix',
+          payer: { email: payerEmail },
+          external_reference: external_reference || undefined
+        }
+      : {
+          // NOVO ▸ cartão de crédito (só entra aqui quando origin === 'tvsulcapixaba')
+          transaction_amount: Number(formData.transaction_amount),
+          token: formData.token,
+          installments: Number(formData.installments) || 1,
+          payment_method_id: formData.payment_method_id,
+          issuer_id: formData.issuer_id || undefined,
+          description: description || 'TV Sul Capixaba',
+          payer: {
+            email: payerEmail,
+            identification: formData.payer.identification
+          },
+          external_reference: external_reference || undefined
+        };
 
     const payment = await paymentClient.create({
-      body: {
-        transaction_amount: Number(formData.transaction_amount),
-        description: description || 'Agência CLAP',
-        payment_method_id: 'pix',
-        payer: { email: payerEmail },
-        external_reference: external_reference || undefined
-      },
+      body: paymentBody,
       requestOptions: { idempotencyKey }
     });
 
@@ -279,6 +306,8 @@ app.post('/api/mercadopago/create-payment', async (req, res) => {
       cidade: cidade || null,                         // NOVO ▸ TV Sul Capixaba
       plano: plano || null,                           // NOVO ▸ TV Sul Capixaba
       codigoAmplificador: codigoAmplificador || null,  // NOVO ▸ TV Sul Capixaba
+      metodoPagamento: isPix ? 'pix' : 'cartão',       // NOVO ▸
+      parcelas: isPix ? 1 : (Number(formData.installments) || 1), // NOVO ▸
       description: description || null,
       valor: Number(formData.transaction_amount),
       status: 'Aguardando pagamento',
