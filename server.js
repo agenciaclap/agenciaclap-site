@@ -41,6 +41,22 @@ const { MercadoPagoConfig, Payment } = require('mercadopago');
 const app = express();
 app.use(express.json());
 
+// NOVO ▸ libera a API pra ser chamada do domínio da TV Sul Capixaba também
+// (a CLAP não precisa disso porque o front dela é servido por este mesmo
+// servidor — same-origin não passa por CORS).
+const ALLOWED_ORIGINS = (process.env.ALLOWED_ORIGINS || '').split(',').map(s => s.trim()).filter(Boolean);
+
+app.use((req, res, next) => {
+  const origin = req.headers.origin;
+  if (origin && ALLOWED_ORIGINS.includes(origin)) {
+    res.set('Access-Control-Allow-Origin', origin);
+    res.set('Access-Control-Allow-Methods', 'GET, POST, PATCH, OPTIONS');
+    res.set('Access-Control-Allow-Headers', 'Content-Type, x-admin-key');
+  }
+  if (req.method === 'OPTIONS') return res.sendStatus(204);
+  next();
+});
+
 // ----------------------------------------------------------------------------
 // Configuração / credenciais
 // ----------------------------------------------------------------------------
@@ -210,7 +226,8 @@ app.post('/api/mercadopago/create-payment', async (req, res) => {
   const {
     formData, external_reference, description,
     instagram, instagramName, instagramPhoto,
-    whatsapp, servico, quantidade
+    whatsapp, servico, quantidade,
+    origin, cidade, plano, codigoAmplificador   // NOVO ▸ TV Sul Capixaba
   } = req.body || {};
 
   if (!formData || typeof formData !== 'object') {
@@ -251,6 +268,7 @@ app.post('/api/mercadopago/create-payment', async (req, res) => {
     saveOrder({
       paymentId: String(payment.id),
       externalReference: external_reference || null,
+      origin: origin || 'clap',                      // NOVO ▸ separa CLAP de TV Sul Capixaba
       instagram: instagram || null,
       instagramName: instagramName || null,
       instagramPhoto: instagramPhoto || null,
@@ -258,6 +276,9 @@ app.post('/api/mercadopago/create-payment', async (req, res) => {
       whatsapp: whatsapp || null,
       servico: servico || null,
       quantidade: quantidade || null,
+      cidade: cidade || null,                         // NOVO ▸ TV Sul Capixaba
+      plano: plano || null,                           // NOVO ▸ TV Sul Capixaba
+      codigoAmplificador: codigoAmplificador || null,  // NOVO ▸ TV Sul Capixaba
       description: description || null,
       valor: Number(formData.transaction_amount),
       status: 'Aguardando pagamento',
@@ -385,7 +406,8 @@ function computeAdminStats(orders) {
 
 app.get('/api/admin/orders', (req, res) => {
   if (!isAdminAuthorized(req)) return res.status(401).json({ error: 'não autorizado' });
-  const orders = listOrders();
+  let orders = listOrders();
+  if (req.query.origin) orders = orders.filter(o => (o.origin || 'clap') === req.query.origin); // NOVO ▸ ?origin=tvsulcapixaba
   return res.status(200).json({ stats: computeAdminStats(orders), orders });
 });
 
@@ -464,6 +486,13 @@ app.get(['/', '/admin'], (req, res) => {
 // MP_PUBLIC_KEY) é sempre quem responde por essa página, independente da
 // ordem em que as linhas apareçam no arquivo.
 app.use(express.static(__dirname, { index: false }));
+
+// NOVO ▸ o front-end da TV Sul Capixaba busca a Public Key aqui em vez de
+// receber por template — porque agora ele é servido por outro projeto,
+// então o truque de substituir __MP_PUBLIC_KEY__ no HTML não se aplica.
+app.get('/api/mercadopago/public-key', (req, res) => {
+  res.json({ publicKey: MP_PUBLIC_KEY });
+});
 
 app.listen(PORT, () => {
   console.log(`Agência CLAP rodando em http://localhost:${PORT}`);
