@@ -455,6 +455,52 @@ app.post('/api/admin/orders/:paymentId/status', (req, res) => {
 });
 
 // ============================================================================
+// NOVO ▸ POST /api/amplificador/cadastro — TV Sul Capixaba. Envia o
+// cadastro de Amplificador por e-mail. Mesmo SMTP do /api/track-order,
+// e-mail de destino fixo (pode virar variável de ambiente se um dia
+// precisar mudar sem redeploy: AMPLIFICADOR_TO).
+// ============================================================================
+const AMPLIFICADOR_TO = process.env.AMPLIFICADOR_TO || 'macucaproducoes.oficial@gmail.com';
+
+app.post('/api/amplificador/cadastro', async (req, res) => {
+  const whatsapp = String(req.body?.whatsapp || '').trim();
+  const nome = String(req.body?.nome || '').trim();
+  const cpf = String(req.body?.cpf || '').trim();
+  const cidade = String(req.body?.cidade || '').trim();
+
+  if (!whatsapp) {
+    return res.status(400).json({ error: 'whatsapp é obrigatório' });
+  }
+  if (!mailTransporter) {
+    console.error('[amplificador-cadastro] SMTP não configurado (SMTP_HOST/SMTP_USER/SMTP_PASS)');
+    return res.status(500).json({ error: 'envio de e-mail não configurado no servidor' });
+  }
+
+  const agora = new Date().toLocaleString('pt-BR', { timeZone: 'America/Sao_Paulo' });
+  const corpo = `Novo cadastro de Amplificador — TV Sul Capixaba.
+
+Nome / razão social: ${nome || '(não informado)'}
+CPF/CNPJ: ${cpf || '(não informado)'}
+WhatsApp: ${whatsapp}
+Cidade/região: ${cidade || '(não informado)'}
+
+Data e hora: ${agora}`;
+
+  try {
+    await mailTransporter.sendMail({
+      from: SMTP_FROM,
+      to: AMPLIFICADOR_TO,
+      subject: `Novo cadastro de Amplificador — ${nome || whatsapp}`,
+      text: corpo
+    });
+    return res.status(200).json({ ok: true });
+  } catch (err) {
+    console.error('[amplificador-cadastro] erro ao enviar e-mail:', err);
+    return res.status(502).json({ error: 'falha ao enviar o cadastro' });
+  }
+});
+
+// ============================================================================
 // POST /api/track-order — "Rastrear Pedido". Só dispara um e-mail, sem banco
 // de dados, sem consulta nenhuma. O cliente informa o e-mail e a equipe
 // responde manualmente por lá.
