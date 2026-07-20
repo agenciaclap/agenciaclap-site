@@ -566,6 +566,10 @@ app.use(express.static(__dirname, { index: false }));
 // receber por template — porque agora ele é servido por outro projeto,
 // então o truque de substituir __MP_PUBLIC_KEY__ no HTML não se aplica.
 app.get('/api/mercadopago/public-key', (req, res) => {
+  // Liberado pra qualquer origem de propósito: é uma chave PÚBLICA — não há
+  // nada a proteger aqui, e isso remove qualquer chance de falha por CORS
+  // (diferença de origem, case, protocolo etc.) nesta rota específica.
+  res.set('Access-Control-Allow-Origin', '*');
   res.json({ publicKey: MP_PUBLIC_KEY });
 });
 
@@ -573,6 +577,7 @@ app.get('/api/mercadopago/public-key', (req, res) => {
 // sem e-mail, sem whatsapp, sem valor). É o que o front-end usa pra saber
 // quando o PIX foi pago de verdade, em vez de "fingir" com um temporizador.
 app.get('/api/mercadopago/payment-status/:paymentId', (req, res) => {
+  res.set('Access-Control-Allow-Origin', '*'); // só devolve status — nada sensível
   const order = getOrderByPaymentId(req.params.paymentId);
   if (!order) return res.status(404).json({ error: 'pedido não encontrado' });
   res.json({ status: order.status });
